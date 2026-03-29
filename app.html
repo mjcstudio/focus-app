@@ -1195,6 +1195,16 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 </script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/focus-app/sw.js')
+      .then(r=>console.log('SW registered:', r.scope))
+      .catch(e=>console.log('SW failed:', e));
+  });
+}
+</script>
 </div><!-- /mainApp -->
 </body>
 </html>
