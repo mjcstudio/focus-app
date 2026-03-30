@@ -60,7 +60,7 @@ body.mode-archive-per .back-btn{display:block;background:var(--per-soft);color:v
 /* UPCOMING */
 .upcoming{margin:0 16px 10px;background:var(--work-surface);border-radius:var(--rs);box-shadow:0 1px 4px rgba(124,111,94,.1);display:flex;align-items:center;padding:10px 14px;gap:10px;flex-shrink:0;cursor:pointer;min-height:44px;transition:all var(--t)}
 .upcoming:active{opacity:.8}
-.up-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--work-muted);flex-shrink:0}
+
 .up-content{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
 .up-name{font-size:14px;font-weight:500;color:var(--work-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up-time{font-size:13px;color:var(--work-muted);flex-shrink:0}
@@ -270,6 +270,22 @@ body.mode-personal .user-pill{background:var(--per-soft);color:var(--per-muted)}
 body.mode-personal .user-dot{background:var(--per-accent)}
 #mainApp{display:none;flex-direction:column;height:100dvh;width:100%}
 
+
+/* DRUM PICKER */
+.drum-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.drum-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.drum-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aaa}
+.drum{width:72px;height:120px;overflow:hidden;position:relative;border-radius:var(--rs);background:#f7f5f2;cursor:pointer}
+.drum-inner{display:flex;flex-direction:column;transition:transform .15s ease;will-change:transform}
+.drum-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:#2a2118;flex-shrink:0;transition:opacity .1s,font-size .1s}
+.drum-item.active{color:#7c6f5e;font-weight:700;font-size:26px}
+.drum-item.adj{opacity:.4;font-size:18px}
+.drum-item.far{opacity:.15;font-size:14px}
+.drum::before,.drum::after{content:'';position:absolute;left:0;right:0;height:40px;z-index:2;pointer-events:none}
+.drum::before{top:0;background:linear-gradient(to bottom,#f7f5f2,rgba(247,245,242,0))}
+.drum::after{bottom:0;background:linear-gradient(to top,#f7f5f2,rgba(247,245,242,0))}
+.drum-sep{font-size:28px;font-weight:300;color:#aaa;padding-bottom:4px}
+
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
@@ -341,7 +357,7 @@ onAuthStateChanged(auth,user=>{
     uid=user.uid;
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('mainApp').style.display='flex';
-    document.getElementById('userEmail').textContent=user.email;
+    
     startSync();
     reqNotif();
   }else{
@@ -422,7 +438,7 @@ window.save=function(){
     <div class="hdr-right">
       <button class="hdr-btn arc-hdr-btn" onclick="goArchive()">Archive</button>
       <button class="hdr-btn back-btn" onclick="goBack()">← Back</button>
-      <button class="user-pill" id="signOutBtn" title="Sign out"><div class="user-dot"></div><span id="userEmail"></span></button>
+      <button class="user-pill" id="signOutBtn" title="Sign out"><div class="user-dot"></div></button>
     </div>
   </div>
 </div>
@@ -432,7 +448,6 @@ window.save=function(){
   <!-- WORK VIEW -->
   <div class="view active" id="workView">
     <div class="upcoming" id="upcomingSlot" onclick="openNextMtgNotes()">
-      <span class="up-lbl">Next</span>
       <div class="up-content" id="upContent"><span class="up-empty">No upcoming meetings</span></div>
       <button class="mtgs-btn" onclick="event.stopPropagation();goMeetings()">Meetings</button>
     </div>
@@ -589,10 +604,16 @@ window.save=function(){
         <label class="tog"><input type="checkbox" id="taskTimeTog" onchange="togTime('task')"><span class="tog-sl"></span></label>
       </div>
       <div id="taskTimeF" style="display:none">
-        <div class="time-inps">
-          <input class="time-inp" id="taskH" type="number" min="0" max="23" placeholder="HH">
-          <span style="font-size:20px;color:#aaa;align-self:center">:</span>
-          <input class="time-inp" id="taskM" type="number" min="0" max="59" placeholder="MM">
+        <div class="drum-wrap">
+          <div class="drum-col">
+            <div class="drum-lbl">Hour</div>
+            <div class="drum" id="drumTaskH"></div>
+          </div>
+          <div class="drum-sep">:</div>
+          <div class="drum-col">
+            <div class="drum-lbl">Min</div>
+            <div class="drum" id="drumTaskM"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -631,10 +652,16 @@ window.save=function(){
         <label class="tog"><input type="checkbox" id="mtgTimeTog" onchange="togTime('mtg')"><span class="tog-sl"></span></label>
       </div>
       <div id="mtgTimeF" style="display:none">
-        <div class="time-inps">
-          <input class="time-inp" id="mtgH" type="number" min="0" max="23" placeholder="HH">
-          <span style="font-size:20px;color:#aaa;align-self:center">:</span>
-          <input class="time-inp" id="mtgM" type="number" min="0" max="59" placeholder="MM">
+        <div class="drum-wrap">
+          <div class="drum-col">
+            <div class="drum-lbl">Hour</div>
+            <div class="drum" id="drumMtgH"></div>
+          </div>
+          <div class="drum-sep">:</div>
+          <div class="drum-col">
+            <div class="drum-lbl">Min</div>
+            <div class="drum" id="drumMtgM"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -725,8 +752,8 @@ function renderUpcoming(){
   if(du===0)dayLbl='Today';
   else if(du===1)dayLbl='Tomorrow';
   else dayLbl=days[d.getDay()];
-  const lbl=n.time?`${n.time} · ${dayLbl}`:dayLbl;
-  el.innerHTML=`<span class="up-name">${esc(n.name)}</span><span class="up-time">${lbl}</span>`;
+  const timePart=n.time?`<span class="up-time">${n.time} · ${dayLbl}</span>`:`<span class="up-time">${dayLbl}</span>`;
+  el.innerHTML=timePart+`<span class="up-name">${esc(n.name)}</span>`;
 }
 function openNextMtgNotes(){const n=nextMtg();if(n)openMtgNotes(n.id)}
 
@@ -748,7 +775,15 @@ function doAdd(mode,sec){
   renderTasks(mode,sec);save();
 }
 
-function daysUntil(iso){const now=new Date();now.setHours(0,0,0,0);const d=new Date(iso);d.setHours(0,0,0,0);return Math.round((d-now)/86400000)}
+function daysUntil(iso){
+  if(!iso)return 999;
+  const now=new Date();
+  const nowISO=localISO(now.getFullYear(),now.getMonth(),now.getDate());
+  const [yr,mn,d]=iso.split('-').map(Number);
+  const [nyr,nmn,nd]=nowISO.split('-').map(Number);
+  const a=new Date(yr,mn-1,d),b=new Date(nyr,nmn-1,nd);
+  return Math.round((a-b)/86400000);
+}
 function fmtDue(iso,timeStr){
   const d=daysUntil(iso);
   if(d<0)return'Overdue';
@@ -822,8 +857,10 @@ function renderTasks(mode,sec){
     wrap.appendChild(card);
     wrap.appendChild(noteArea);
 
-    card.addEventListener('dragstart',e=>{S.drag={src:i,mode,sec};e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
-    card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+    card.addEventListener('dragstart',e=>{
+      if(e.dataTransfer){S.drag={src:i,mode,sec};e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';}
+    });
+    card.addEventListener('dragend',()=>{card.classList.remove('dragging');});
     addTouchDrag(card,mode,sec,i);
     addSwipeDelete(wrap,card,delBg,mode,sec,i);
     list.appendChild(wrap);
@@ -908,12 +945,29 @@ function addSwipeDelete(wrap,card,delBg,mode,sec,idx){
   },{passive:true});
 }
 function addTouchDrag(card,mode,sec,idx){
-  let sy;
-  card.addEventListener('touchstart',e=>{sy=e.touches[0].clientY},{passive:true});
+  let sy=null,moved=false;
+  card.addEventListener('touchstart',e=>{
+    // Only drag from the drag handle
+    if(!e.target.classList.contains('dh'))return;
+    sy=e.touches[0].clientY;moved=false;
+    e.stopPropagation();
+  },{passive:true});
+  card.addEventListener('touchmove',e=>{
+    if(sy===null)return;
+    moved=true;
+    e.preventDefault();
+  },{passive:false});
   card.addEventListener('touchend',e=>{
-    const diff=e.changedTouches[0].clientY-sy;if(Math.abs(diff)<30)return;
-    const arr=S.tasks[mode][sec],ni=Math.max(0,Math.min(arr.length-1,idx+(diff>0?1:-1)));
-    if(ni===idx)return;const[item]=arr.splice(idx,1);arr.splice(ni,0,item);
+    if(sy===null)return;
+    const diff=e.changedTouches[0].clientY-sy;
+    sy=null;
+    if(!moved||Math.abs(diff)<20)return;
+    const arr=S.tasks[mode][sec];
+    const steps=Math.round(diff/50);
+    if(steps===0)return;
+    const ni=Math.max(0,Math.min(arr.length-1,idx+steps));
+    if(ni===idx)return;
+    const[item]=arr.splice(idx,1);arr.splice(ni,0,item);
     renderTasks(mode,sec);save();
   },{passive:true});
 }
@@ -929,10 +983,84 @@ function openTaskModal(mode,sec){
   document.getElementById('taskModal').classList.add('open');
 }
 function closeTaskModal(){document.getElementById('taskModal').classList.remove('open')}
+// ── DRUM PICKERS ─────────────────────────────────────────────
+const drums={};
+function initDrum(id,count,pad,initial){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const state={val:initial,count,pad,startY:0,startVal:initial,dragging:false};
+  drums[id]=state;
+  renderDrum(id);
+  el.addEventListener('touchstart',e=>{
+    state.startY=e.touches[0].clientY;state.startVal=state.val;state.dragging=true;
+    e.preventDefault();
+  },{passive:false});
+  el.addEventListener('touchmove',e=>{
+    if(!state.dragging)return;
+    const dy=state.startY-e.touches[0].clientY;
+    const delta=Math.round(dy/40);
+    let nv=(state.startVal+delta)%count;
+    if(nv<0)nv+=count;
+    if(nv!==state.val){state.val=nv;renderDrum(id);}
+    e.preventDefault();
+  },{passive:false});
+  el.addEventListener('touchend',()=>{state.dragging=false;},{passive:true});
+  // Mouse support for desktop testing
+  let mouseDown=false,mouseStartY=0,mouseStartVal=0;
+  el.addEventListener('mousedown',e=>{mouseDown=true;mouseStartY=e.clientY;mouseStartVal=state.val;});
+  window.addEventListener('mousemove',e=>{
+    if(!mouseDown)return;
+    const dy=mouseStartY-e.clientY;
+    const delta=Math.round(dy/40);
+    let nv=(mouseStartVal+delta)%count;
+    if(nv<0)nv+=count;
+    if(nv!==state.val){state.val=nv;renderDrum(id);}
+  });
+  window.addEventListener('mouseup',()=>{mouseDown=false;});
+}
+function renderDrum(id){
+  const state=drums[id];if(!state)return;
+  const el=document.getElementById(id);if(!el)return;
+  const{val,count,pad}=state;
+  // Show 5 items: far-prev, adj-prev, active, adj-next, far-next
+  let h='<div class="drum-inner">';
+  for(let offset=-2;offset<=2;offset++){
+    let v=(val+offset+count)%count;
+    const label=pad?String(v).padStart(2,'0'):String(v);
+    let cls='drum-item';
+    if(offset===0)cls+=' active';
+    else if(Math.abs(offset)===1)cls+=' adj';
+    else cls+=' far';
+    h+=`<div class="${cls}">${label}</div>`;
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
+function getDrumVal(id){
+  const state=drums[id];
+  if(!state)return 0;
+  return state.val;
+}
+function setDrumVal(id,val){
+  const state=drums[id];
+  if(!state)return;
+  state.val=val;
+  renderDrum(id);
+}
 function togTime(which){
   const id=which==='task'?'taskTimeF':'mtgTimeF';
   const tog=which==='task'?'taskTimeTog':'mtgTimeTog';
-  document.getElementById(id).style.display=document.getElementById(tog).checked?'block':'none';
+  const show=document.getElementById(tog).checked;
+  document.getElementById(id).style.display=show?'block':'none';
+  if(show){
+    if(which==='task'){
+      initDrum('drumTaskH',24,true,8);
+      initDrum('drumTaskM',60,true,0);
+    }else{
+      initDrum('drumMtgH',24,true,9);
+      initDrum('drumMtgM',60,true,0);
+    }
+  }
 }
 function selPill(btn,which){
   const id=which==='task'?'taskPills':'mtgPills';
@@ -943,7 +1071,7 @@ function selPill(btn,which){
 function confirmTaskDate(){
   if(!S.tm.date){closeTaskModal();return}
   const hasTime=document.getElementById('taskTimeTog').checked;
-  const timeStr=hasTime?String(document.getElementById('taskH').value).padStart(2,'0')+':'+String(document.getElementById('taskM').value).padStart(2,'0'):null;
+  const timeStr=hasTime?String(getDrumVal('drumTaskH')).padStart(2,'0')+':'+String(getDrumVal('drumTaskM')).padStart(2,'0'):null;
   const tasks=S.tasks[S.tm.mode][S.tm.sec];
   let applied=false;
   for(let i=tasks.length-1;i>=0;i--){
@@ -954,6 +1082,10 @@ function confirmTaskDate(){
 }
 
 // ── CALENDAR ─────────────────────────────────────────────────
+function localISO(yr,mn,d){
+  // Build ISO date string from local year/month/day — avoids UTC timezone shift
+  return yr+'-'+String(mn+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
 function renderCal(which){
   const id=which==='task'?'taskCal':'mtgCal';
   const mo=which==='task'?S.taskCalMo:S.mtgCalMo;
@@ -961,18 +1093,37 @@ function renderCal(which){
   const el=document.getElementById(id);
   const yr=mo.getFullYear(),mn=mo.getMonth();
   const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const today=new Date();today.setHours(0,0,0,0);
+  const today=new Date();
+  const todayISO=localISO(today.getFullYear(),today.getMonth(),today.getDate());
   const first=new Date(yr,mn,1).getDay(),dim=new Date(yr,mn+1,0).getDate();
   let h=`<div class="cal-hdr"><button class="cal-nav" onclick="calNav('${which}',-1)">‹</button><span class="cal-mo">${MO[mn]} ${yr}</span><button class="cal-nav" onclick="calNav('${which}',1)">›</button></div><div class="cal-grid"><div class="cdn">Su</div><div class="cdn">Mo</div><div class="cdn">Tu</div><div class="cdn">We</div><div class="cdn">Th</div><div class="cdn">Fr</div><div class="cdn">Sa</div>`;
   for(let i=0;i<first;i++)h+=`<div class="cd other"></div>`;
   for(let d=1;d<=dim;d++){
-    const dt=new Date(yr,mn,d),iso=dt.toISOString().split('T')[0];
-    const past=dt<today,isToday=dt.getTime()===today.getTime(),isSel=iso===sel;
-    let cls='cd'+(past?' past':'')+(isToday?' today':'')+(isSel?' sel':'');
-    const oc=past?'':` onclick="selDay('${which}','${iso}')"`;
+    const iso=localISO(yr,mn,d);
+    const isPast=iso<todayISO;
+    const isToday=iso===todayISO;
+    const isSel=iso===sel;
+    let cls='cd'+(isPast?' past':'')+(isToday?' today':'')+(isSel?' sel':'');
+    // Use touchend + preventDefault to avoid double-fire on mobile
+    const oc=isPast?'':` data-which="${which}" data-iso="${iso}"`;
     h+=`<div class="${cls}"${oc}>${d}</div>`;
   }
-  h+='</div>';el.innerHTML=h;
+  h+='</div>';
+  el.innerHTML=h;
+  // Attach single touchend listeners to avoid double-tap issue
+  el.querySelectorAll('.cd:not(.past):not(.other)').forEach(cell=>{
+    cell.addEventListener('touchend',e=>{
+      e.preventDefault();
+      const iso=cell.dataset.iso,which=cell.dataset.which;
+      if(iso&&which)selDay(which,iso);
+    },{passive:false});
+    cell.addEventListener('click',e=>{
+      // Only fire on non-touch (mouse) to avoid double
+      if(e.detail===0)return; // triggered by touch, skip
+      const iso=cell.dataset.iso,which=cell.dataset.which;
+      if(iso&&which)selDay(which,iso);
+    });
+  });
 }
 function calNav(which,dir){
   if(which==='task')S.taskCalMo.setMonth(S.taskCalMo.getMonth()+dir);
@@ -1111,7 +1262,12 @@ function openMtgModal(editId){
     const m=S.meetings.find(x=>x.id===editId);
     if(m){document.getElementById('mtgName').value=m.name;S.mm.date=m.date;S.mm.recur=m.recur;
       document.querySelectorAll('#mtgPills .pill').forEach(p=>p.classList.toggle('sel',p.dataset.v===m.recur));
-      if(m.time){document.getElementById('mtgTimeTog').checked=true;document.getElementById('mtgTimeF').style.display='block';const[h,mi]=m.time.split(':');document.getElementById('mtgH').value=h;document.getElementById('mtgM').value=mi}
+      if(m.time){
+        document.getElementById('mtgTimeTog').checked=true;
+        document.getElementById('mtgTimeF').style.display='block';
+        const[h,mi]=m.time.split(':').map(Number);
+        setTimeout(()=>{initDrum('drumMtgH',24,true,h);initDrum('drumMtgM',60,true,mi);},50);
+      }
       S.mtgCalMo=new Date(m.date);
     }
   }else S.mtgCalMo=new Date();
@@ -1122,7 +1278,7 @@ function confirmMtg(){
   const name=document.getElementById('mtgName').value.trim();
   if(!name||!S.mm.date){closeMtgModal();return}
   const hasTime=document.getElementById('mtgTimeTog').checked;
-  const timeStr=hasTime?String(document.getElementById('mtgH').value).padStart(2,'0')+':'+String(document.getElementById('mtgM').value).padStart(2,'0'):null;
+  const timeStr=hasTime?String(getDrumVal('drumMtgH')).padStart(2,'0')+':'+String(getDrumVal('drumMtgM')).padStart(2,'0'):null;
   if(S.mm.editId){const m=S.meetings.find(x=>x.id===S.mm.editId);if(m){m.name=name;m.date=S.mm.date;m.time=timeStr;m.recur=S.mm.recur}}
   else S.meetings.push({id:S.nextId++,name,date:S.mm.date,time:timeStr,recur:S.mm.recur,notes:'',archived:false});
   if(timeStr)schedNotif(name,'Meeting starting now',S.mm.date,timeStr);
