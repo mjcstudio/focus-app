@@ -699,6 +699,11 @@ const S={
   drag:{src:null,mode:null,sec:null},noteDragSrc:null
 };
 
+// Safe list clear — works on all mobile browsers
+function clearList(list,keepClass){
+  let c=list.firstChild;
+  while(c){const n=c.nextSibling;if(!keepClass||!c.classList||!c.classList.contains(keepClass))c.remove();c=n;}
+}
 // save() is defined in the Firebase module script above
 // load from localStorage as initial offline seed before Firebase syncs
 function load(){
@@ -855,13 +860,7 @@ function clearCompleted(mode){
 function renderTasks(mode,sec){
   const list=document.getElementById('tl-'+mode+'-'+sec);
   const empty=document.getElementById('em-'+mode+'-'+sec);
-  // Clear all task wrappers safely
-  let child=list.firstChild;
-  while(child){
-    const next=child.nextSibling;
-    if(!child.classList||!child.classList.contains('empty'))child.remove();
-    child=next;
-  }
+  clearList(list,'empty');
   const tasks=S.tasks[mode][sec];
   empty.style.display=tasks.length?'none':'flex';
   const now=new Date();now.setHours(0,0,0,0);
@@ -1211,7 +1210,7 @@ function addNote(){
 }
 function renderNotes(){
   const list=document.getElementById('notesList'),empty=document.getElementById('em-notes');
-  list.querySelectorAll('.note-card').forEach(e=>e.remove());
+  clearList(list,'empty');
   empty.style.display=S.notes.length?'none':'flex';
   S.notes.forEach((n,i)=>{
     const card=document.createElement('div');card.className='note-card';
@@ -1302,7 +1301,7 @@ function archivePast(){
 function renderMtgs(){
   archivePast();
   const list=document.getElementById('mtgsList'),empty=document.getElementById('em-mtgs');
-  list.querySelectorAll('.mtg-card,.arc-lbl').forEach(e=>e.remove());
+  clearList(list,'em-mtgs');
   const active=S.meetings.filter(m=>!m.archived).sort((a,b)=>mtgTs(a)-mtgTs(b));
   const archived=S.meetings.filter(m=>m.archived).sort((a,b)=>mtgTs(b)-mtgTs(a));
   empty.style.display=(active.length+archived.length)===0?'flex':'none';
