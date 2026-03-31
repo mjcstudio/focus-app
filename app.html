@@ -863,49 +863,48 @@ function renderTasks(mode,sec){
   clearList(list,'empty');
   const tasks=S.tasks[mode][sec];
   empty.style.display=tasks.length?'none':'flex';
-  const now=new Date();now.setHours(0,0,0,0);
-  tasks.forEach((t,i)=>{
-    const overdue=t.date&&!t.completed&&new Date(t.date)<now;
+  const nowD=new Date();nowD.setHours(0,0,0,0);
+  tasks.forEach(function(t,i){
+    const overdue=!!(t.date&&!t.completed&&new Date(t.date)<nowD);
     const du=t.date?daysUntil(t.date):999;
-    const dueClass=overdue?'overdue':du<=3&&du>=0?'soon':'';
+    const dueClass=overdue?'overdue':(du<=3&&du>=0?'soon':'');
     const hasNote=!!(t.note&&t.note.trim());
+    const isFirst=(i===0);
+    const isLast=(i===tasks.length-1);
 
-    // Wrapper for swipe
     const wrap=document.createElement('div');
-    wrap.className='swipe-wrap';
-    wrap.dataset.mode=mode;wrap.dataset.sec=sec;wrap.dataset.tidx=i;
-
-    // Delete bg
-    const delBg=document.createElement('div');
-    delBg.className='swipe-del-bg';delBg.textContent='Delete';
-    wrap.appendChild(delBg);
+    wrap.style.display='flex';
+    wrap.style.flexDirection='column';
+    wrap.style.flexShrink='0';
 
     const card=document.createElement('div');
     card.className='task-card'+(t.completed?' completed':'')+(overdue?' overdue':'');
-    card.dataset.idx=i;
-    card.innerHTML=`
-      <div class="dh">⣿</div>
-      <div class="chk" onclick="toggleTask('${mode}','${sec}',${i})"></div>
-      <div class="task-txt"
-        onblur="editTask('${mode}','${sec}',${i},this.innerText)"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"
-      >${esc(t.text)}</div>
-      ${t.date?`<span class="due-tag ${dueClass}">${fmtDue(t.date,t.time)}</span>`:''}
-      <button class="task-edit-btn" title="Edit" onclick="startEditTask(this)">✎</button>
-      <button class="task-note-btn${hasNote?' has-note':''}" title="Note" onclick="toggleTaskNote('${mode}','${sec}',${i},this)">⋯</button>
-      <button class="del-btn" onclick="delTask('${mode}','${sec}',${i})">✕</button>
-    `;
+    card.dataset.idx=String(i);
 
-    // Note area below card
+    const upBtn='<button class="move-btn" onclick="moveTask(''+mode+'',''+sec+'','+i+',-1)"'+(isFirst?' style="opacity:0;pointer-events:none"':'')+'>▲</button>';
+    const dnBtn='<button class="move-btn" onclick="moveTask(''+mode+'',''+sec+'','+i+',1)"'+(isLast?' style="opacity:0;pointer-events:none"':'')+'>▼</button>';
+    const dueTag=t.date?('<span class="due-tag '+dueClass+'">'+fmtDue(t.date,t.time)+'</span>'):'';
+    const noteBtn='<button class="task-note-btn'+(hasNote?' has-note':'')+'" title="Note" onclick="toggleTaskNote(''+mode+'',''+sec+'','+i+',this)">⋯</button>';
+    const editBtn='<button class="task-edit-btn" title="Edit" onclick="startEditTask(this)">✎</button>';
+    const delBtn='<button class="del-btn" onclick="delTask(''+mode+'',''+sec+'','+i+')">✕</button>';
+
+    card.innerHTML='<div class="move-btns">'+upBtn+dnBtn+'</div>'
+      +'<div class="chk" onclick="toggleTask(''+mode+'',''+sec+'','+i+')"></div>'
+      +'<div class="task-txt" onblur="editTask(''+mode+'',''+sec+'','+i+',this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">'+esc(t.text)+'</div>'
+      +dueTag+editBtn+noteBtn+delBtn;
+
     const noteArea=document.createElement('div');
     noteArea.className='task-note-area'+(hasNote?' open':'');
-    noteArea.innerHTML=`<textarea class="task-note-inp" rows="2" placeholder="Add a note…" onblur="saveTaskNote('${mode}','${sec}',${i},this.value)">${esc(t.note||'')}</textarea>`;
+    const ta=document.createElement('textarea');
+    ta.className='task-note-inp';
+    ta.rows=2;
+    ta.placeholder='Add a note…';
+    ta.value=t.note||'';
+    ta.addEventListener('blur',function(){saveTaskNote(mode,sec,i,this.value);});
+    noteArea.appendChild(ta);
 
     wrap.appendChild(card);
     wrap.appendChild(noteArea);
-
-    addTouchDrag(card,mode,sec,i);
-    addSwipeDelete(wrap,card,delBg,mode,sec,i);
     list.appendChild(wrap);
   });
   updateClearBtn(mode);
