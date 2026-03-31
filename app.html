@@ -182,8 +182,6 @@ body.mode-personal .add-ok{background:var(--per-accent)}
 .mtg-card:hover .mtg-del{opacity:.35}
 .mtg-del:hover{opacity:.8!important}
 
-.gcal-card{border-left:3px solid #4285F4!important}
-.gcal-tag{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:#e8f0fe;color:#4285F4;flex-shrink:0}
 
 .arc-lbl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--work-muted);padding:10px 4px 6px}
 
@@ -373,14 +371,6 @@ onAuthStateChanged(auth,user=>{
     document.getElementById('mainApp').style.display='flex';
     startSync();
     reqNotif();
-    // Try to get a fresh token for Calendar API
-    user.getIdToken().then(()=>{
-      // Use getAuth().currentUser to get a Google credential token
-      // We rely on window._gcalToken set during signIn, or prompt re-auth if missing
-      if(window._gcalToken){
-        fetchGCalEvents(window._gcalToken);
-      }
-    });
   }else{
     uid=null;
     if(unsubscribe){unsubscribe();unsubscribe=null;}
@@ -392,15 +382,7 @@ onAuthStateChanged(auth,user=>{
 window.signInWithGoogle=async function(){
   try{
     const provider=new GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/calendar.events.readonly');
-    provider.addScope('https://www.googleapis.com/auth/calendar.readonly');
-    const result=await signInWithPopup(auth,provider);
-    // Store the Google OAuth access token for Calendar API calls
-    const credential=GoogleAuthProvider.credentialFromResult(result);
-    if(credential&&credential.accessToken){
-      window._gcalToken=credential.accessToken;
-      fetchGCalEvents(credential.accessToken);
-    }
+    await signInWithPopup(auth,provider);
   }catch(e){console.error(e)}
 };
 
@@ -426,44 +408,6 @@ function startSync(){
     }
   });
 }
-
-// ── GOOGLE CALENDAR ────────────────────────────────────────────
-window.fetchGCalEvents=async function(token){
-  if(!token)return;
-  try{
-    const now=new Date();
-    const twoWeeks=new Date(now.getTime()+14*24*60*60*1000);
-    const timeMin=now.toISOString();
-    const timeMax=twoWeeks.toISOString();
-    const url=`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=50`;
-    const resp=await fetch(url,{headers:{Authorization:`Bearer ${token}`}});
-    if(!resp.ok){
-      if(resp.status===401){window._gcalToken=null;}
-      return;
-    }
-    const data=await resp.json();
-    const events=(data.items||[]).map(ev=>{
-      const start=ev.start.dateTime||ev.start.date;
-      const isAllDay=!ev.start.dateTime;
-      let dateISO,timeStr=null;
-      if(isAllDay){
-        dateISO=ev.start.date;
-      }else{
-        const d=new Date(ev.start.dateTime);
-        dateISO=localISO(d.getFullYear(),d.getMonth(),d.getDate());
-        timeStr=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-      }
-      return{id:'gcal-'+ev.id,name:ev.summary||'(No title)',date:dateISO,time:timeStr,gcal:true};
-    });
-    window._gcalEvents=events;
-    // Re-render upcoming and meetings if we're on those views
-    if(typeof renderUpcoming==='function')renderUpcoming();
-    if(typeof renderMtgs==='function'&&S.currentMode==='meetings')renderMtgs();
-  }catch(e){console.error('GCal fetch failed:',e);}
-};
-
-// Refresh calendar every 15 minutes
-setInterval(()=>{if(window._gcalToken)window.fetchGCalEvents(window._gcalToken);},15*60*1000);
 
 // Debounced save to Firestore
 window.save=function(){
@@ -819,10 +763,7 @@ function mtgTs(m){
 }
 function nextMtg(){
   const now=Date.now();
-  const focusMtgs=S.meetings.filter(m=>!m.archived).map(m=>({m,ts:mtgTs(m)}));
-  const gcalMtgs=(window._gcalEvents||[]).map(m=>({m,ts:mtgTs(m)}));
-  const all=[...focusMtgs,...gcalMtgs].filter(x=>x.ts>now-60000).sort((a,b)=>a.ts-b.ts);
-  return all[0]?.m||null;
+  return S.meetings.filter(m=>!m.archived).map(m=>({m,ts:mtgTs(m)})).filter(x=>x.ts>now-60000).sort((a,b)=>a.ts-b.ts)[0]?.m||null;
 }
 function renderUpcoming(){
   const el=document.getElementById('upContent'),n=nextMtg();
@@ -1358,26 +1299,9 @@ function renderMtgs(){
   list.querySelectorAll('.mtg-card,.arc-lbl').forEach(e=>e.remove());
   const active=S.meetings.filter(m=>!m.archived).sort((a,b)=>mtgTs(a)-mtgTs(b));
   const archived=S.meetings.filter(m=>m.archived).sort((a,b)=>mtgTs(b)-mtgTs(a));
-  const gcal=(window._gcalEvents||[]).sort((a,b)=>mtgTs(a)-mtgTs(b));
-  const total=active.length+archived.length+gcal.length;
-  empty.style.display=total===0?'flex':'none';
-  // Merge Focus active + gcal by date
-  const merged=[...active,...gcal].sort((a,b)=>mtgTs(a)-mtgTs(b));
-  merged.forEach(m=>list.appendChild(mkMtgCard(m)));
-  if(archived.length){
-    const l=document.createElement('div');l.className='arc-lbl';l.textContent='Archived';list.appendChild(l);
-    archived.forEach(m=>list.appendChild(mkMtgCard(m)));
-  }
-  // Show gcal connect prompt if no token
-  if(!window._gcalToken&&gcal.length===0){
-    const prompt=document.createElement('div');
-    prompt.className='arc-lbl';
-    prompt.style.fontStyle='italic';
-    prompt.style.textTransform='none';
-    prompt.style.letterSpacing='0';
-    prompt.textContent='Sign out and back in to connect Google Calendar';
-    list.appendChild(prompt);
-  }
+  empty.style.display=(active.length+archived.length)===0?'flex':'none';
+  active.forEach(m=>list.appendChild(mkMtgCard(m)));
+  if(archived.length){const l=document.createElement('div');l.className='arc-lbl';l.textContent='Archived';list.appendChild(l);archived.forEach(m=>list.appendChild(mkMtgCard(m)))}
 }
 function mkMtgCard(m){
   const card=document.createElement('div');card.className='mtg-card'+(m.archived?' archived':'');
