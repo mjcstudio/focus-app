@@ -700,9 +700,15 @@ const S={
 };
 
 // Safe list clear — works on all mobile browsers
-function clearList(list,keepClass){
-  let c=list.firstChild;
-  while(c){const n=c.nextSibling;if(!keepClass||!c.classList||!c.classList.contains(keepClass))c.remove();c=n;}
+function clearList(list,keepId){
+  // Remove all children except the one with a specific ID
+  var children=[];
+  var c=list.firstChild;
+  while(c){children.push(c);c=c.nextSibling;}
+  for(var i=0;i<children.length;i++){
+    var el=children[i];
+    if(!keepId||el.id!==keepId)el.remove();
+  }
 }
 // save() is defined in the Firebase module script above
 // load from localStorage as initial offline seed before Firebase syncs
@@ -860,7 +866,7 @@ function clearCompleted(mode){
 function renderTasks(mode,sec){
   const list=document.getElementById('tl-'+mode+'-'+sec);
   const empty=document.getElementById('em-'+mode+'-'+sec);
-  clearList(list,'empty');
+  clearList(list,'em-'+mode+'-'+sec);
   const tasks=S.tasks[mode][sec];
   empty.style.display=tasks.length?'none':'flex';
   const nowD=new Date();nowD.setHours(0,0,0,0);
@@ -1209,7 +1215,7 @@ function addNote(){
 }
 function renderNotes(){
   const list=document.getElementById('notesList'),empty=document.getElementById('em-notes');
-  clearList(list,'empty');
+  clearList(list,'em-notes');
   empty.style.display=S.notes.length?'none':'flex';
   S.notes.forEach((n,i)=>{
     const card=document.createElement('div');card.className='note-card';
