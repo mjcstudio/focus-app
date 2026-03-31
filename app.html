@@ -30,6 +30,15 @@ body.mode-meetings,body.mode-mnotes{background:var(--work-bg);color:var(--work-t
 body.mode-archive{background:var(--work-bg);color:var(--work-text)}
 body.mode-archive-per{background:var(--per-bg);color:var(--per-text)}
 
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:#f5f2ee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;z-index:200;padding:40px}
+.login-title{font-family:'DM Serif Display',serif;font-size:42px;color:#7c6f5e;letter-spacing:-.5px}
+.login-sub{font-size:14px;color:#9a8d7e;text-align:center;line-height:1.6;max-width:260px}
+.login-btn{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #ddd6cb;border-radius:12px;padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:#2a2118;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.login-btn:active{transform:scale(.97)}
+.g-icon{width:20px;height:20px}
+#mainApp{display:none;flex-direction:column;height:100dvh;width:100%}
+
 /* HEADER */
 .hdr{padding:18px 20px 10px;flex-shrink:0}
 .hdr-inner{display:flex;align-items:center;gap:10px}
@@ -43,14 +52,16 @@ body.mode-personal .mode-lbl,body.mode-archive-per .mode-lbl{color:var(--per-mut
 body.mode-notes .mode-lbl{color:var(--note-muted)}
 .hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hdr-btn{border:none;border-radius:var(--rs);padding:4px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t)}
-/* Archive button - only in work/personal */
 .arc-hdr-btn{display:none}
 body.mode-work .arc-hdr-btn{display:block;background:var(--work-soft);color:var(--work-accent)}
 body.mode-personal .arc-hdr-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
-/* Back button - in meetings/mnotes/archive */
 .back-btn{display:none;background:var(--work-soft);color:var(--work-accent)}
 body.mode-meetings .back-btn,body.mode-mnotes .back-btn,body.mode-archive .back-btn{display:block}
 body.mode-archive-per .back-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
+.user-pill{display:flex;align-items:center;gap:5px;background:var(--work-soft);border:none;border-radius:20px;padding:4px 8px;cursor:pointer;transition:all var(--t)}
+body.mode-personal .user-pill{background:var(--per-soft)}
+.user-dot{width:7px;height:7px;border-radius:50%;background:var(--work-accent);flex-shrink:0}
+body.mode-personal .user-dot{background:var(--per-accent)}
 
 /* LAYOUT */
 .content{flex:1;overflow:hidden;position:relative}
@@ -60,13 +71,11 @@ body.mode-archive-per .back-btn{display:block;background:var(--per-soft);color:v
 /* UPCOMING */
 .upcoming{margin:0 16px 10px;background:var(--work-surface);border-radius:var(--rs);box-shadow:0 1px 4px rgba(124,111,94,.1);display:flex;align-items:center;padding:10px 14px;gap:10px;flex-shrink:0;cursor:pointer;min-height:44px;transition:all var(--t)}
 .upcoming:active{opacity:.8}
-
 .up-content{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
 .up-name{font-size:14px;font-weight:500;color:var(--work-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up-time{font-size:13px;color:var(--work-muted);flex-shrink:0}
 .up-empty{font-size:13px;color:var(--work-muted);font-style:italic}
 .mtgs-btn{flex-shrink:0;background:var(--work-soft);border:none;border-radius:var(--rs);padding:5px 10px;font-size:12px;font-weight:500;color:var(--work-accent);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t)}
-.mtgs-btn:active{opacity:.7}
 
 /* SECTIONS */
 .pri-sec{flex:3;display:flex;flex-direction:column;overflow:hidden;padding:0 16px 8px}
@@ -87,8 +96,6 @@ body.mode-personal .clr-btn{color:var(--per-accent)}
 .divider{height:1px;margin:0 16px;flex-shrink:0;transition:background .3s}
 body.mode-work .divider{background:var(--work-div)}
 body.mode-personal .divider{background:var(--per-div)}
-
-/* ICON BTNS */
 .ibtn{width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--t);flex-shrink:0}
 body.mode-work .ibtn{background:var(--work-soft);color:var(--work-accent)}
 body.mode-personal .ibtn{background:var(--per-soft);color:var(--per-accent)}
@@ -97,16 +104,18 @@ body.mode-work .ibtn.plus{background:var(--work-accent);color:#fff}
 body.mode-personal .ibtn.plus{background:var(--per-accent);color:#fff}
 .ibtn:active{transform:scale(.92)}
 
-/* TASK LIST */
+/* TASKS */
 .task-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:4px;scrollbar-width:none}
 .task-list::-webkit-scrollbar{display:none}
-.task-card{border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;gap:10px;transition:all var(--t);-webkit-user-select:none;user-select:none}
-.task-card:active{cursor:grabbing}
-.task-card.dragging{opacity:.4}
+.task-wrap{display:flex;flex-direction:column;flex-shrink:0}
+.task-card{border-radius:var(--rs);padding:10px 12px;display:flex;align-items:center;gap:10px;transition:all var(--t)}
 body.mode-work .task-card{background:var(--work-surface);box-shadow:0 1px 3px rgba(124,111,94,.08)}
 body.mode-personal .task-card{background:var(--per-surface);box-shadow:0 1px 3px rgba(45,106,159,.08)}
 .task-card.overdue{background:var(--overdue-bg)!important}
 .task-card.completed .task-txt{text-decoration:line-through;opacity:.45}
+.move-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.move-btn{background:none;border:none;cursor:pointer;font-size:11px;line-height:1;padding:1px 4px;opacity:.25;color:inherit;transition:opacity var(--t);-webkit-user-select:none;user-select:none}
+.move-btn:active{opacity:1}
 .chk{width:20px;height:20px;border-radius:50%;border:2px solid;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
 body.mode-work .chk{border-color:var(--work-accent)}
 body.mode-personal .chk{border-color:var(--per-accent)}
@@ -116,23 +125,20 @@ body.mode-personal .task-card.completed .chk{background:var(--per-accent);border
 .task-card.completed .chk::after{display:block}
 .task-txt{flex:1;font-size:14px;line-height:1.4;min-width:0;cursor:default;-webkit-user-select:none;user-select:none}
 .task-txt.editing{outline:none;cursor:text;-webkit-user-select:text;user-select:text}
-.task-edit-btn{opacity:0;background:none;border:none;cursor:pointer;font-size:13px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
-.task-card:hover .task-edit-btn{opacity:.3}
-.task-edit-btn:hover{opacity:.7!important}
 .due-tag{font-size:11px;font-weight:500;flex-shrink:0;padding:2px 6px;border-radius:4px}
 .due-tag.overdue{color:var(--overdue);background:rgba(192,57,43,.1)}
 .due-tag.soon{color:var(--soon)}
 body.mode-work .due-tag:not(.overdue):not(.soon){color:var(--work-muted)}
 body.mode-personal .due-tag:not(.overdue):not(.soon){color:var(--per-muted)}
-
-.del-btn{opacity:0;background:none;border:none;cursor:pointer;font-size:15px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
-.task-card:hover .del-btn{opacity:.3}
-.del-btn:hover{opacity:.7!important}
+.task-edit-btn,.task-note-btn,.del-btn{opacity:0;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
+.task-card:active .task-edit-btn,.task-card:active .task-note-btn,.task-card:active .del-btn{opacity:.4}
+.task-note-btn.has-note{opacity:.5!important}
+.del-btn:active{opacity:.8!important}
 
 /* ADD BAR */
 .add-bar{display:none;padding:6px 16px 8px;gap:8px;align-items:center;flex-shrink:0}
 .add-bar.on{display:flex}
-.add-inp{flex:1;border:none;border-bottom:1.5px solid;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;padding:5px 0;outline:none;color:inherit}
+.add-inp{flex:1;border:none;border-bottom:1.5px solid;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;padding:5px 0;outline:none;color:inherit;-webkit-user-select:text;user-select:text}
 body.mode-work .add-inp{border-color:var(--work-accent);color:var(--work-text)}
 body.mode-personal .add-inp{border-color:var(--per-accent);color:var(--per-text)}
 body.mode-work .add-inp::placeholder{color:var(--work-muted)}
@@ -140,6 +146,13 @@ body.mode-personal .add-inp::placeholder{color:var(--per-muted)}
 .add-ok{border:none;border-radius:var(--rs);padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#fff;transition:all var(--t)}
 body.mode-work .add-ok{background:var(--work-accent)}
 body.mode-personal .add-ok{background:var(--per-accent)}
+
+/* TASK NOTES */
+.task-note-area{display:none;padding:4px 44px 6px 44px;flex-shrink:0}
+.task-note-area.open{display:block}
+.task-note-inp{width:100%;border:none;border-bottom:1px solid;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;padding:4px 0;outline:none;color:inherit;resize:none;line-height:1.5;-webkit-user-select:text;user-select:text}
+body.mode-work .task-note-inp{border-color:var(--work-div);color:var(--work-text)}
+body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-text)}
 
 /* EMPTY */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:6px;opacity:.3;pointer-events:none;padding:20px;text-align:center;font-size:13px}
@@ -151,19 +164,17 @@ body.mode-personal .add-ok{background:var(--per-accent)}
 .notes-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:8px;scrollbar-width:none}
 .notes-list::-webkit-scrollbar{display:none}
 .note-card{background:var(--note-surface);border-radius:var(--r);padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.note-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.note-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.note-dh{color:var(--note-muted);opacity:.3;font-size:13px;cursor:grab;padding:2px 4px;flex-shrink:0;-webkit-user-select:none;user-select:none}
 .note-title{font-size:14px;font-weight:600;color:var(--note-accent);outline:none;flex:1;min-width:0;-webkit-user-select:text;user-select:text}
 .note-title:empty::before{content:'Untitled';color:var(--note-muted);font-weight:400}
 .note-body{font-size:14px;line-height:1.6;color:var(--note-text);outline:none;min-height:36px;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
 .note-body:empty::before{content:'Start writing…';color:var(--note-muted)}
 .note-del{opacity:0;background:none;border:none;cursor:pointer;font-size:15px;color:var(--note-muted);padding:2px 4px;transition:opacity var(--t);flex-shrink:0}
-.note-card:hover .note-del{opacity:.4}
-.note-del:hover{opacity:.8!important}
+.note-card:active .note-del{opacity:.5}
 .ghost-btn{display:flex;align-items:center;gap:8px;border:1.5px dashed;border-radius:var(--r);padding:11px 16px;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;transition:all var(--t);flex-shrink:0;margin-bottom:4px}
 .ghost-btn.note{border-color:var(--note-muted);color:var(--note-muted)}
-.ghost-btn.note:hover{border-color:var(--note-accent);color:var(--note-accent)}
 .ghost-btn.mtg{border-color:var(--work-muted);color:var(--work-muted)}
-.ghost-btn.mtg:hover{border-color:var(--work-accent);color:var(--work-accent)}
 
 /* MEETINGS */
 .mtgs-view{display:none;flex-direction:column;height:100%;padding:0 16px}
@@ -177,25 +188,21 @@ body.mode-personal .add-ok{background:var(--per-accent)}
 .mtg-name{font-size:14px;font-weight:500;color:var(--work-text)}
 .mtg-meta{font-size:12px;color:var(--work-muted);margin-top:2px}
 .recur-tag{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;background:var(--work-soft);color:var(--work-accent);flex-shrink:0}
-
-.mtg-del{opacity:0;background:none;border:none;cursor:pointer;font-size:15px;color:var(--work-muted);padding:2px 6px;transition:opacity var(--t);flex-shrink:0}
-.mtg-card:hover .mtg-del{opacity:.35}
-.mtg-del:hover{opacity:.8!important}
-
-
+.mtg-del{background:none;border:none;cursor:pointer;font-size:15px;color:var(--work-muted);padding:2px 6px;transition:opacity var(--t);flex-shrink:0;opacity:.4}
 .arc-lbl{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--work-muted);padding:10px 4px 6px}
 
 /* MEETING NOTES */
 .mnotes-view{display:none;flex-direction:column;height:100%;padding:0 16px}
 .mnotes-view.active{display:flex}
 .mnotes-hdr{margin-bottom:10px;flex-shrink:0}
-.mnotes-name{font-size:18px;font-weight:600;color:var(--work-text);margin-bottom:2px}
+.mnotes-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.mnotes-name{font-size:18px;font-weight:600;color:var(--work-text)}
 .mnotes-meta{font-size:12px;color:var(--work-muted)}
 .mnotes-body{flex:1;font-size:14px;line-height:1.7;color:var(--work-text);outline:none;overflow-y:auto;white-space:pre-wrap;padding-bottom:20px;scrollbar-width:none;-webkit-user-select:text;user-select:text}
 .mnotes-body::-webkit-scrollbar{display:none}
 .mnotes-body:empty::before{content:'Add notes for this meeting…';color:var(--work-muted)}
 
-/* ARCHIVE VIEW */
+/* ARCHIVE */
 .arc-view{display:none;flex-direction:column;height:100%;padding:0 16px}
 .arc-view.active{display:flex}
 .arc-group-btns{display:flex;gap:6px;flex-shrink:0;margin-bottom:12px}
@@ -209,16 +216,14 @@ body.mode-archive-per .arc-grp-btn.sel{border-color:var(--per-accent);background
 .arc-group-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:8px 2px 4px}
 body.mode-archive .arc-group-label{color:var(--work-muted)}
 body.mode-archive-per .arc-group-label{color:var(--per-muted)}
-.arc-item{border-radius:var(--rs);padding:10px 14px;display:flex;align-items:center;gap:10px;transition:all var(--t)}
+.arc-item{border-radius:var(--rs);padding:10px 14px;display:flex;align-items:center;gap:10px}
 body.mode-archive .arc-item{background:var(--work-surface);box-shadow:0 1px 2px rgba(124,111,94,.07)}
 body.mode-archive-per .arc-item{background:var(--per-surface);box-shadow:0 1px 2px rgba(45,106,159,.07)}
 .arc-item-txt{flex:1;font-size:14px;opacity:.7}
 .arc-item-date{font-size:11px;flex-shrink:0}
 body.mode-archive .arc-item-date{color:var(--work-muted)}
 body.mode-archive-per .arc-item-date{color:var(--per-muted)}
-.arc-del{opacity:0;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
-.arc-item:hover .arc-del{opacity:.3}
-.arc-del:hover{opacity:.7!important}
+.arc-del{opacity:.3;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;color:inherit;flex-shrink:0}
 
 /* NAV */
 .nav{height:var(--nav);display:flex;align-items:stretch;flex-shrink:0;padding:8px 12px 12px;gap:8px;transition:background .3s}
@@ -228,75 +233,15 @@ body.mode-notes .nav{background:var(--note-bg)}
 .nav-btn{flex:1;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.03em;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center}
 .nav-btn:active{transform:scale(.97)}
 body.mode-work .nb-work{background:var(--work-accent);color:#fff}
-body.mode-work .nb-notes,body.mode-work .nb-per{background:var(--work-soft);color:var(--work-muted)}
+body.mode-work .nb-notes,.nb-work-off{background:var(--work-soft);color:var(--work-muted)}
 body.mode-personal .nb-per{background:var(--per-accent);color:#fff}
-body.mode-personal .nb-work,body.mode-personal .nb-notes{background:var(--per-soft);color:var(--per-muted)}
+body.mode-personal .nb-work,.nb-per-off{background:var(--per-soft);color:var(--per-muted)}
 body.mode-notes .nb-notes{background:var(--note-accent);color:#fff}
 body.mode-notes .nb-work,body.mode-notes .nb-per{background:#e8e8e6;color:var(--note-muted)}
 body.mode-meetings .nb-work,body.mode-mnotes .nb-work,body.mode-archive .nb-work{background:var(--work-accent);color:#fff}
 body.mode-meetings .nb-notes,body.mode-meetings .nb-per,body.mode-mnotes .nb-notes,body.mode-mnotes .nb-per,body.mode-archive .nb-notes,body.mode-archive .nb-per{background:var(--work-soft);color:var(--work-muted)}
 body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
 body.mode-archive-per .nb-work,body.mode-archive-per .nb-notes{background:var(--per-soft);color:var(--per-muted)}
-
-
-
-/* MOVE ARROWS */
-.move-btns{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
-.move-btn{background:none;border:none;cursor:pointer;font-size:11px;line-height:1;padding:1px 4px;opacity:.2;color:inherit;transition:opacity var(--t)}
-.task-card:hover .move-btn{opacity:.5}
-.move-btn:hover{opacity:1!important}
-.move-btn:active{transform:scale(.85)}
-
-/* TASK NOTES */
-.task-note-btn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 3px;opacity:.25;transition:opacity var(--t);flex-shrink:0;line-height:1;color:inherit}
-.task-card:hover .task-note-btn{opacity:.5}
-.task-note-btn.has-note{opacity:.6}
-.task-note-btn.has-note:hover{opacity:.9}
-.task-note-area{display:none;padding:6px 44px 4px 44px;flex-shrink:0}
-.task-note-area.open{display:block}
-.task-note-inp{width:100%;border:none;border-bottom:1px solid;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;padding:4px 0;outline:none;color:inherit;resize:none;line-height:1.5;-webkit-user-select:text;user-select:text}
-body.mode-work .task-note-inp{border-color:var(--work-div);color:var(--work-text)}
-body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-text)}
-body.mode-work .task-note-inp::placeholder{color:var(--work-muted)}
-body.mode-personal .task-note-inp::placeholder{color:var(--per-muted)}
-
-
-
-/* NOTE DRAG HANDLE */
-.note-dh{color:var(--note-muted);opacity:.25;font-size:13px;cursor:grab;padding:2px 4px;flex-shrink:0;user-select:none}
-.note-dh:hover{opacity:.5}
-
-
-/* LOGIN SCREEN */
-#loginScreen{position:fixed;inset:0;background:#f5f2ee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;z-index:200;padding:40px}
-.login-title{font-family:'DM Serif Display',serif;font-size:42px;color:#7c6f5e;letter-spacing:-.5px}
-.login-sub{font-size:14px;color:#9a8d7e;text-align:center;line-height:1.6;max-width:260px}
-.login-btn{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #ddd6cb;border-radius:12px;padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:#2a2118;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.login-btn:hover{border-color:#7c6f5e;box-shadow:0 2px 12px rgba(124,111,94,.15)}
-.login-btn:active{transform:scale(.97)}
-.login-google-icon{width:20px;height:20px}
-/* USER PILL */
-.user-pill{display:flex;align-items:center;gap:6px;background:var(--work-soft);border:none;border-radius:20px;padding:3px 10px 3px 6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--work-muted);transition:all var(--t)}
-body.mode-personal .user-pill{background:var(--per-soft);color:var(--per-muted)}
-.user-dot{width:7px;height:7px;border-radius:50%;background:var(--work-accent);flex-shrink:0}
-body.mode-personal .user-dot{background:var(--per-accent)}
-#mainApp{display:none;flex-direction:column;height:100dvh;width:100%}
-
-
-/* DRUM PICKER */
-.drum-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
-.drum-col{display:flex;flex-direction:column;align-items:center;gap:4px}
-.drum-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aaa}
-.drum{width:72px;height:120px;overflow:hidden;position:relative;border-radius:var(--rs);background:#f7f5f2;cursor:pointer}
-.drum-inner{display:flex;flex-direction:column;transition:transform .15s ease;will-change:transform}
-.drum-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:#2a2118;flex-shrink:0;transition:opacity .1s,font-size .1s}
-.drum-item.active{color:#7c6f5e;font-weight:700;font-size:26px}
-.drum-item.adj{opacity:.4;font-size:18px}
-.drum-item.far{opacity:.15;font-size:14px}
-.drum::before,.drum::after{content:'';position:absolute;left:0;right:0;height:40px;z-index:2;pointer-events:none}
-.drum::before{top:0;background:linear-gradient(to bottom,#f7f5f2,rgba(247,245,242,0))}
-.drum::after{bottom:0;background:linear-gradient(to top,#f7f5f2,rgba(247,245,242,0))}
-.drum-sep{font-size:28px;font-weight:300;color:#aaa;padding-bottom:4px}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -306,7 +251,7 @@ body.mode-personal .user-dot{background:var(--per-accent)}
 .modal-title{font-size:16px;font-weight:600;margin-bottom:18px;color:#1a1a18}
 .mfield{margin-bottom:16px}
 .mlbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:6px;display:block}
-.minp{width:100%;border:none;border-bottom:1.5px solid #ddd;font-family:'DM Sans',sans-serif;font-size:15px;padding:6px 0;outline:none;color:#1a1a18;background:transparent}
+.minp{width:100%;border:none;border-bottom:1.5px solid #ddd;font-family:'DM Sans',sans-serif;font-size:15px;padding:6px 0;outline:none;color:#1a1a18;background:transparent;-webkit-user-select:text;user-select:text}
 .minp:focus{border-color:#7c6f5e}
 .cal{border:1px solid #eee;border-radius:var(--rs);overflow:hidden;margin-bottom:4px}
 .cal-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fafaf8}
@@ -320,7 +265,6 @@ body.mode-personal .user-dot{background:var(--per-accent)}
 .cd.sel{background:#7c6f5e;color:#fff!important;font-weight:600}
 .cd.other{color:#ccc}
 .cd.past{color:#ccc;cursor:default}
-.cd.past:hover{background:transparent}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
 .pill{padding:5px 12px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;color:#666;background:#fff;font-family:'DM Sans',sans-serif}
 .pill.sel{border-color:#7c6f5e;background:#7c6f5e;color:#fff}
@@ -332,115 +276,90 @@ body.mode-personal .user-dot{background:var(--per-accent)}
 .tog-sl::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
 input:checked+.tog-sl{background:#7c6f5e}
 input:checked+.tog-sl::before{transform:translateX(18px)}
-.time-inps{display:flex;gap:10px}
-.time-inp{flex:1;border:none;border-bottom:1.5px solid #ddd;font-family:'DM Sans',sans-serif;font-size:15px;padding:6px 0;outline:none;color:#1a1a18;background:transparent;text-align:center}
-.time-inp:focus{border-color:#7c6f5e}
+.drum-wrap{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.drum-col{display:flex;flex-direction:column;align-items:center;gap:4px}
+.drum-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#aaa}
+.drum{width:72px;height:120px;overflow:hidden;position:relative;border-radius:var(--rs);background:#f7f5f2;cursor:pointer;touch-action:none}
+.drum-inner{display:flex;flex-direction:column;}
+.drum-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:#2a2118;flex-shrink:0}
+.drum-item.active{color:#7c6f5e;font-weight:700;font-size:26px}
+.drum-item.adj{opacity:.4;font-size:18px}
+.drum-item.far{opacity:.15;font-size:14px}
+.drum::before,.drum::after{content:'';position:absolute;left:0;right:0;height:40px;z-index:2;pointer-events:none}
+.drum::before{top:0;background:linear-gradient(to bottom,#f7f5f2,rgba(247,245,242,0))}
+.drum::after{bottom:0;background:linear-gradient(to top,#f7f5f2,rgba(247,245,242,0))}
+.drum-sep{font-size:28px;font-weight:300;color:#aaa;padding-bottom:4px}
 .mbtns{display:flex;gap:8px;margin-top:20px}
 .mbtn{flex:1;padding:11px;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all var(--t)}
 .mbtn.pri{background:#7c6f5e;color:#fff}
 .mbtn.sec{background:#f0ece7;color:#7c6f5e}
 .mbtn:active{transform:scale(.97)}
 </style>
+
 <script type="module">
-// ── FIREBASE ───────────────────────────────────────────────────
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import{getFirestore,doc,setDoc,getDoc,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-const firebaseConfig={
-  apiKey:"AIzaSyCDnMndkJBFvrXPTzaZh5_GjgHq9rOShVQ",
-  authDomain:"focus-app-b5600.firebaseapp.com",
-  projectId:"focus-app-b5600",
-  storageBucket:"focus-app-b5600.firebasestorage.app",
-  messagingSenderId:"29192274508",
-  appId:"1:29192274508:web:354f4affb51b9f4a116ae9"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-let uid=null;
-let unsubscribe=null;
-let saveTimer=null;
-
-// ── AUTH ───────────────────────────────────────────────────────
+import{getFirestore,doc,setDoc,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+const cfg={apiKey:"AIzaSyCDnMndkJBFvrXPTzaZh5_GjgHq9rOShVQ",authDomain:"focus-app-b5600.firebaseapp.com",projectId:"focus-app-b5600",storageBucket:"focus-app-b5600.firebasestorage.app",messagingSenderId:"29192274508",appId:"1:29192274508:web:354f4affb51b9f4a116ae9"};
+const fbApp=initializeApp(cfg);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+let uid=null,unsub=null,saveTimer=null;
 onAuthStateChanged(auth,user=>{
   if(user){
     uid=user.uid;
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('mainApp').style.display='flex';
     startSync();
-    reqNotif();
+    if(typeof reqNotif==='function')reqNotif();
   }else{
     uid=null;
-    if(unsubscribe){unsubscribe();unsubscribe=null;}
+    if(unsub){unsub();unsub=null;}
     document.getElementById('loginScreen').style.display='flex';
     document.getElementById('mainApp').style.display='none';
   }
 });
-
 window.signInWithGoogle=async function(){
-  try{
-    const provider=new GoogleAuthProvider();
-    await signInWithPopup(auth,provider);
-  }catch(e){console.error(e)}
+  try{const p=new GoogleAuthProvider();await signInWithPopup(auth,p);}catch(e){console.error(e);}
 };
-
-window.doSignOut=async function(){
-  await signOut(auth);
-};
-
-// ── SYNC ───────────────────────────────────────────────────────
+window.doSignOut=async function(){await signOut(auth);};
 function startSync(){
-  if(unsubscribe)unsubscribe();
-  const ref=doc(db,'users',uid,'data','main');
-  // Listen for remote changes
-  unsubscribe=onSnapshot(ref,snap=>{
+  if(unsub)unsub();
+  unsub=onSnapshot(doc(db,'users',uid,'data','main'),snap=>{
     if(snap.exists()){
       const d=snap.data();
-      let changed=false;
-      if(d.tasks){S.tasks=d.tasks;changed=true;}
-      if(d.notes){S.notes=d.notes;changed=true;}
-      if(d.meetings){S.meetings=d.meetings;changed=true;}
-      if(d.archive){S.archive=d.archive;changed=true;}
-      if(d.nextId){S.nextId=d.nextId;changed=true;}
-      if(changed){archivePast();renderAll();}
+      if(d.tasks)S.tasks=d.tasks;
+      if(d.notes)S.notes=d.notes;
+      if(d.meetings)S.meetings=d.meetings;
+      if(d.archive)S.archive=d.archive;
+      if(d.nextId)S.nextId=d.nextId;
+      if(typeof archivePast==='function')archivePast();
+      if(typeof renderAll==='function')renderAll();
     }
   });
 }
-
-// Debounced save to Firestore
 window.save=function(){
-  // Also keep localStorage as offline cache
   localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId}));
   if(!uid)return;
   clearTimeout(saveTimer);
-  saveTimer=setTimeout(async()=>{
-    try{
-      await setDoc(doc(db,'users',uid,'data','main'),{
-        tasks:S.tasks,notes:S.notes,meetings:S.meetings,
-        archive:S.archive,nextId:S.nextId,
-        updatedAt:new Date().toISOString()
-      });
-    }catch(e){console.error('Save failed:',e);}
+  saveTimer=setTimeout(async function(){
+    try{await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,meetings:S.meetings,archive:S.archive,nextId:S.nextId,updatedAt:new Date().toISOString()});}
+    catch(e){console.error('Save failed:',e);}
   },800);
 };
-
 </script>
 </head>
 <body class="mode-work">
 
-<!-- LOGIN SCREEN -->
 <div id="loginScreen">
   <div class="login-title">Focus</div>
   <div class="login-sub">Your personal task &amp; meeting companion. Sign in to sync across all your devices.</div>
   <button class="login-btn" id="googleSignInBtn">
-    <svg class="login-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    <svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
     Sign in with Google
   </button>
 </div>
 
-<!-- MAIN APP -->
 <div id="mainApp">
 <div class="hdr">
   <div class="hdr-inner">
@@ -455,10 +374,9 @@ window.save=function(){
 </div>
 
 <div class="content">
-
-  <!-- WORK VIEW -->
+  <!-- WORK -->
   <div class="view active" id="workView">
-    <div class="upcoming" id="upcomingSlot" onclick="openNextMtgNotes()">
+    <div class="upcoming" onclick="openNextMtgNotes()">
       <div class="up-content" id="upContent"><span class="up-empty">No upcoming meetings</span></div>
       <button class="mtgs-btn" onclick="event.stopPropagation();goMeetings()">Meetings</button>
     </div>
@@ -467,14 +385,14 @@ window.save=function(){
         <span class="sec-lbl">Priority</span>
         <button class="clr-btn" id="clr-work" onclick="clearCompleted('work')">Clear Completed</button>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('work','priority')" title="Set date">🗓</button>
+        <button class="ibtn" onclick="openTaskModal('work','priority')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('work-priority')">+</button>
       </div>
       <div class="add-bar" id="add-work-priority">
         <input class="add-inp" id="inp-work-priority" placeholder="Add priority task…" onkeydown="addKey(event,'work','priority')">
         <button class="add-ok" onclick="doAdd('work','priority')">Add</button>
       </div>
-      <div class="task-list" id="tl-work-priority" ondragover="onDragOver(event)" ondrop="onDrop(event,'work','priority')">
+      <div class="task-list" id="tl-work-priority">
         <div class="empty" id="em-work-priority"><div class="empty-ico">☑</div>No priority tasks</div>
       </div>
     </div>
@@ -483,34 +401,34 @@ window.save=function(){
       <div class="sec-hdr">
         <span class="sec-lbl">General</span>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('work','general')" title="Set date">🗓</button>
+        <button class="ibtn" onclick="openTaskModal('work','general')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('work-general')">+</button>
       </div>
       <div class="add-bar" id="add-work-general">
         <input class="add-inp" id="inp-work-general" placeholder="Add general task…" onkeydown="addKey(event,'work','general')">
         <button class="add-ok" onclick="doAdd('work','general')">Add</button>
       </div>
-      <div class="task-list" id="tl-work-general" ondragover="onDragOver(event)" ondrop="onDrop(event,'work','general')">
+      <div class="task-list" id="tl-work-general">
         <div class="empty" id="em-work-general"><div class="empty-ico">📋</div>No general tasks</div>
       </div>
     </div>
   </div>
 
-  <!-- PERSONAL VIEW -->
+  <!-- PERSONAL -->
   <div class="view" id="personalView">
     <div class="pri-sec">
       <div class="sec-hdr">
         <span class="sec-lbl">Priority</span>
         <button class="clr-btn" id="clr-personal" onclick="clearCompleted('personal')">Clear Completed</button>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('personal','priority')" title="Set date">🗓</button>
+        <button class="ibtn" onclick="openTaskModal('personal','priority')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('personal-priority')">+</button>
       </div>
       <div class="add-bar" id="add-personal-priority">
         <input class="add-inp" id="inp-personal-priority" placeholder="Add priority task…" onkeydown="addKey(event,'personal','priority')">
         <button class="add-ok" onclick="doAdd('personal','priority')">Add</button>
       </div>
-      <div class="task-list" id="tl-personal-priority" ondragover="onDragOver(event)" ondrop="onDrop(event,'personal','priority')">
+      <div class="task-list" id="tl-personal-priority">
         <div class="empty" id="em-personal-priority"><div class="empty-ico">☑</div>No priority tasks</div>
       </div>
     </div>
@@ -519,54 +437,54 @@ window.save=function(){
       <div class="sec-hdr">
         <span class="sec-lbl">General</span>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('personal','general')" title="Set date">🗓</button>
+        <button class="ibtn" onclick="openTaskModal('personal','general')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('personal-general')">+</button>
       </div>
       <div class="add-bar" id="add-personal-general">
         <input class="add-inp" id="inp-personal-general" placeholder="Add general task…" onkeydown="addKey(event,'personal','general')">
         <button class="add-ok" onclick="doAdd('personal','general')">Add</button>
       </div>
-      <div class="task-list" id="tl-personal-general" ondragover="onDragOver(event)" ondrop="onDrop(event,'personal','general')">
+      <div class="task-list" id="tl-personal-general">
         <div class="empty" id="em-personal-general"><div class="empty-ico">📋</div>No general tasks</div>
       </div>
     </div>
   </div>
 
-  <!-- NOTES VIEW -->
+  <!-- NOTES -->
   <div class="notes-view" id="notesView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
       <span class="sec-lbl note-lbl">Notes</span>
     </div>
-    <button class="ghost-btn note" onclick="addNote()"><span>+</span> New note</button>
+    <button class="ghost-btn note" onclick="addNote()">+ New note</button>
     <div class="notes-list" id="notesList">
       <div class="empty" id="em-notes" style="color:var(--note-muted)"><div class="empty-ico">📝</div>No notes yet</div>
     </div>
   </div>
 
-  <!-- MEETINGS VIEW -->
+  <!-- MEETINGS -->
   <div class="mtgs-view" id="meetingsView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
       <span class="sec-lbl mtg-lbl">Meetings</span>
     </div>
-    <button class="ghost-btn mtg" onclick="openMtgModal()"><span>+</span> New meeting</button>
+    <button class="ghost-btn mtg" onclick="openMtgModal()">+ New meeting</button>
     <div class="mtgs-list" id="mtgsList">
       <div class="empty" id="em-mtgs" style="color:var(--work-muted)"><div class="empty-ico">📅</div>No meetings yet</div>
     </div>
   </div>
 
-  <!-- MEETING NOTES VIEW -->
+  <!-- MEETING NOTES -->
   <div class="mnotes-view" id="mnotesView">
     <div class="mnotes-hdr">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+      <div class="mnotes-top">
         <div class="mnotes-name" id="mnotesName"></div>
-        <button class="hdr-btn back-btn" style="display:block;margin-left:8px;flex-shrink:0" onclick="openMtgModal(window._activeMtgId)">Edit</button>
+        <button class="hdr-btn back-btn" style="display:block" onclick="openMtgModal(window._editMtgId)">Edit</button>
       </div>
       <div class="mnotes-meta" id="mnotesMeta"></div>
     </div>
     <div class="mnotes-body" id="mnotesBody" contenteditable="true" onblur="saveMtgNotes(this.innerText)"></div>
   </div>
 
-  <!-- WORK ARCHIVE VIEW -->
+  <!-- WORK ARCHIVE -->
   <div class="arc-view" id="archiveView">
     <div class="arc-group-btns">
       <button class="arc-grp-btn sel" data-g="day" onclick="selArcGroup(this,'work')">Day</button>
@@ -576,7 +494,7 @@ window.save=function(){
     <div class="arc-list" id="arcList"></div>
   </div>
 
-  <!-- PERSONAL ARCHIVE VIEW -->
+  <!-- PERSONAL ARCHIVE -->
   <div class="arc-view" id="archivePerView">
     <div class="arc-group-btns">
       <button class="arc-grp-btn sel" data-g="day" onclick="selArcGroup(this,'personal')">Day</button>
@@ -585,7 +503,6 @@ window.save=function(){
     </div>
     <div class="arc-list" id="arcPerList"></div>
   </div>
-
 </div>
 
 <nav class="nav">
@@ -619,15 +536,9 @@ window.save=function(){
       </div>
       <div id="taskTimeF" style="display:none">
         <div class="drum-wrap">
-          <div class="drum-col">
-            <div class="drum-lbl">Hour</div>
-            <div class="drum" id="drumTaskH"></div>
-          </div>
+          <div class="drum-col"><div class="drum-lbl">Hour</div><div class="drum" id="drumTaskH"></div></div>
           <div class="drum-sep">:</div>
-          <div class="drum-col">
-            <div class="drum-lbl">Min</div>
-            <div class="drum" id="drumTaskM"></div>
-          </div>
+          <div class="drum-col"><div class="drum-lbl">Min</div><div class="drum" id="drumTaskM"></div></div>
         </div>
       </div>
     </div>
@@ -667,15 +578,9 @@ window.save=function(){
       </div>
       <div id="mtgTimeF" style="display:none">
         <div class="drum-wrap">
-          <div class="drum-col">
-            <div class="drum-lbl">Hour</div>
-            <div class="drum" id="drumMtgH"></div>
-          </div>
+          <div class="drum-col"><div class="drum-lbl">Hour</div><div class="drum" id="drumMtgH"></div></div>
           <div class="drum-sep">:</div>
-          <div class="drum-col">
-            <div class="drum-lbl">Min</div>
-            <div class="drum" id="drumMtgM"></div>
-          </div>
+          <div class="drum-col"><div class="drum-lbl">Min</div><div class="drum" id="drumMtgM"></div></div>
         </div>
       </div>
     </div>
@@ -687,60 +592,79 @@ window.save=function(){
 </div>
 
 <script>
-const S={
+var S={
   tasks:{work:{priority:[],general:[]},personal:{priority:[],general:[]}},
-  archive:{work:[],personal:[]}, // {id,text,completedDate}
+  archive:{work:[],personal:[]},
   notes:[],meetings:[],nextId:1,
   currentMode:null,prevTaskMode:'work',activeMtgId:null,
   arcGroup:{work:'day',personal:'day'},
   tm:{mode:null,sec:null,date:null,recur:'once'},
   mm:{date:null,recur:'once',editId:null},
-  taskCalMo:new Date(),mtgCalMo:new Date(),
-  drag:{src:null,mode:null,sec:null},noteDragSrc:null
+  taskCalMo:new Date(),mtgCalMo:new Date()
 };
 
-// Safe list clear — works on all mobile browsers
-function clearList(list,keepId){
-  // Remove all children except the one with a specific ID
-  var children=[];
-  var c=list.firstChild;
-  while(c){children.push(c);c=c.nextSibling;}
-  for(var i=0;i<children.length;i++){
-    var el=children[i];
-    if(!keepId||el.id!==keepId)el.remove();
-  }
-}
-// save() is defined in the Firebase module script above
-// load from localStorage as initial offline seed before Firebase syncs
+// ── PERSIST ───────────────────────────────────────────────────
+if(typeof save==='undefined')window.save=function(){localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId}));};
 function load(){
-  try{const d=JSON.parse(localStorage.getItem('focus-v3')||localStorage.getItem('focus-v2')||'null');if(!d)return;
-    if(d.tasks)S.tasks=d.tasks;if(d.notes)S.notes=d.notes;
-    if(d.meetings)S.meetings=d.meetings;if(d.nextId)S.nextId=d.nextId;
+  try{
+    var d=JSON.parse(localStorage.getItem('focus-v3')||localStorage.getItem('focus-v2')||'null');
+    if(!d)return;
+    if(d.tasks)S.tasks=d.tasks;
+    if(d.notes)S.notes=d.notes;
+    if(d.meetings)S.meetings=d.meetings;
+    if(d.nextId)S.nextId=d.nextId;
     if(d.archive)S.archive=d.archive;
   }catch(e){}
 }
-// Fallback stub in case module hasn't loaded yet
-if(typeof save==='undefined')window.save=function(){localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId}))};
 
-function reqNotif(){if('Notification'in window&&Notification.permission==='default')Notification.requestPermission()}
+function reqNotif(){if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();}
 function schedNotif(title,body,dateISO,timeStr){
   if(!('Notification'in window)||Notification.permission!=='granted'||!timeStr)return;
-  const[h,m]=timeStr.split(':').map(Number);
-  const d=new Date(dateISO);d.setHours(h,m,0,0);
-  const ms=d-Date.now();if(ms>0)setTimeout(()=>new Notification(title,{body}),ms);
+  var parts=timeStr.split(':'),h=parseInt(parts[0]),m=parseInt(parts[1]);
+  var dp=dateISO.split('-'),d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]),h,m,0,0);
+  var ms=d-Date.now();if(ms>0)setTimeout(function(){new Notification(title,{body:body});},ms);
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function localISO(yr,mn,d){return yr+'-'+String(mn+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+function daysUntil(iso){
+  if(!iso)return 999;
+  var now=new Date(),nowISO=localISO(now.getFullYear(),now.getMonth(),now.getDate());
+  var ap=iso.split('-'),bp=nowISO.split('-');
+  var a=new Date(parseInt(ap[0]),parseInt(ap[1])-1,parseInt(ap[2]));
+  var b=new Date(parseInt(bp[0]),parseInt(bp[1])-1,parseInt(bp[2]));
+  return Math.round((a-b)/86400000);
+}
+function fmtDue(iso,timeStr){
+  var d=daysUntil(iso);
+  if(d<0)return'Overdue';
+  if(d===0)return timeStr||'Today';
+  if(d===1)return'Tomorrow';
+  if(d<=3)return d+' days';
+  var p=iso.split('-');
+  return String(parseInt(p[2])).padStart(2,'0')+'/'+String(parseInt(p[1])).padStart(2,'0');
+}
+function nextRecur(iso,recur){
+  var p=iso.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),12,0,0,0);
+  if(recur==='weekly')d.setDate(d.getDate()+7);
+  else if(recur==='biweekly')d.setDate(d.getDate()+14);
+  else if(recur==='monthly')d.setMonth(d.getMonth()+1);
+  else if(recur==='yearly')d.setFullYear(d.getFullYear()+1);
+  return localISO(d.getFullYear(),d.getMonth(),d.getDate());
 }
 
 // ── MODE ──────────────────────────────────────────────────────
 function autoMode(){
-  const n=new Date(),day=n.getDay(),mins=n.getHours()*60+n.getMinutes();
+  var n=new Date(),day=n.getDay(),mins=n.getHours()*60+n.getMinutes();
   return(day>=1&&day<=5&&mins>=480&&mins<1050)?'work':'personal';
 }
 function switchMode(m){
   if(m==='work'||m==='personal')S.prevTaskMode=m;
   applyMode(m);
 }
-function goMeetings(){applyMode('meetings')}
-function goArchive(){applyMode(S.prevTaskMode==='personal'?'archive-per':'archive')}
+function goMeetings(){applyMode('meetings');}
+function goArchive(){applyMode(S.prevTaskMode==='personal'?'archive-per':'archive');}
 function goBack(){
   if(S.currentMode==='mnotes')applyMode('meetings');
   else applyMode(S.prevTaskMode);
@@ -748,70 +672,68 @@ function goBack(){
 function applyMode(m){
   S.currentMode=m;
   document.body.className='mode-'+m;
-  const labels={work:'Work',personal:'Personal',notes:'Notes',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive',['archive-per']:'Archive'};
+  var labels={work:'Work',personal:'Personal',notes:'Notes',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive'};
   document.getElementById('modeLbl').textContent=labels[m]||m;
-  const views={work:'workView',personal:'personalView',notes:'notesView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView',['archive-per']:'archivePerView'};
-  Object.entries(views).forEach(([k,id])=>{
-    const el=document.getElementById(id);
-    if(el){el.classList.toggle('active',k===m);if(el.classList.contains('notes-view'))el.classList.toggle('active',k===m)}
-  });
-  // notes-view special handling
+  var views={work:'workView',personal:'personalView',notes:'notesView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView'};
+  var keys=Object.keys(views);
+  for(var i=0;i<keys.length;i++){
+    var el=document.getElementById(views[keys[i]]);
+    if(el)el.classList.toggle('active',keys[i]===m);
+  }
   document.getElementById('notesView').classList.toggle('active',m==='notes');
   if(m==='work')renderUpcoming();
   if(m==='meetings')renderMtgs();
   if(m==='archive')renderArchive('work');
   if(m==='archive-per')renderArchive('personal');
 }
-function initMode(){applyMode(autoMode())}
+function initMode(){applyMode(autoMode());}
 
 // ── UPCOMING ──────────────────────────────────────────────────
 function mtgTs(m){
-  // Parse date locally to avoid UTC offset (BST etc)
-  const[yr,mn,dy]=m.date.split('-').map(Number);
-  const d=new Date(yr,mn-1,dy,0,0,0,0);
-  if(m.time){const[h,mi]=m.time.split(':').map(Number);d.setHours(h,mi,0,0);}
+  var p=m.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),0,0,0,0);
+  if(m.time){var t=m.time.split(':');d.setHours(parseInt(t[0]),parseInt(t[1]),0,0);}
   return d.getTime();
 }
 function nextMtg(){
-  const now=Date.now();
-  return S.meetings.filter(m=>!m.archived).map(m=>({m,ts:mtgTs(m)})).filter(x=>x.ts>now-60000).sort((a,b)=>a.ts-b.ts)[0]?.m||null;
+  var now=Date.now();
+  var active=S.meetings.filter(function(m){return!m.archived;});
+  var withTs=active.map(function(m){return{m:m,ts:mtgTs(m)};}).filter(function(x){return x.ts>now-60000;});
+  withTs.sort(function(a,b){return a.ts-b.ts;});
+  return withTs.length?withTs[0].m:null;
 }
 function renderUpcoming(){
-  const el=document.getElementById('upContent'),n=nextMtg();
-  if(!n){el.innerHTML='<span class="up-empty">No upcoming meetings</span>';return}
-  const[uyr,umn,udy]=n.date.split('-').map(Number);
-  const d=new Date(uyr,umn-1,udy);
-  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const du=daysUntil(n.date);
-  let dayLbl;
+  var el=document.getElementById('upContent'),n=nextMtg();
+  if(!n){el.innerHTML='<span class="up-empty">No upcoming meetings</span>';return;}
+  var p=n.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var du=daysUntil(n.date),dayLbl;
   if(du===0)dayLbl='Today';
   else if(du===1)dayLbl='Tomorrow';
   else dayLbl=days[d.getDay()];
-  const timePart=n.time?`<span class="up-time">${n.time} · ${dayLbl}</span>`:`<span class="up-time">${dayLbl}</span>`;
-  el.innerHTML=timePart+`<span class="up-name">${esc(n.name)}</span>`;
+  var timePart=n.time?'<span class="up-time">'+n.time+' \u00b7 '+dayLbl+'</span>':'<span class="up-time">'+dayLbl+'</span>';
+  el.innerHTML=timePart+'<span class="up-name">'+esc(n.name)+'</span>';
 }
-function openNextMtgNotes(){const n=nextMtg();if(n)openMtgNotes(n.id)}
+function openNextMtgNotes(){var n=nextMtg();if(n)openMtgNotes(n.id);}
 
 // ── TASKS ─────────────────────────────────────────────────────
 function showAdd(key){
-  document.querySelectorAll('.add-bar').forEach(e=>e.classList.remove('on'));
-  const bar=document.getElementById('add-'+key);
+  var bars=document.querySelectorAll('.add-bar');
+  for(var i=0;i<bars.length;i++)bars[i].classList.remove('on');
+  var bar=document.getElementById('add-'+key);
   bar.classList.add('on');
-  const inp=document.getElementById('inp-'+key);
+  var inp=document.getElementById('inp-'+key);
   inp.value='';
   inp.focus();
-  // Dismiss on outside tap
-  setTimeout(()=>{
-    function outsideTap(e){
+  setTimeout(function(){
+    function outside(e){
       if(!bar.contains(e.target)){
-        bar.classList.remove('on');
-        inp.value='';
-        document.removeEventListener('touchstart',outsideTap,true);
-        document.removeEventListener('mousedown',outsideTap,true);
+        bar.classList.remove('on');inp.value='';
+        document.removeEventListener('touchstart',outside,true);
+        document.removeEventListener('mousedown',outside,true);
       }
     }
-    document.addEventListener('touchstart',outsideTap,true);
-    document.addEventListener('mousedown',outsideTap,true);
+    document.addEventListener('touchstart',outside,true);
+    document.addEventListener('mousedown',outside,true);
   },100);
 }
 function addKey(e,mode,sec){
@@ -819,571 +741,440 @@ function addKey(e,mode,sec){
   if(e.key==='Escape')document.getElementById('add-'+mode+'-'+sec).classList.remove('on');
 }
 function doAdd(mode,sec){
-  const inp=document.getElementById('inp-'+mode+'-'+sec),text=inp.value.trim();
+  var inp=document.getElementById('inp-'+mode+'-'+sec),text=inp.value.trim();
   if(!text)return;
-  S.tasks[mode][sec].push({id:S.nextId++,text,completed:false,date:null,time:null,recur:'once',note:''});
+  S.tasks[mode][sec].push({id:S.nextId++,text:text,completed:false,date:null,time:null,recur:'once',note:''});
   inp.value='';document.getElementById('add-'+mode+'-'+sec).classList.remove('on');
   renderTasks(mode,sec);save();
 }
-
-function daysUntil(iso){
-  if(!iso)return 999;
-  const now=new Date();
-  const nowISO=localISO(now.getFullYear(),now.getMonth(),now.getDate());
-  const [yr,mn,d]=iso.split('-').map(Number);
-  const [nyr,nmn,nd]=nowISO.split('-').map(Number);
-  const a=new Date(yr,mn-1,d),b=new Date(nyr,nmn-1,nd);
-  return Math.round((a-b)/86400000);
+function moveTask(mode,sec,idx,dir){
+  var arr=S.tasks[mode][sec],ni=idx+dir;
+  if(ni<0||ni>=arr.length)return;
+  var item=arr.splice(idx,1)[0];arr.splice(ni,0,item);
+  renderTasks(mode,sec);save();
 }
-function fmtDue(iso,timeStr){
-  const d=daysUntil(iso);
-  if(d<0)return'Overdue';
-  if(d===0)return timeStr||'Today';
-  if(d===1)return'Tomorrow';
-  if(d<=3)return d+' days';
-  const dt=new Date(iso);
-  return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0');
+function toggleTask(mode,sec,i){
+  var t=S.tasks[mode][sec][i];
+  t.completed=!t.completed;
+  if(t.completed&&t.recur!=='once'&&t.date){t.date=nextRecur(t.date,t.recur);t.completed=false;}
+  renderTasks(mode,sec);updateClearBtn(mode);save();
 }
-
-function hasCompleted(mode){
-  return S.tasks[mode].priority.some(t=>t.completed)||S.tasks[mode].general.some(t=>t.completed);
+function startEditTask(btn){
+  var txt=btn.closest('.task-card').querySelector('.task-txt');
+  txt.contentEditable='true';txt.classList.add('editing');txt.focus();
+  var range=document.createRange(),sel=window.getSelection();
+  range.selectNodeContents(txt);range.collapse(false);sel.removeAllRanges();sel.addRange(range);
 }
-function updateClearBtn(mode){
-  const btn=document.getElementById('clr-'+mode);
-  if(btn)btn.classList.toggle('on',hasCompleted(mode));
+function editTask(mode,sec,i,text){
+  var t=text.trim();
+  var card=document.querySelector('[data-mode="'+mode+'"][data-sec="'+sec+'"][data-tidx="'+i+'"] .task-txt');
+  if(card){card.contentEditable='false';card.classList.remove('editing');}
+  if(!t){delTask(mode,sec,i);return;}
+  S.tasks[mode][sec][i].text=t;save();
 }
+function toggleTaskNote(mode,sec,i,btn){
+  var noteArea=btn.closest('.task-card').parentElement.querySelector('.task-note-area');
+  var open=noteArea.classList.toggle('open');
+  if(open)noteArea.querySelector('textarea').focus();
+}
+function saveTaskNote(mode,sec,i,val){
+  if(S.tasks[mode]&&S.tasks[mode][sec]&&S.tasks[mode][sec][i])S.tasks[mode][sec][i].note=val;
+  save();
+}
+function delTask(mode,sec,i){S.tasks[mode][sec].splice(i,1);renderTasks(mode,sec);save();}
+function hasCompleted(mode){return S.tasks[mode].priority.some(function(t){return t.completed;})||S.tasks[mode].general.some(function(t){return t.completed;});}
+function updateClearBtn(mode){var btn=document.getElementById('clr-'+mode);if(btn)btn.classList.toggle('on',hasCompleted(mode));}
 function clearCompleted(mode){
-  const today=new Date().toISOString().split('T')[0];
-  ['priority','general'].forEach(sec=>{
-    const keep=[],done=[];
-    S.tasks[mode][sec].forEach(t=>(t.completed?done:keep).push(t));
+  var today=localISO(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
+  ['priority','general'].forEach(function(sec){
+    var keep=[],done=[];
+    S.tasks[mode][sec].forEach(function(t){(t.completed?done:keep).push(t);});
     S.tasks[mode][sec]=keep;
-    done.forEach(t=>S.archive[mode].unshift({id:t.id,text:t.text,completedDate:today}));
+    done.forEach(function(t){S.archive[mode].unshift({id:t.id,text:t.text,completedDate:today});});
   });
   renderTasks(mode,'priority');renderTasks(mode,'general');save();
 }
 
 function renderTasks(mode,sec){
-  const list=document.getElementById('tl-'+mode+'-'+sec);
-  const empty=document.getElementById('em-'+mode+'-'+sec);
-  clearList(list,'em-'+mode+'-'+sec);
-  const tasks=S.tasks[mode][sec];
-  empty.style.display=tasks.length?'none':'flex';
-  const nowD=new Date();nowD.setHours(0,0,0,0);
-  tasks.forEach(function(t,i){
-    const overdue=!!(t.date&&!t.completed&&new Date(t.date)<nowD);
-    const du=t.date?daysUntil(t.date):999;
-    const dueClass=overdue?'overdue':(du<=3&&du>=0?'soon':'');
-    const hasNote=!!(t.note&&t.note.trim());
-    const isFirst=(i===0);
-    const isLast=(i===tasks.length-1);
+  var list=document.getElementById('tl-'+mode+'-'+sec);
+  var emptyEl=document.getElementById('em-'+mode+'-'+sec);
+  // Clear all children except empty state
+  var toRemove=[];
+  for(var ci=0;ci<list.childNodes.length;ci++){
+    var ch=list.childNodes[ci];
+    if(ch.id!=='em-'+mode+'-'+sec)toRemove.push(ch);
+  }
+  for(var ri=0;ri<toRemove.length;ri++)toRemove[ri].remove();
 
-    const wrap=document.createElement('div');
-    wrap.style.display='flex';
-    wrap.style.flexDirection='column';
-    wrap.style.flexShrink='0';
+  var tasks=S.tasks[mode][sec];
+  emptyEl.style.display=tasks.length?'none':'flex';
+  var nowD=new Date();nowD.setHours(0,0,0,0);
 
-    const card=document.createElement('div');
-    card.className='task-card'+(t.completed?' completed':'')+(overdue?' overdue':'');
-    card.dataset.idx=String(i);
+  for(var i=0;i<tasks.length;i++){
+    (function(t,i){
+      var overdue=!!(t.date&&!t.completed&&new Date(t.date)<nowD);
+      var du=t.date?daysUntil(t.date):999;
+      var dueClass=overdue?'overdue':(du<=3&&du>=0?'soon':'');
+      var hasNote=!!(t.note&&t.note.trim());
+      var isFirst=(i===0),isLast=(i===tasks.length-1);
 
-    const upBtn='<button class="move-btn" onclick="moveTask(''+mode+'',''+sec+'','+i+',-1)"'+(isFirst?' style="opacity:0;pointer-events:none"':'')+'>▲</button>';
-    const dnBtn='<button class="move-btn" onclick="moveTask(''+mode+'',''+sec+'','+i+',1)"'+(isLast?' style="opacity:0;pointer-events:none"':'')+'>▼</button>';
-    const dueTag=t.date?('<span class="due-tag '+dueClass+'">'+fmtDue(t.date,t.time)+'</span>'):'';
-    const noteBtn='<button class="task-note-btn'+(hasNote?' has-note':'')+'" title="Note" onclick="toggleTaskNote(''+mode+'',''+sec+'','+i+',this)">⋯</button>';
-    const editBtn='<button class="task-edit-btn" title="Edit" onclick="startEditTask(this)">✎</button>';
-    const delBtn='<button class="del-btn" onclick="delTask(''+mode+'',''+sec+'','+i+')">✕</button>';
+      var wrap=document.createElement('div');
+      wrap.className='task-wrap';
+      wrap.setAttribute('data-mode',mode);
+      wrap.setAttribute('data-sec',sec);
+      wrap.setAttribute('data-tidx',String(i));
 
-    card.innerHTML='<div class="move-btns">'+upBtn+dnBtn+'</div>'
-      +'<div class="chk" onclick="toggleTask(''+mode+'',''+sec+'','+i+')"></div>'
-      +'<div class="task-txt" onblur="editTask(''+mode+'',''+sec+'','+i+',this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}">'+esc(t.text)+'</div>'
-      +dueTag+editBtn+noteBtn+delBtn;
+      var card=document.createElement('div');
+      card.className='task-card'+(t.completed?' completed':'')+(overdue?' overdue':'');
 
-    const noteArea=document.createElement('div');
-    noteArea.className='task-note-area'+(hasNote?' open':'');
-    const ta=document.createElement('textarea');
-    ta.className='task-note-inp';
-    ta.rows=2;
-    ta.placeholder='Add a note…';
-    ta.value=t.note||'';
-    ta.addEventListener('blur',function(){saveTaskNote(mode,sec,i,this.value);});
-    noteArea.appendChild(ta);
+      // Build inner HTML safely
+      var upDisabled=isFirst?' style="opacity:0;pointer-events:none"':'';
+      var dnDisabled=isLast?' style="opacity:0;pointer-events:none"':'';
+      var dueHtml=t.date?'<span class="due-tag '+dueClass+'">'+fmtDue(t.date,t.time)+'</span>':'';
+      card.innerHTML=
+        '<div class="move-btns">'
+          +'<button class="move-btn"'+upDisabled+'>▲</button>'
+          +'<button class="move-btn"'+dnDisabled+'>▼</button>'
+        +'</div>'
+        +'<div class="chk"></div>'
+        +'<div class="task-txt">'+esc(t.text)+'</div>'
+        +dueHtml
+        +'<button class="task-edit-btn" title="Edit">✎</button>'
+        +'<button class="task-note-btn'+(hasNote?' has-note':'')+'" title="Note">⋯</button>'
+        +'<button class="del-btn">✕</button>';
 
-    wrap.appendChild(card);
-    wrap.appendChild(noteArea);
-    list.appendChild(wrap);
-  });
+      // Attach events
+      var btns=card.querySelectorAll('.move-btn');
+      (function(upB,dnB){
+        upB.addEventListener('click',function(){moveTask(mode,sec,i,-1);});
+        dnB.addEventListener('click',function(){moveTask(mode,sec,i,1);});
+      })(btns[0],btns[1]);
+      card.querySelector('.chk').addEventListener('click',function(){toggleTask(mode,sec,i);});
+      card.querySelector('.task-edit-btn').addEventListener('click',function(){startEditTask(this);});
+      card.querySelector('.task-note-btn').addEventListener('click',function(){toggleTaskNote(mode,sec,i,this);});
+      card.querySelector('.del-btn').addEventListener('click',function(){delTask(mode,sec,i);});
+      var txtEl=card.querySelector('.task-txt');
+      txtEl.addEventListener('blur',function(){editTask(mode,sec,i,this.innerText);});
+      txtEl.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();this.blur();}});
+
+      var noteArea=document.createElement('div');
+      noteArea.className='task-note-area'+(hasNote?' open':'');
+      var ta=document.createElement('textarea');
+      ta.className='task-note-inp';ta.rows=2;ta.placeholder='Add a note\u2026';ta.value=t.note||'';
+      (function(mode,sec,i){ta.addEventListener('blur',function(){saveTaskNote(mode,sec,i,this.value);});})(mode,sec,i);
+      noteArea.appendChild(ta);
+
+      wrap.appendChild(card);
+      wrap.appendChild(noteArea);
+      list.appendChild(wrap);
+    })(tasks[i],i);
+  }
   updateClearBtn(mode);
 }
 
-function toggleTask(mode,sec,i){
-  const t=S.tasks[mode][sec][i];
-  t.completed=!t.completed;
-  if(t.completed&&t.recur!=='once'&&t.date){t.date=nextRecur(t.date,t.recur);t.completed=false}
-  renderTasks(mode,sec);updateClearBtn(mode);save();
-}
-function nextRecur(iso,recur){
-  const[yr,mn,dy]=iso.split('-').map(Number);
-  const d=new Date(yr,mn-1,dy,12,0,0,0); // noon to avoid any DST edge
-  if(recur==='weekly')d.setDate(d.getDate()+7);
-  else if(recur==='biweekly')d.setDate(d.getDate()+14);
-  else if(recur==='monthly')d.setMonth(d.getMonth()+1);
-  else if(recur==='yearly')d.setFullYear(d.getFullYear()+1);
-  return localISO(d.getFullYear(),d.getMonth(),d.getDate());
-}
-function editTask(mode,sec,i,text){
-  const t=text.trim();
-  const el=document.querySelector(`[data-mode='${mode}'][data-sec='${sec}'][data-tidx='${i}'] .task-txt`);
-  if(el){el.contentEditable='false';el.classList.remove('editing');}
-  if(!t){delTask(mode,sec,i);return}
-  S.tasks[mode][sec][i].text=t;save();
-}
-function startEditTask(btn){
-  const card=btn.closest('.task-card');
-  const txt=card.querySelector('.task-txt');
-  txt.contentEditable='true';
-  txt.classList.add('editing');
-  // place cursor at end
-  txt.focus();
-  const range=document.createRange(),sel=window.getSelection();
-  range.selectNodeContents(txt);range.collapse(false);
-  sel.removeAllRanges();sel.addRange(range);
-}
-function toggleTaskNote(mode,sec,i,btn){
-  const card=btn.closest('.task-card');
-  const noteArea=card.parentElement.querySelector('.task-note-area');
-  const open=noteArea.classList.toggle('open');
-  if(open)noteArea.querySelector('textarea').focus();
-}
-function saveTaskNote(mode,sec,i,val){
-  S.tasks[mode][sec][i].note=val;
-  // update dot indicator without full re-render
-  save();
-  const list=document.getElementById('tl-'+mode+'-'+sec);
-  const cards=list.querySelectorAll('.task-card');
-  if(cards[i]){
-    const btn=cards[i].querySelector('.task-note-btn');
-    if(btn)btn.classList.toggle('has-note',!!(val&&val.trim()));
-  }
-}
-function delTask(mode,sec,i){S.tasks[mode][sec].splice(i,1);renderTasks(mode,sec);save()}
 function renderAll(){
-  ['work','personal'].forEach(m=>['priority','general'].forEach(s=>renderTasks(m,s)));
+  ['work','personal'].forEach(function(m){['priority','general'].forEach(function(s){renderTasks(m,s);});});
   renderNotes();renderUpcoming();
 }
 
-// ── MOVE ─────────────────────────────────────────────────────
-function moveTask(mode,sec,idx,dir){
-  const arr=S.tasks[mode][sec];
-  const ni=idx+dir;
-  if(ni<0||ni>=arr.length)return;
-  const[item]=arr.splice(idx,1);arr.splice(ni,0,item);
-  renderTasks(mode,sec);save();
-}
-function onDragOver(e){e.preventDefault();}
-function onDrop(e,mode,sec){e.preventDefault();}
-
-
-
 // ── TASK DATE MODAL ──────────────────────────────────────────
 function openTaskModal(mode,sec){
-  S.tm={mode,sec,date:null,recur:'once'};
-  document.querySelectorAll('#taskPills .pill').forEach(p=>p.classList.toggle('sel',p.dataset.v==='once'));
+  S.tm={mode:mode,sec:sec,date:null,recur:'once'};
+  var pills=document.querySelectorAll('#taskPills .pill');
+  for(var i=0;i<pills.length;i++)pills[i].classList.toggle('sel',pills[i].dataset.v==='once');
   document.getElementById('taskTimeTog').checked=false;
   document.getElementById('taskTimeF').style.display='none';
   S.taskCalMo=new Date();renderCal('task');
   document.getElementById('taskModal').classList.add('open');
 }
-function closeTaskModal(){document.getElementById('taskModal').classList.remove('open')}
-// ── DRUM PICKERS ─────────────────────────────────────────────
-const drums={};
-function initDrum(id,count,pad,initial){
-  const el=document.getElementById(id);
-  if(!el)return;
-  const state={val:initial,count,pad,startY:0,startVal:initial,dragging:false};
-  drums[id]=state;
-  renderDrum(id);
-  el.addEventListener('touchstart',e=>{
-    state.startY=e.touches[0].clientY;state.startVal=state.val;state.dragging=true;
-    e.preventDefault();
-  },{passive:false});
-  el.addEventListener('touchmove',e=>{
-    if(!state.dragging)return;
-    const dy=state.startY-e.touches[0].clientY;
-    const delta=Math.round(dy/40);
-    let nv=(state.startVal+delta)%count;
-    if(nv<0)nv+=count;
-    if(nv!==state.val){state.val=nv;renderDrum(id);}
-    e.preventDefault();
-  },{passive:false});
-  el.addEventListener('touchend',()=>{state.dragging=false;},{passive:true});
-  // Mouse support for desktop testing
-  let mouseDown=false,mouseStartY=0,mouseStartVal=0;
-  el.addEventListener('mousedown',e=>{mouseDown=true;mouseStartY=e.clientY;mouseStartVal=state.val;});
-  window.addEventListener('mousemove',e=>{
-    if(!mouseDown)return;
-    const dy=mouseStartY-e.clientY;
-    const delta=Math.round(dy/40);
-    let nv=(mouseStartVal+delta)%count;
-    if(nv<0)nv+=count;
-    if(nv!==state.val){state.val=nv;renderDrum(id);}
-  });
-  window.addEventListener('mouseup',()=>{mouseDown=false;});
-}
-function renderDrum(id){
-  const state=drums[id];if(!state)return;
-  const el=document.getElementById(id);if(!el)return;
-  const{val,count,pad}=state;
-  // Show 5 items: far-prev, adj-prev, active, adj-next, far-next
-  let h='<div class="drum-inner">';
-  for(let offset=-2;offset<=2;offset++){
-    let v=(val+offset+count)%count;
-    const label=pad?String(v).padStart(2,'0'):String(v);
-    let cls='drum-item';
-    if(offset===0)cls+=' active';
-    else if(Math.abs(offset)===1)cls+=' adj';
-    else cls+=' far';
-    h+=`<div class="${cls}">${label}</div>`;
-  }
-  h+='</div>';
-  el.innerHTML=h;
-}
-function getDrumVal(id){
-  const state=drums[id];
-  if(!state)return 0;
-  return state.val;
-}
-function setDrumVal(id,val){
-  const state=drums[id];
-  if(!state)return;
-  state.val=val;
-  renderDrum(id);
-}
-function togTime(which){
-  const id=which==='task'?'taskTimeF':'mtgTimeF';
-  const tog=which==='task'?'taskTimeTog':'mtgTimeTog';
-  const show=document.getElementById(tog).checked;
-  document.getElementById(id).style.display=show?'block':'none';
-  if(show){
-    if(which==='task'){
-      initDrum('drumTaskH',24,true,8);
-      initDrum('drumTaskM',60,true,0);
-    }else{
-      initDrum('drumMtgH',24,true,9);
-      initDrum('drumMtgM',60,true,0);
-    }
-  }
-}
-function selPill(btn,which){
-  const id=which==='task'?'taskPills':'mtgPills';
-  document.querySelectorAll('#'+id+' .pill').forEach(p=>p.classList.remove('sel'));
-  btn.classList.add('sel');
-  if(which==='task')S.tm.recur=btn.dataset.v;else S.mm.recur=btn.dataset.v;
-}
+function closeTaskModal(){document.getElementById('taskModal').classList.remove('open');}
 function confirmTaskDate(){
-  if(!S.tm.date){closeTaskModal();return}
-  const hasTime=document.getElementById('taskTimeTog').checked;
-  const timeStr=hasTime?String(getDrumVal('drumTaskH')).padStart(2,'0')+':'+String(getDrumVal('drumTaskM')).padStart(2,'0'):null;
-  const tasks=S.tasks[S.tm.mode][S.tm.sec];
-  let applied=false;
-  for(let i=tasks.length-1;i>=0;i--){
-    if(!tasks[i].date){tasks[i].date=S.tm.date;tasks[i].time=timeStr;tasks[i].recur=S.tm.recur;if(timeStr)schedNotif(tasks[i].text,'Task due now',S.tm.date,timeStr);applied=true;break}
+  if(!S.tm.date){closeTaskModal();return;}
+  var hasTime=document.getElementById('taskTimeTog').checked;
+  var timeStr=hasTime?String(getDrumVal('drumTaskH')).padStart(2,'0')+':'+String(getDrumVal('drumTaskM')).padStart(2,'0'):null;
+  var tasks=S.tasks[S.tm.mode][S.tm.sec];
+  var applied=false;
+  for(var i=tasks.length-1;i>=0;i--){
+    if(!tasks[i].date){tasks[i].date=S.tm.date;tasks[i].time=timeStr;tasks[i].recur=S.tm.recur;if(timeStr)schedNotif(tasks[i].text,'Task due now',S.tm.date,timeStr);applied=true;break;}
   }
-  if(!applied&&tasks.length){const t=tasks[tasks.length-1];t.date=S.tm.date;t.time=timeStr;t.recur=S.tm.recur}
+  if(!applied&&tasks.length){tasks[tasks.length-1].date=S.tm.date;tasks[tasks.length-1].time=timeStr;tasks[tasks.length-1].recur=S.tm.recur;}
   closeTaskModal();renderTasks(S.tm.mode,S.tm.sec);save();
 }
 
 // ── CALENDAR ─────────────────────────────────────────────────
-function localISO(yr,mn,d){
-  // Build ISO date string from local year/month/day — avoids UTC timezone shift
-  return yr+'-'+String(mn+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-}
 function renderCal(which){
-  const id=which==='task'?'taskCal':'mtgCal';
-  const mo=which==='task'?S.taskCalMo:S.mtgCalMo;
-  const sel=which==='task'?S.tm.date:S.mm.date;
-  const el=document.getElementById(id);
-  const yr=mo.getFullYear(),mn=mo.getMonth();
-  const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const today=new Date();
-  const todayISO=localISO(today.getFullYear(),today.getMonth(),today.getDate());
-  const first=new Date(yr,mn,1).getDay(),dim=new Date(yr,mn+1,0).getDate();
-  let h=`<div class="cal-hdr"><button class="cal-nav" onclick="calNav('${which}',-1)">‹</button><span class="cal-mo">${MO[mn]} ${yr}</span><button class="cal-nav" onclick="calNav('${which}',1)">›</button></div><div class="cal-grid"><div class="cdn">Su</div><div class="cdn">Mo</div><div class="cdn">Tu</div><div class="cdn">We</div><div class="cdn">Th</div><div class="cdn">Fr</div><div class="cdn">Sa</div>`;
-  for(let i=0;i<first;i++)h+=`<div class="cd other"></div>`;
-  for(let d=1;d<=dim;d++){
-    const iso=localISO(yr,mn,d);
-    const isPast=iso<todayISO;
-    const isToday=iso===todayISO;
-    const isSel=iso===sel;
-    let cls='cd'+(isPast?' past':'')+(isToday?' today':'')+(isSel?' sel':'');
-    // Use touchend + preventDefault to avoid double-fire on mobile
-    const oc=isPast?'':` data-which="${which}" data-iso="${iso}"`;
-    h+=`<div class="${cls}"${oc}>${d}</div>`;
+  var id=which==='task'?'taskCal':'mtgCal';
+  var mo=which==='task'?S.taskCalMo:S.mtgCalMo;
+  var sel=which==='task'?S.tm.date:S.mm.date;
+  var el=document.getElementById(id);
+  var yr=mo.getFullYear(),mn=mo.getMonth();
+  var MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var today=new Date(),todayISO=localISO(today.getFullYear(),today.getMonth(),today.getDate());
+  var first=new Date(yr,mn,1).getDay(),dim=new Date(yr,mn+1,0).getDate();
+  var h='<div class="cal-hdr"><button class="cal-nav" onclick="calNav(\''+which+'\',-1)">&#8249;</button><span class="cal-mo">'+MO[mn]+' '+yr+'</span><button class="cal-nav" onclick="calNav(\''+which+'\',1)">&#8250;</button></div><div class="cal-grid"><div class="cdn">Su</div><div class="cdn">Mo</div><div class="cdn">Tu</div><div class="cdn">We</div><div class="cdn">Th</div><div class="cdn">Fr</div><div class="cdn">Sa</div>';
+  for(var e=0;e<first;e++)h+='<div class="cd other"></div>';
+  for(var d=1;d<=dim;d++){
+    var iso=localISO(yr,mn,d);
+    var isPast=iso<todayISO,isToday=iso===todayISO,isSel=iso===sel;
+    var cls='cd'+(isPast?' past':'')+(isToday?' today':'')+(isSel?' sel':'');
+    h+='<div class="'+cls+'"'+(isPast?'':' data-which="'+which+'" data-iso="'+iso+'"')+'>'+d+'</div>';
   }
   h+='</div>';
   el.innerHTML=h;
-  // Attach single touchend listeners to avoid double-tap issue
-  el.querySelectorAll('.cd:not(.past):not(.other)').forEach(cell=>{
-    cell.addEventListener('touchend',e=>{
-      e.preventDefault();
-      const iso=cell.dataset.iso,which=cell.dataset.which;
-      if(iso&&which)selDay(which,iso);
-    },{passive:false});
-    cell.addEventListener('click',e=>{
-      // Only fire on non-touch (mouse) to avoid double
-      if(e.detail===0)return; // triggered by touch, skip
-      const iso=cell.dataset.iso,which=cell.dataset.which;
-      if(iso&&which)selDay(which,iso);
-    });
-  });
+  var cells=el.querySelectorAll('.cd:not(.past):not(.other)');
+  for(var ci=0;ci<cells.length;ci++){
+    (function(cell){
+      cell.addEventListener('touchend',function(e){e.preventDefault();selDay(cell.dataset.which,cell.dataset.iso);},{passive:false});
+      cell.addEventListener('click',function(e){if(e.detail>0)selDay(cell.dataset.which,cell.dataset.iso);});
+    })(cells[ci]);
+  }
 }
 function calNav(which,dir){
   if(which==='task')S.taskCalMo.setMonth(S.taskCalMo.getMonth()+dir);
   else S.mtgCalMo.setMonth(S.mtgCalMo.getMonth()+dir);
   renderCal(which);
 }
-function selDay(which,iso){if(which==='task')S.tm.date=iso;else S.mm.date=iso;renderCal(which)}
+function selDay(which,iso){if(which==='task')S.tm.date=iso;else S.mm.date=iso;renderCal(which);}
+
+// ── DRUM PICKERS ─────────────────────────────────────────────
+var drums={};
+function initDrum(id,count,pad,initial){
+  var el=document.getElementById(id);if(!el)return;
+  var state={val:initial,count:count,pad:pad,startY:0,startVal:initial,dragging:false};
+  drums[id]=state;
+  renderDrum(id);
+  el.addEventListener('touchstart',function(e){state.startY=e.touches[0].clientY;state.startVal=state.val;state.dragging=true;e.preventDefault();},{passive:false});
+  el.addEventListener('touchmove',function(e){
+    if(!state.dragging)return;
+    var dy=state.startY-e.touches[0].clientY,delta=Math.round(dy/40);
+    var nv=(state.startVal+delta)%count;if(nv<0)nv+=count;
+    if(nv!==state.val){state.val=nv;renderDrum(id);}
+    e.preventDefault();
+  },{passive:false});
+  el.addEventListener('touchend',function(){state.dragging=false;},{passive:true});
+  var md=false,msy=0,msv=0;
+  el.addEventListener('mousedown',function(e){md=true;msy=e.clientY;msv=state.val;});
+  window.addEventListener('mousemove',function(e){
+    if(!md)return;
+    var dy=msy-e.clientY,delta=Math.round(dy/40),nv=(msv+delta)%count;
+    if(nv<0)nv+=count;if(nv!==state.val){state.val=nv;renderDrum(id);}
+  });
+  window.addEventListener('mouseup',function(){md=false;});
+}
+function renderDrum(id){
+  var state=drums[id];if(!state)return;
+  var el=document.getElementById(id);if(!el)return;
+  var h='<div class="drum-inner">';
+  for(var offset=-2;offset<=2;offset++){
+    var v=(state.val+offset+state.count)%state.count;
+    var label=state.pad?String(v).padStart(2,'0'):String(v);
+    var cls='drum-item'+(offset===0?' active':(Math.abs(offset)===1?' adj':' far'));
+    h+='<div class="'+cls+'">'+label+'</div>';
+  }
+  h+='</div>';el.innerHTML=h;
+}
+function getDrumVal(id){return drums[id]?drums[id].val:0;}
+function togTime(which){
+  var fid=which==='task'?'taskTimeF':'mtgTimeF';
+  var tog=which==='task'?'taskTimeTog':'mtgTimeTog';
+  var show=document.getElementById(tog).checked;
+  document.getElementById(fid).style.display=show?'block':'none';
+  if(show){
+    if(which==='task'){initDrum('drumTaskH',24,true,8);initDrum('drumTaskM',60,true,0);}
+    else{initDrum('drumMtgH',24,true,9);initDrum('drumMtgM',60,true,0);}
+  }
+}
+function selPill(btn,which){
+  var id=which==='task'?'taskPills':'mtgPills';
+  var pills=document.querySelectorAll('#'+id+' .pill');
+  for(var i=0;i<pills.length;i++)pills[i].classList.remove('sel');
+  btn.classList.add('sel');
+  if(which==='task')S.tm.recur=btn.dataset.v;else S.mm.recur=btn.dataset.v;
+}
 
 // ── ARCHIVE ──────────────────────────────────────────────────
 function selArcGroup(btn,mode){
-  const parent=btn.parentElement;
-  parent.querySelectorAll('.arc-grp-btn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  S.arcGroup[mode]=btn.dataset.g;
-  renderArchive(mode);
+  var parent=btn.parentElement,btns=parent.querySelectorAll('.arc-grp-btn');
+  for(var i=0;i<btns.length;i++)btns[i].classList.remove('sel');
+  btn.classList.add('sel');S.arcGroup[mode]=btn.dataset.g;renderArchive(mode);
 }
-
 function renderArchive(mode){
-  const listId=mode==='work'?'arcList':'arcPerList';
-  const list=document.getElementById(listId);
-  if(!list)return;
+  var listId=mode==='work'?'arcList':'arcPerList';
+  var list=document.getElementById(listId);if(!list)return;
   list.innerHTML='';
-  const items=S.archive[mode]||[];
-  if(!items.length){
-    list.innerHTML='<div class="empty" style="color:var(--work-muted)"><div class="empty-ico">📂</div>No archived tasks</div>';
-    return;
-  }
-  const group=S.arcGroup[mode]||'day';
-  // Group items
-  const groups={};
-  items.forEach((item,idx)=>{
-    const d=new Date(item.completedDate);
-    let key,label;
-    if(group==='day'){
-      key=item.completedDate;
-      const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      label=`${days[d.getDay()]} ${d.getDate()} ${mos[d.getMonth()]} ${d.getFullYear()}`;
-    }else if(group==='week'){
-      // Get Monday of that week
-      const day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);
-      const mon=new Date(d);mon.setDate(diff);
-      key=mon.toISOString().split('T')[0];
-      const mos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const sun=new Date(mon);sun.setDate(mon.getDate()+6);
-      label=`${mon.getDate()} ${mos[mon.getMonth()]} – ${sun.getDate()} ${mos[sun.getMonth()]}`;
-    }else{
-      const mos=['January','February','March','April','May','June','July','August','September','October','November','December'];
-      key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-      label=`${mos[d.getMonth()]} ${d.getFullYear()}`;
-    }
-    if(!groups[key])groups[key]={label,items:[]};
-    groups[key].items.push({item,idx});
+  var items=S.archive[mode]||[];
+  if(!items.length){list.innerHTML='<div class="empty" style="color:var(--work-muted)"><div class="empty-ico">📂</div>No archived tasks</div>';return;}
+  var group=S.arcGroup[mode]||'day',groups={};
+  var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var MOSL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  items.forEach(function(item,idx){
+    var dp=item.completedDate.split('-'),d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+    var key,label;
+    if(group==='day'){key=item.completedDate;label=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()]+' '+d.getFullYear();}
+    else if(group==='week'){
+      var day=d.getDay(),mon=new Date(d);mon.setDate(d.getDate()-day+(day===0?-6:1));
+      key=localISO(mon.getFullYear(),mon.getMonth(),mon.getDate());
+      var sun=new Date(mon);sun.setDate(mon.getDate()+6);
+      label=mon.getDate()+' '+MOS[mon.getMonth()]+' \u2013 '+sun.getDate()+' '+MOS[sun.getMonth()];
+    }else{key=dp[0]+'-'+dp[1];label=MOSL[d.getMonth()]+' '+d.getFullYear();}
+    if(!groups[key])groups[key]={label:label,items:[]};
+    groups[key].items.push({item:item,idx:idx});
   });
-
-  Object.entries(groups).forEach(([,g])=>{
-    const lbl=document.createElement('div');lbl.className='arc-group-label';lbl.textContent=g.label;list.appendChild(lbl);
-    g.items.forEach(({item,idx})=>{
-      const row=document.createElement('div');row.className='arc-item';
-      const d=new Date(item.completedDate);
-      const mos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      const dateStr=`${d.getDate()} ${mos[d.getMonth()]}`;
-      row.innerHTML=`<span class="arc-item-txt">${esc(item.text)}</span><span class="arc-item-date">${dateStr}</span><button class="arc-del" onclick="delArchive('${mode}',${idx})">✕</button>`;
+  Object.keys(groups).forEach(function(k){
+    var g=groups[k];
+    var lbl=document.createElement('div');lbl.className='arc-group-label';lbl.textContent=g.label;list.appendChild(lbl);
+    g.items.forEach(function(x){
+      var row=document.createElement('div');row.className='arc-item';
+      var dp=x.item.completedDate.split('-'),d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+      row.innerHTML='<span class="arc-item-txt">'+esc(x.item.text)+'</span><span class="arc-item-date">'+d.getDate()+' '+MOS[d.getMonth()]+'</span><button class="arc-del">✕</button>';
+      (function(idx){row.querySelector('.arc-del').addEventListener('click',function(){delArchive(mode,idx);});})(x.idx);
       list.appendChild(row);
     });
   });
 }
-
-function delArchive(mode,idx){
-  S.archive[mode].splice(idx,1);
-  renderArchive(mode);save();
-}
+function delArchive(mode,idx){S.archive[mode].splice(idx,1);renderArchive(mode);save();}
 
 // ── NOTES ────────────────────────────────────────────────────
 function addNote(){
   S.notes.unshift({id:S.nextId++,title:'',body:''});renderNotes();save();
-  setTimeout(()=>{const t=document.querySelectorAll('.note-title');if(t[0])t[0].focus()},50);
+  setTimeout(function(){var t=document.querySelectorAll('.note-title');if(t[0])t[0].focus();},50);
 }
 function renderNotes(){
-  const list=document.getElementById('notesList'),empty=document.getElementById('em-notes');
-  clearList(list,'em-notes');
+  var list=document.getElementById('notesList'),empty=document.getElementById('em-notes');
+  var toRm=[];
+  for(var ci=0;ci<list.childNodes.length;ci++){if(list.childNodes[ci].id!=='em-notes')toRm.push(list.childNodes[ci]);}
+  toRm.forEach(function(c){c.remove();});
   empty.style.display=S.notes.length?'none':'flex';
-  S.notes.forEach((n,i)=>{
-    const card=document.createElement('div');card.className='note-card';
-    card.dataset.idx=i;
-    card.innerHTML=`
-      <div class="note-hdr">
-        <div class="note-dh" title="Drag to reorder">⣿</div>
-        <div class="note-title" contenteditable="true" onblur="editNote(${i},'title',this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.parentElement.nextElementSibling&&this.parentElement.nextElementSibling.focus()}">${esc(n.title)}</div>
-        <button class="note-del" onclick="delNote(${i})">✕</button>
-      </div>
-      <div class="note-body" contenteditable="true" onblur="editNote(${i},'body',this.innerText)">${esc(n.body)}</div>`;
-    card.addEventListener('dragstart',e=>{S.noteDragSrc=i;card.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
-    card.addEventListener('dragend',()=>card.classList.remove('dragging'));
-    card.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move'});
-    card.addEventListener('drop',e=>{
-      e.preventDefault();
-      const from=S.noteDragSrc,to=parseInt(card.dataset.idx);
-      if(from===to||from==null)return;
-      const[item]=S.notes.splice(from,1);S.notes.splice(to,0,item);
-      S.noteDragSrc=null;renderNotes();save();
-    });
-    addNoteTouchDrag(card,i);
+  S.notes.forEach(function(n,i){
+    var card=document.createElement('div');card.className='note-card';card.dataset.idx=String(i);
+    card.innerHTML='<div class="note-hdr"><div class="note-dh">&#11815;</div><div class="note-title" contenteditable="true">'+esc(n.title)+'</div><button class="note-del">&#10005;</button></div><div class="note-body" contenteditable="true">'+esc(n.body)+'</div>';
+    (function(i){
+      card.querySelector('.note-title').addEventListener('blur',function(){editNote(i,'title',this.innerText);});
+      card.querySelector('.note-body').addEventListener('blur',function(){editNote(i,'body',this.innerText);});
+      card.querySelector('.note-del').addEventListener('click',function(){delNote(i);});
+      addNoteTouchDrag(card,i);
+    })(i);
     list.appendChild(card);
   });
 }
 function addNoteTouchDrag(card,idx){
-  let sy;
-  card.addEventListener('touchstart',e=>{
-    // only drag from handle
-    if(!e.target.classList.contains('note-dh'))return;
-    sy=e.touches[0].clientY;
-  },{passive:true});
-  card.addEventListener('touchend',e=>{
-    if(sy==null)return;
-    const diff=e.changedTouches[0].clientY-sy;sy=null;
+  var sy=null;
+  card.addEventListener('touchstart',function(e){if(!e.target.classList.contains('note-dh'))return;sy=e.touches[0].clientY;},{passive:true});
+  card.addEventListener('touchend',function(e){
+    if(sy===null)return;
+    var diff=e.changedTouches[0].clientY-sy;sy=null;
     if(Math.abs(diff)<30)return;
-    const dir=diff>0?1:-1;
-    const ni=Math.max(0,Math.min(S.notes.length-1,idx+dir));
+    var dir=diff>0?1:-1,ni=Math.max(0,Math.min(S.notes.length-1,idx+dir));
     if(ni===idx)return;
-    const[item]=S.notes.splice(idx,1);S.notes.splice(ni,0,item);
+    var item=S.notes.splice(idx,1)[0];S.notes.splice(ni,0,item);
     renderNotes();save();
   },{passive:true});
 }
-function editNote(i,f,v){S.notes[i][f]=v.trim();save()}
-function delNote(i){S.notes.splice(i,1);renderNotes();save()}
+function editNote(i,f,v){if(S.notes[i])S.notes[i][f]=v.trim();save();}
+function delNote(i){S.notes.splice(i,1);renderNotes();save();}
 
 // ── MEETINGS ─────────────────────────────────────────────────
 function openMtgModal(editId){
   S.mm={date:null,recur:'once',editId:editId||null};
   document.getElementById('mtgModalTitle').textContent=editId?'Edit meeting':'New meeting';
   document.getElementById('mtgName').value='';
-  document.querySelectorAll('#mtgPills .pill').forEach(p=>p.classList.toggle('sel',p.dataset.v==='once'));
+  var pills=document.querySelectorAll('#mtgPills .pill');
+  for(var i=0;i<pills.length;i++)pills[i].classList.toggle('sel',pills[i].dataset.v==='once');
   document.getElementById('mtgTimeTog').checked=false;document.getElementById('mtgTimeF').style.display='none';
   if(editId){
-    const m=S.meetings.find(x=>x.id===editId);
-    if(m){document.getElementById('mtgName').value=m.name;S.mm.date=m.date;S.mm.recur=m.recur;
-      document.querySelectorAll('#mtgPills .pill').forEach(p=>p.classList.toggle('sel',p.dataset.v===m.recur));
-      if(m.time){
-        document.getElementById('mtgTimeTog').checked=true;
-        document.getElementById('mtgTimeF').style.display='block';
-        const[h,mi]=m.time.split(':').map(Number);
-        setTimeout(()=>{initDrum('drumMtgH',24,true,h);initDrum('drumMtgM',60,true,mi);},50);
-      }
-      S.mtgCalMo=new Date(m.date);
+    var m=S.meetings.find(function(x){return x.id===editId;});
+    if(m){
+      document.getElementById('mtgName').value=m.name;S.mm.date=m.date;S.mm.recur=m.recur;
+      var pills2=document.querySelectorAll('#mtgPills .pill');
+      for(var j=0;j<pills2.length;j++)pills2[j].classList.toggle('sel',pills2[j].dataset.v===m.recur);
+      if(m.time){document.getElementById('mtgTimeTog').checked=true;document.getElementById('mtgTimeF').style.display='block';var tp=m.time.split(':');setTimeout(function(){initDrum('drumMtgH',24,true,parseInt(tp[0]));initDrum('drumMtgM',60,true,parseInt(tp[1]));},50);}
+      S.mtgCalMo=new Date(parseInt(m.date.split('-')[0]),parseInt(m.date.split('-')[1])-1,parseInt(m.date.split('-')[2]));
     }
-  }else S.mtgCalMo=new Date();
+  }else{S.mtgCalMo=new Date();}
   renderCal('mtg');document.getElementById('mtgModal').classList.add('open');
 }
-function closeMtgModal(){document.getElementById('mtgModal').classList.remove('open')}
+function closeMtgModal(){document.getElementById('mtgModal').classList.remove('open');}
 function confirmMtg(){
-  const name=document.getElementById('mtgName').value.trim();
-  if(!name||!S.mm.date){closeMtgModal();return}
-  const hasTime=document.getElementById('mtgTimeTog').checked;
-  const timeStr=hasTime?String(getDrumVal('drumMtgH')).padStart(2,'0')+':'+String(getDrumVal('drumMtgM')).padStart(2,'0'):null;
-  if(S.mm.editId){const m=S.meetings.find(x=>x.id===S.mm.editId);if(m){m.name=name;m.date=S.mm.date;m.time=timeStr;m.recur=S.mm.recur}}
-  else S.meetings.push({id:S.nextId++,name,date:S.mm.date,time:timeStr,recur:S.mm.recur,notes:'',archived:false});
+  var name=document.getElementById('mtgName').value.trim();
+  if(!name||!S.mm.date){closeMtgModal();return;}
+  var hasTime=document.getElementById('mtgTimeTog').checked;
+  var timeStr=hasTime?String(getDrumVal('drumMtgH')).padStart(2,'0')+':'+String(getDrumVal('drumMtgM')).padStart(2,'0'):null;
+  if(S.mm.editId){
+    var m=S.meetings.find(function(x){return x.id===S.mm.editId;});
+    if(m){m.name=name;m.date=S.mm.date;m.time=timeStr;m.recur=S.mm.recur;}
+  }else{
+    S.meetings.push({id:S.nextId++,name:name,date:S.mm.date,time:timeStr,recur:S.mm.recur,notes:'',archived:false});
+  }
   if(timeStr)schedNotif(name,'Meeting starting now',S.mm.date,timeStr);
   closeMtgModal();archivePast();renderMtgs();renderUpcoming();save();
 }
 function archivePast(){
-  const now=Date.now();
-  S.meetings.forEach(m=>{
+  var now=Date.now();
+  S.meetings.forEach(function(m){
     if(m.archived)return;
-    // Give 2hrs grace before archiving
-    if(mtgTs(m)<now-7200000){if(m.recur==='once')m.archived=true;else m.date=nextRecur(m.date,m.recur)}
+    if(mtgTs(m)<now-7200000){if(m.recur==='once')m.archived=true;else m.date=nextRecur(m.date,m.recur);}
   });
 }
 function renderMtgs(){
   archivePast();
-  const list=document.getElementById('mtgsList'),empty=document.getElementById('em-mtgs');
-  clearList(list,'em-mtgs');
-  const active=S.meetings.filter(m=>!m.archived).sort((a,b)=>mtgTs(a)-mtgTs(b));
-  const archived=S.meetings.filter(m=>m.archived).sort((a,b)=>mtgTs(b)-mtgTs(a));
+  var list=document.getElementById('mtgsList'),empty=document.getElementById('em-mtgs');
+  var toRm=[];
+  for(var ci=0;ci<list.childNodes.length;ci++){if(list.childNodes[ci].id!=='em-mtgs')toRm.push(list.childNodes[ci]);}
+  toRm.forEach(function(c){c.remove();});
+  var active=S.meetings.filter(function(m){return!m.archived;}).sort(function(a,b){return mtgTs(a)-mtgTs(b);});
+  var archived=S.meetings.filter(function(m){return m.archived;}).sort(function(a,b){return mtgTs(b)-mtgTs(a);});
   empty.style.display=(active.length+archived.length)===0?'flex':'none';
-  active.forEach(m=>list.appendChild(mkMtgCard(m)));
-  if(archived.length){const l=document.createElement('div');l.className='arc-lbl';l.textContent='Archived';list.appendChild(l);archived.forEach(m=>list.appendChild(mkMtgCard(m)))}
+  active.forEach(function(m){list.appendChild(mkMtgCard(m));});
+  if(archived.length){
+    var lbl=document.createElement('div');lbl.className='arc-lbl';lbl.textContent='Archived';list.appendChild(lbl);
+    archived.forEach(function(m){list.appendChild(mkMtgCard(m));});
+  }
 }
 function mkMtgCard(m){
-  const card=document.createElement('div');card.className='mtg-card'+(m.archived?' archived':'');
-  const[myr,mmn,mdy]=m.date.split('-').map(Number);
-  const d=new Date(myr,mmn-1,mdy);
-  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const dateStr=`${days[d.getDay()]} ${d.getDate()} ${mos[d.getMonth()]}${m.time?' · '+m.time:''}`;
-  const rL={once:'',weekly:'Weekly',biweekly:'Bi-weekly',monthly:'Monthly',yearly:'Yearly'};
-  card.innerHTML=`
-    <div class="mtg-info">
-      <div class="mtg-name">${esc(m.name)}</div>
-      <div class="mtg-meta">${dateStr}</div>
-    </div>
-    ${m.recur!=='once'?`<span class="recur-tag">${rL[m.recur]}</span>`:''}
-    <button class="mtg-del" onclick="event.stopPropagation();delMtg(${m.id})">✕</button>`;
-  card.addEventListener('click',()=>openMtgNotes(m.id));
+  var card=document.createElement('div');card.className='mtg-card'+(m.archived?' archived':'');
+  var p=m.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()]+(m.time?' \u00b7 '+m.time:'');
+  var rL={once:'',weekly:'Weekly',biweekly:'Bi-weekly',monthly:'Monthly',yearly:'Yearly'};
+  card.innerHTML='<div class="mtg-info"><div class="mtg-name">'+esc(m.name)+'</div><div class="mtg-meta">'+dateStr+'</div></div>'+(m.recur&&m.recur!=='once'?'<span class="recur-tag">'+rL[m.recur]+'</span>':'')+'<button class="mtg-del">&#10005;</button>';
+  card.addEventListener('click',function(){openMtgNotes(m.id);});
+  card.querySelector('.mtg-del').addEventListener('click',function(e){e.stopPropagation();delMtg(m.id);});
   return card;
 }
-function delMtg(id){const i=S.meetings.findIndex(m=>m.id===id);if(i===-1)return;S.meetings.splice(i,1);renderMtgs();renderUpcoming();save()}
+function delMtg(id){var i=S.meetings.findIndex(function(m){return m.id===id;});if(i===-1)return;S.meetings.splice(i,1);renderMtgs();renderUpcoming();save();}
 function openMtgNotes(id){
-  const m=S.meetings.find(x=>x.id===id);if(!m)return;
-  S.activeMtgId=id;window._activeMtgId=id;
+  var m=S.meetings.find(function(x){return x.id===id;});if(!m)return;
+  S.activeMtgId=id;window._editMtgId=id;
   document.getElementById('mnotesName').textContent=m.name;
-  const[nyr,nmn,ndy]=m.date.split('-').map(Number);
-  const nd=new Date(nyr,nmn-1,ndy);
-  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],mos=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('mnotesMeta').textContent=`${days[nd.getDay()]} ${nd.getDate()} ${mos[nd.getMonth()]}${m.time?' · '+m.time:''}`;
+  var p=m.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('mnotesMeta').textContent=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()]+(m.time?' \u00b7 '+m.time:'');
   document.getElementById('mnotesBody').innerText=m.notes||'';
   applyMode('mnotes');
 }
-function saveMtgNotes(text){const m=S.meetings.find(x=>x.id===S.activeMtgId);if(m){m.notes=text.trim();save()}}
+function saveMtgNotes(text){var m=S.meetings.find(function(x){return x.id===S.activeMtgId;});if(m){m.notes=text.trim();save();}}
 
-function nextRecur(iso,recur){
-  const[yr,mn,dy]=iso.split('-').map(Number);
-  const d=new Date(yr,mn-1,dy,12,0,0,0); // noon to avoid any DST edge
-  if(recur==='weekly')d.setDate(d.getDate()+7);
-  else if(recur==='biweekly')d.setDate(d.getDate()+14);
-  else if(recur==='monthly')d.setMonth(d.getMonth()+1);
-  else if(recur==='yearly')d.setFullYear(d.getFullYear()+1);
-  return localISO(d.getFullYear(),d.getMonth(),d.getDate());
-}
-
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-
+// ── INIT ─────────────────────────────────────────────────────
 load();archivePast();initMode();renderAll();
-setInterval(()=>{archivePast();renderAll()},60000);
+setInterval(function(){archivePast();renderUpcoming();},60000);
 </script>
 
 <script>
-// Wire up auth buttons once DOM is ready
-// Functions are exposed on window by the Firebase module script
 document.addEventListener('DOMContentLoaded',function(){
   var btn=document.getElementById('googleSignInBtn');
-  if(btn)btn.addEventListener('click',function(){
-    if(typeof window.signInWithGoogle==='function')window.signInWithGoogle();
-  });
+  if(btn)btn.addEventListener('click',function(){if(typeof window.signInWithGoogle==='function')window.signInWithGoogle();});
   var out=document.getElementById('signOutBtn');
-  if(out)out.addEventListener('click',function(){
-    if(typeof window.doSignOut==='function')window.doSignOut();
-  });
+  if(out)out.addEventListener('click',function(){if(typeof window.doSignOut==='function')window.doSignOut();});
 });
 </script>
 
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/focus-app/sw.js')
-      .then(r=>console.log('SW registered:', r.scope))
-      .catch(e=>console.log('SW failed:', e));
+if('serviceWorker'in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/focus-app/sw.js').catch(function(e){console.log('SW:',e);});
   });
 }
 </script>
-</div><!-- /mainApp -->
+</div>
 </body>
 </html>
