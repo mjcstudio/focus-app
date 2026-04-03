@@ -26,6 +26,7 @@ body{display:flex;flex-direction:column;height:100dvh;transition:background .3s}
 body.mode-work{background:var(--work-bg);color:var(--work-text)}
 body.mode-personal{background:var(--per-bg);color:var(--per-text)}
 body.mode-notes{background:var(--note-bg);color:var(--note-text)}
+body.mode-ndetail{background:var(--note-bg);color:var(--note-text)}
 body.mode-meetings,body.mode-mnotes{background:var(--work-bg);color:var(--work-text)}
 body.mode-archive{background:var(--work-bg);color:var(--work-text)}
 body.mode-archive-per{background:var(--per-bg);color:var(--per-text)}
@@ -45,11 +46,11 @@ body.mode-archive-per{background:var(--per-bg);color:var(--per-text)}
 .app-title{font-family:'DM Serif Display',serif;font-size:26px;letter-spacing:-.5px;transition:color .3s;line-height:1}
 body.mode-work .app-title,body.mode-meetings .app-title,body.mode-mnotes .app-title,body.mode-archive .app-title{color:var(--work-accent)}
 body.mode-personal .app-title,body.mode-archive-per .app-title{color:var(--per-accent)}
-body.mode-notes .app-title{color:var(--note-accent)}
+body.mode-notes .app-title,body.mode-ndetail .app-title{color:var(--note-accent)}
 .mode-lbl{font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:color .3s}
 body.mode-work .mode-lbl,body.mode-meetings .mode-lbl,body.mode-mnotes .mode-lbl,body.mode-archive .mode-lbl{color:var(--work-muted)}
 body.mode-personal .mode-lbl,body.mode-archive-per .mode-lbl{color:var(--per-muted)}
-body.mode-notes .mode-lbl{color:var(--note-muted)}
+body.mode-notes .mode-lbl,body.mode-ndetail .mode-lbl{color:var(--note-muted)}
 .hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center}
 .hdr-btn{border:none;border-radius:var(--rs);padding:4px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t)}
 
@@ -62,6 +63,7 @@ body.mode-personal .arc-hdr-btn{display:block;background:var(--per-soft);color:v
 .back-btn{display:none;background:var(--work-soft);color:var(--work-accent)}
 body.mode-meetings .back-btn,body.mode-mnotes .back-btn,body.mode-archive .back-btn{display:block}
 body.mode-archive-per .back-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
+body.mode-ndetail .back-btn{display:block;background:#e8e8e6;color:var(--note-accent)}
 .user-pill{display:flex;align-items:center;gap:5px;background:var(--work-soft);border:none;border-radius:20px;padding:4px 8px;cursor:pointer;transition:all var(--t)}
 body.mode-personal .user-pill{background:var(--per-soft)}
 .user-dot{width:7px;height:7px;border-radius:50%;background:var(--work-accent);flex-shrink:0}
@@ -142,10 +144,10 @@ body.mode-personal .task-card.completed .chk{background:var(--per-accent);border
 .due-tag.soon{color:var(--soon)}
 body.mode-work .due-tag:not(.overdue):not(.soon){color:var(--work-muted)}
 body.mode-personal .due-tag:not(.overdue):not(.soon){color:var(--per-muted)}
-.task-edit-btn,.task-note-btn,.del-btn{opacity:0;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
-.task-card:active .task-edit-btn,.task-card:active .task-note-btn,.task-card:active .del-btn{opacity:.4}
-.task-note-btn.has-note{opacity:.5!important}
-.del-btn:active{opacity:.8!important}
+.task-edit-btn,.task-note-btn,.del-btn{opacity:.2;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
+.task-card:active .task-edit-btn,.task-card:active .task-note-btn,.task-card:active .del-btn{opacity:.55}
+.task-note-btn.has-note{opacity:.6!important}
+.del-btn:active{opacity:.9!important}
 
 /* ADD BAR */
 .add-bar{display:none;padding:6px 16px 8px;gap:8px;align-items:center;flex-shrink:0}
@@ -175,15 +177,22 @@ body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-te
 .notes-view.active{display:flex}
 .notes-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:8px;scrollbar-width:none}
 .notes-list::-webkit-scrollbar{display:none}
-.note-card{background:var(--note-surface);border-radius:var(--r);padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.note-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
-.note-dh{color:var(--note-muted);opacity:.3;font-size:13px;cursor:grab;padding:2px 4px;flex-shrink:0;-webkit-user-select:none;user-select:none}
-.note-title{font-size:14px;font-weight:600;color:var(--note-accent);outline:none;flex:1;min-width:0;-webkit-user-select:text;user-select:text}
-.note-title:empty::before{content:'Untitled';color:var(--note-muted);font-weight:400}
-.note-body{font-size:14px;line-height:1.6;color:var(--note-text);outline:none;min-height:36px;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
-.note-body:empty::before{content:'Start writing…';color:var(--note-muted)}
-.note-del{opacity:0;background:none;border:none;cursor:pointer;font-size:15px;color:var(--note-muted);padding:2px 4px;transition:opacity var(--t);flex-shrink:0}
-.note-card:active .note-del{opacity:.5}
+/* NOTES LIST */
+.note-row{background:var(--note-surface);border-radius:var(--rs);padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t)}
+.note-row:active{opacity:.7}
+.note-row-title{flex:1;font-size:14px;font-weight:500;color:var(--note-accent);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-row-title.untitled{color:var(--note-muted);font-weight:400;font-style:italic}
+.note-row-del{opacity:.3;background:none;border:none;cursor:pointer;font-size:15px;color:var(--note-muted);padding:2px 6px;transition:opacity var(--t);flex-shrink:0}
+.note-row:active .note-row-del{opacity:.7}
+
+/* NOTE DETAIL VIEW */
+.ndetail-view{display:none;flex-direction:column;height:100%;padding:0 16px}
+.ndetail-view.active{display:flex}
+.ndetail-title{font-size:18px;font-weight:600;color:var(--note-accent);outline:none;margin-bottom:6px;flex-shrink:0;-webkit-user-select:text;user-select:text;border:none;background:transparent;font-family:'DM Sans',sans-serif;width:100%;padding:2px 0}
+.ndetail-title:empty::before{content:'Untitled';color:var(--note-muted);font-weight:400}
+.ndetail-body{flex:1;font-size:14px;line-height:1.7;color:var(--note-text);outline:none;overflow-y:auto;white-space:pre-wrap;padding-bottom:20px;scrollbar-width:none;-webkit-user-select:text;user-select:text}
+.ndetail-body::-webkit-scrollbar{display:none}
+.ndetail-body:empty::before{content:'Start writing…';color:var(--note-muted)}
 .ghost-btn{display:flex;align-items:center;gap:8px;border:1.5px dashed;border-radius:var(--r);padding:11px 16px;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;transition:all var(--t);flex-shrink:0;margin-bottom:4px}
 .ghost-btn.note{border-color:var(--note-muted);color:var(--note-muted)}
 .ghost-btn.mtg{border-color:var(--work-muted);color:var(--work-muted)}
@@ -241,7 +250,7 @@ body.mode-archive-per .arc-item-date{color:var(--per-muted)}
 .nav{height:var(--nav);display:flex;align-items:stretch;flex-shrink:0;padding:8px 12px 12px;gap:8px;transition:background .3s}
 body.mode-work .nav,body.mode-meetings .nav,body.mode-mnotes .nav,body.mode-archive .nav{background:var(--work-bg)}
 body.mode-personal .nav,body.mode-archive-per .nav{background:var(--per-bg)}
-body.mode-notes .nav{background:var(--note-bg)}
+body.mode-notes .nav,body.mode-ndetail .nav{background:var(--note-bg)}
 .nav-btn{flex:1;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.03em;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center}
 .nav-btn:active{transform:scale(.97)}
 body.mode-work .nb-work{background:var(--work-accent);color:#fff}
@@ -250,6 +259,8 @@ body.mode-personal .nb-per{background:var(--per-accent);color:#fff}
 body.mode-personal .nb-work,.nb-per-off{background:var(--per-soft);color:var(--per-muted)}
 body.mode-notes .nb-notes{background:var(--note-accent);color:#fff}
 body.mode-notes .nb-work,body.mode-notes .nb-per{background:#e8e8e6;color:var(--note-muted)}
+body.mode-ndetail .nb-notes{background:var(--note-accent);color:#fff}
+body.mode-ndetail .nb-work,body.mode-ndetail .nb-per{background:#e8e8e6;color:var(--note-muted)}
 body.mode-meetings .nb-work,body.mode-mnotes .nb-work,body.mode-archive .nb-work{background:var(--work-accent);color:#fff}
 body.mode-meetings .nb-notes,body.mode-meetings .nb-per,body.mode-mnotes .nb-notes,body.mode-mnotes .nb-per,body.mode-archive .nb-notes,body.mode-archive .nb-per{background:var(--work-soft);color:var(--work-muted)}
 body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
@@ -473,6 +484,12 @@ window.save=function(){
     </div>
   </div>
 
+  <!-- NOTE DETAIL -->
+  <div class="ndetail-view" id="ndetailView">
+    <div contenteditable="true" class="ndetail-title" id="ndetailTitle" onblur="saveNoteDetail('title',this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ndetailBody').focus();}"></div>
+    <div contenteditable="true" class="ndetail-body" id="ndetailBody" onblur="saveNoteDetail('body',this.innerText)"></div>
+  </div>
+
   <!-- MEETINGS -->
   <div class="mtgs-view" id="meetingsView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
@@ -608,7 +625,7 @@ var S={
   tasks:{work:{priority:[],general:[]},personal:{priority:[],general:[]}},
   archive:{work:[],personal:[]},
   notes:[],meetings:[],nextId:1,
-  currentMode:null,prevTaskMode:'work',activeMtgId:null,
+  currentMode:null,prevTaskMode:'work',activeMtgId:null,activeNoteId:null,
   arcGroup:{work:'day',personal:'day'},
   tm:{mode:null,sec:null,date:null,recur:'once'},
   mm:{date:null,recur:'once',editId:null},
@@ -679,20 +696,22 @@ function goMeetings(){applyMode('meetings');}
 function goArchive(){applyMode(S.prevTaskMode==='personal'?'archive-per':'archive');}
 function goBack(){
   if(S.currentMode==='mnotes')applyMode('meetings');
+  else if(S.currentMode==='ndetail')applyMode('notes');
   else applyMode(S.prevTaskMode);
 }
 function applyMode(m){
   S.currentMode=m;
   document.body.className='mode-'+m;
-  var labels={work:'Work',personal:'Personal',notes:'Notes',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive'};
+  var labels={work:'Work',personal:'Personal',notes:'Notes',ndetail:'Note',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive'};
   document.getElementById('modeLbl').textContent=labels[m]||m;
-  var views={work:'workView',personal:'personalView',notes:'notesView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView'};
+  var views={work:'workView',personal:'personalView',notes:'notesView',ndetail:'ndetailView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView'};
   var keys=Object.keys(views);
   for(var i=0;i<keys.length;i++){
     var el=document.getElementById(views[keys[i]]);
     if(el)el.classList.toggle('active',keys[i]===m);
   }
   document.getElementById('notesView').classList.toggle('active',m==='notes');
+  document.getElementById('ndetailView').classList.toggle('active',m==='ndetail');
   if(m==='work')renderUpcoming();
   if(m==='meetings')renderMtgs();
   if(m==='archive')renderArchive('work');
@@ -1091,8 +1110,28 @@ function delArchive(mode,idx){S.archive[mode].splice(idx,1);renderArchive(mode);
 
 // ── NOTES ────────────────────────────────────────────────────
 function addNote(){
-  S.notes.unshift({id:S.nextId++,title:'',body:''});renderNotes();save();
-  setTimeout(function(){var t=document.querySelectorAll('.note-title');if(t[0])t[0].focus();},50);
+  var id=S.nextId++;
+  S.notes.unshift({id:id,title:'',body:''});
+  save();
+  openNoteDetail(id);
+}
+function openNoteDetail(id){
+  var n=S.notes.find(function(x){return x.id===id;});
+  if(!n)return;
+  S.activeNoteId=id;
+  var titleEl=document.getElementById('ndetailTitle');
+  var bodyEl=document.getElementById('ndetailBody');
+  titleEl.innerText=n.title||'';
+  bodyEl.innerText=n.body||'';
+  applyMode('ndetail');
+  setTimeout(function(){
+    if(!n.title)titleEl.focus();
+    else bodyEl.focus();
+  },50);
+}
+function saveNoteDetail(field,val){
+  var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
+  if(n){n[field]=val.trim();save();renderNotes();}
 }
 function renderNotes(){
   var list=document.getElementById('notesList'),empty=document.getElementById('em-notes');
@@ -1100,33 +1139,27 @@ function renderNotes(){
   for(var ci=0;ci<list.childNodes.length;ci++){if(list.childNodes[ci].id!=='em-notes')toRm.push(list.childNodes[ci]);}
   toRm.forEach(function(c){c.remove();});
   empty.style.display=S.notes.length?'none':'flex';
-  S.notes.forEach(function(n,i){
-    var card=document.createElement('div');card.className='note-card';card.dataset.idx=String(i);
-    card.innerHTML='<div class="note-hdr"><div class="note-dh">&#11815;</div><div class="note-title" contenteditable="true">'+esc(n.title)+'</div><button class="note-del">&#10005;</button></div><div class="note-body" contenteditable="true">'+esc(n.body)+'</div>';
-    (function(i){
-      card.querySelector('.note-title').addEventListener('blur',function(){editNote(i,'title',this.innerText);});
-      card.querySelector('.note-body').addEventListener('blur',function(){editNote(i,'body',this.innerText);});
-      card.querySelector('.note-del').addEventListener('click',function(){delNote(i);});
-      addNoteTouchDrag(card,i);
-    })(i);
-    list.appendChild(card);
+  S.notes.forEach(function(n){
+    var row=document.createElement('div');row.className='note-row';
+    var titleText=n.title&&n.title.trim()?n.title.trim():'Untitled';
+    var isUntitled=!n.title||!n.title.trim();
+    row.innerHTML='<span class="note-row-title'+(isUntitled?' untitled':'")">'+esc(titleText)+'</span><button class="note-row-del">&#10005;</button>';
+    // fix the class attribute — rebuild cleanly
+    var titleEl=row.querySelector('.note-row-title');
+    if(isUntitled)titleEl.className='note-row-title untitled'; else titleEl.className='note-row-title';
+    titleEl.textContent=titleText;
+    (function(nid){
+      row.addEventListener('click',function(e){if(!e.target.classList.contains('note-row-del'))openNoteDetail(nid);});
+      row.querySelector('.note-row-del').addEventListener('click',function(e){e.stopPropagation();delNote(nid);});
+    })(n.id);
+    list.appendChild(row);
   });
 }
-function addNoteTouchDrag(card,idx){
-  var sy=null;
-  card.addEventListener('touchstart',function(e){if(!e.target.classList.contains('note-dh'))return;sy=e.touches[0].clientY;},{passive:true});
-  card.addEventListener('touchend',function(e){
-    if(sy===null)return;
-    var diff=e.changedTouches[0].clientY-sy;sy=null;
-    if(Math.abs(diff)<30)return;
-    var dir=diff>0?1:-1,ni=Math.max(0,Math.min(S.notes.length-1,idx+dir));
-    if(ni===idx)return;
-    var item=S.notes.splice(idx,1)[0];S.notes.splice(ni,0,item);
-    renderNotes();save();
-  },{passive:true});
+function delNote(id){
+  S.notes=S.notes.filter(function(n){return n.id!==id;});
+  renderNotes();save();
+  if(S.currentMode==='ndetail'&&S.activeNoteId===id)applyMode('notes');
 }
-function editNote(i,f,v){if(S.notes[i])S.notes[i][f]=v.trim();save();}
-function delNote(i){S.notes.splice(i,1);renderNotes();save();}
 
 // ── MEETINGS ─────────────────────────────────────────────────
 function openMtgModal(editId){
