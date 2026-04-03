@@ -63,7 +63,6 @@ body.mode-personal .arc-hdr-btn{display:block;background:var(--per-soft);color:v
 .back-btn{display:none;background:var(--work-soft);color:var(--work-accent)}
 body.mode-meetings .back-btn,body.mode-mnotes .back-btn,body.mode-archive .back-btn{display:block}
 body.mode-archive-per .back-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
-body.mode-ndetail .back-btn{display:block;background:#e8e8e6;color:var(--note-accent)}
 .user-pill{display:flex;align-items:center;gap:5px;background:var(--work-soft);border:none;border-radius:20px;padding:4px 8px;cursor:pointer;transition:all var(--t)}
 body.mode-personal .user-pill{background:var(--per-soft)}
 .user-dot{width:7px;height:7px;border-radius:50%;background:var(--work-accent);flex-shrink:0}
@@ -188,8 +187,11 @@ body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-te
 /* NOTE DETAIL VIEW */
 .ndetail-view{display:none;flex-direction:column;height:100%;padding:0 16px}
 .ndetail-view.active{display:flex}
-.ndetail-title{font-size:18px;font-weight:600;color:var(--note-accent);outline:none;margin-bottom:6px;flex-shrink:0;-webkit-user-select:text;user-select:text;border:none;background:transparent;font-family:'DM Sans',sans-serif;width:100%;padding:2px 0}
+.ndetail-hdr{display:flex;align-items:flex-start;gap:10px;flex-shrink:0;margin-bottom:6px}
+.ndetail-title{flex:1;font-size:18px;font-weight:600;color:var(--note-accent);outline:none;-webkit-user-select:text;user-select:text;border:none;background:transparent;font-family:'DM Sans',sans-serif;padding:2px 0;min-height:28px}
 .ndetail-title:empty::before{content:'Untitled';color:var(--note-muted);font-weight:400}
+.ndetail-done{flex-shrink:0;border:none;border-radius:var(--rs);padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--note-accent);color:#fff;transition:all var(--t);margin-top:2px}
+.ndetail-done:active{opacity:.8;transform:scale(.97)}
 .ndetail-body{flex:1;font-size:14px;line-height:1.7;color:var(--note-text);outline:none;overflow-y:auto;white-space:pre-wrap;padding-bottom:20px;scrollbar-width:none;-webkit-user-select:text;user-select:text}
 .ndetail-body::-webkit-scrollbar{display:none}
 .ndetail-body:empty::before{content:'Start writing…';color:var(--note-muted)}
@@ -486,8 +488,11 @@ window.save=function(){
 
   <!-- NOTE DETAIL -->
   <div class="ndetail-view" id="ndetailView">
-    <div contenteditable="true" class="ndetail-title" id="ndetailTitle" onblur="saveNoteDetail('title',this.innerText)" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ndetailBody').focus();}"></div>
-    <div contenteditable="true" class="ndetail-body" id="ndetailBody" onblur="saveNoteDetail('body',this.innerText)"></div>
+    <div class="ndetail-hdr">
+      <div contenteditable="true" class="ndetail-title" id="ndetailTitle" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ndetailBody').focus();}"></div>
+      <button class="ndetail-done" onclick="doneNote()">✓ Done</button>
+    </div>
+    <div contenteditable="true" class="ndetail-body" id="ndetailBody"></div>
   </div>
 
   <!-- MEETINGS -->
@@ -689,6 +694,11 @@ function autoMode(){
   return(day>=1&&day<=5&&mins>=480&&mins<1050)?'work':'personal';
 }
 function switchMode(m){
+  if(S.currentMode==='ndetail'){
+    var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
+    if(n){n.title=document.getElementById('ndetailTitle').innerText.trim();n.body=document.getElementById('ndetailBody').innerText.trim();save();}
+    renderNotes();
+  }
   if(m==='work'||m==='personal')S.prevTaskMode=m;
   applyMode(m);
 }
@@ -696,7 +706,7 @@ function goMeetings(){applyMode('meetings');}
 function goArchive(){applyMode(S.prevTaskMode==='personal'?'archive-per':'archive');}
 function goBack(){
   if(S.currentMode==='mnotes')applyMode('meetings');
-  else if(S.currentMode==='ndetail')applyMode('notes');
+  else if(S.currentMode==='ndetail')doneNote();
   else applyMode(S.prevTaskMode);
 }
 function applyMode(m){
@@ -1129,9 +1139,19 @@ function openNoteDetail(id){
     else bodyEl.focus();
   },50);
 }
+function doneNote(){
+  var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
+  if(n){
+    n.title=document.getElementById('ndetailTitle').innerText.trim();
+    n.body=document.getElementById('ndetailBody').innerText.trim();
+    save();
+  }
+  renderNotes();
+  applyMode('notes');
+}
 function saveNoteDetail(field,val){
   var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
-  if(n){n[field]=val.trim();save();renderNotes();}
+  if(n){n[field]=val.trim();save();}
 }
 function renderNotes(){
   var list=document.getElementById('notesList'),empty=document.getElementById('em-notes');
