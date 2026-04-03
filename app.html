@@ -1143,8 +1143,7 @@ function renderNotes(){
     var row=document.createElement('div');row.className='note-row';
     var titleText=n.title&&n.title.trim()?n.title.trim():'Untitled';
     var isUntitled=!n.title||!n.title.trim();
-    row.innerHTML='<span class="note-row-title'+(isUntitled?' untitled':'")">'+esc(titleText)+'</span><button class="note-row-del">&#10005;</button>';
-    // fix the class attribute — rebuild cleanly
+    row.innerHTML='<span class="note-row-title"></span><button class="note-row-del">&#10005;</button>';
     var titleEl=row.querySelector('.note-row-title');
     if(isUntitled)titleEl.className='note-row-title untitled'; else titleEl.className='note-row-title';
     titleEl.textContent=titleText;
