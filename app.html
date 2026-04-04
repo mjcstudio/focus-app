@@ -428,6 +428,8 @@ body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
 .search-empty-ico{font-size:28px}
 .search-group-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--work-muted);padding:8px 2px 4px;flex-shrink:0}
 .search-result{background:var(--work-surface);border-radius:var(--rs);padding:11px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all var(--t);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.search-result.result-work{border-left:3px solid var(--work-accent);background:var(--work-surface)}
+.search-result.result-personal{border-left:3px solid var(--per-accent);background:var(--per-surface)}
 .search-result:active{opacity:.7}
 .search-result-icon{font-size:14px;flex-shrink:0;margin-top:1px;opacity:.5}
 .search-result-body{flex:1;min-width:0}
@@ -1822,42 +1824,28 @@ function renderSearchResults(query){
 
   var totalCount=0;
 
-  // ── TASKS ──
-  if(showTasks){
-    var taskHits=[];
-    ['work','personal'].forEach(function(mode){
-      ['priority','general'].forEach(function(sec){
-        S.tasks[mode][sec].forEach(function(t){
-          if(doesMatch(t.text,q)||doesMatch(t.note,q)){
-            taskHits.push({t:t,mode:mode,sec:sec});
-          }
-        });
-      });
+  // ── MEETINGS ──
+  if(showMtgs){
+    var mtgHits=S.meetings.filter(function(m){
+      return doesMatch(m.name,q)||doesMatch(m.notes,q);
     });
-    if(taskHits.length){
-      var lbl=document.createElement('div');lbl.className='search-group-label';lbl.textContent='Tasks';list.appendChild(lbl);
-      taskHits.forEach(function(hit){
-        var t=hit.t;
-        var sub=[];
-        if(hit.mode==='work')sub.push('Work · '+(hit.sec==='priority'?'Priority':'General'));
-        else sub.push('Personal · '+(hit.sec==='priority'?'Priority':'General'));
-        if(t.date)sub.push(fmtDue(t.date,t.time));
-        if(t.recur&&t.recur!=='once')sub.push(rL[t.recur]);
-        if(t.note&&t.note.trim()&&doesMatch(t.note,q))sub.push('"'+t.note.trim().slice(0,60)+(t.note.length>60?'…':'')+'"');
+    if(mtgHits.length){
+      var lbl3=document.createElement('div');lbl3.className='search-group-label';lbl3.textContent='Meetings';list.appendChild(lbl3);
+      mtgHits.forEach(function(m){
+        var p=m.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+        var dateStr=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()];
+        var sub=[dateStr];
+        if(m.time)sub.push(m.time);
+        if(m.recur&&m.recur!=='once')sub.push(rL[m.recur]);
+        if(m.archived)sub.push('Archived');
+        if(m.notes&&m.notes.trim()&&doesMatch(m.notes,q))sub.push('"'+m.notes.trim().slice(0,60)+(m.notes.length>60?'…':'')+'"');
         var row=document.createElement('div');row.className='search-result';
-        row.innerHTML='<div class="search-result-icon">'+(t.completed?'☑':'☐')+'</div>'
+        row.innerHTML='<div class="search-result-icon">📅</div>'
           +'<div class="search-result-body">'
-          +'<div class="search-result-title">'+highlight(t.text,q)+'</div>'
-          +(sub.length?'<div class="search-result-sub">'+highlight(sub.join(' · '),q)+'</div>':'')
+          +'<div class="search-result-title">'+highlight(m.name,q)+'</div>'
+          +'<div class="search-result-sub">'+highlight(sub.join(' · '),q)+'</div>'
           +'</div>';
-        (function(m,s,id){row.addEventListener('click',function(){
-          switchMode(m);
-          applyMode(m);
-          setTimeout(function(){
-            var el=document.querySelector('[data-id="'+id+'"]');
-            if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
-          },150);
-        });})(hit.mode,hit.sec,t.id);
+        (function(id){row.addEventListener('click',function(){openMtgNotes(id);});})(m.id);
         list.appendChild(row);
         totalCount++;
       });
@@ -1887,28 +1875,43 @@ function renderSearchResults(query){
     }
   }
 
-  // ── MEETINGS ──
-  if(showMtgs){
-    var mtgHits=S.meetings.filter(function(m){
-      return doesMatch(m.name,q)||doesMatch(m.notes,q);
+  // ── TASKS ──
+  if(showTasks){
+    var taskHits=[];
+    ['work','personal'].forEach(function(mode){
+      ['priority','general'].forEach(function(sec){
+        S.tasks[mode][sec].forEach(function(t){
+          if(doesMatch(t.text,q)||doesMatch(t.note,q)){
+            taskHits.push({t:t,mode:mode,sec:sec});
+          }
+        });
+      });
     });
-    if(mtgHits.length){
-      var lbl3=document.createElement('div');lbl3.className='search-group-label';lbl3.textContent='Meetings';list.appendChild(lbl3);
-      mtgHits.forEach(function(m){
-        var p=m.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
-        var dateStr=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()];
-        var sub=[dateStr];
-        if(m.time)sub.push(m.time);
-        if(m.recur&&m.recur!=='once')sub.push(rL[m.recur]);
-        if(m.archived)sub.push('Archived');
-        if(m.notes&&m.notes.trim()&&doesMatch(m.notes,q))sub.push('"'+m.notes.trim().slice(0,60)+(m.notes.length>60?'…':'')+'"');
-        var row=document.createElement('div');row.className='search-result';
-        row.innerHTML='<div class="search-result-icon">📅</div>'
+    if(taskHits.length){
+      var lbl=document.createElement('div');lbl.className='search-group-label';lbl.textContent='Tasks';list.appendChild(lbl);
+      taskHits.forEach(function(hit){
+        var t=hit.t;
+        var sub=[];
+        if(hit.mode==='work')sub.push('Work · '+(hit.sec==='priority'?'Priority':'General'));
+        else sub.push('Personal · '+(hit.sec==='priority'?'Priority':'General'));
+        if(t.date)sub.push(fmtDue(t.date,t.time));
+        if(t.recur&&t.recur!=='once')sub.push(rL[t.recur]);
+        if(t.note&&t.note.trim()&&doesMatch(t.note,q))sub.push('"'+t.note.trim().slice(0,60)+(t.note.length>60?'…':'')+'"');
+        var row=document.createElement('div');
+        row.className='search-result '+(hit.mode==='work'?'result-work':'result-personal');
+        row.innerHTML='<div class="search-result-icon">'+(t.completed?'☑':'☐')+'</div>'
           +'<div class="search-result-body">'
-          +'<div class="search-result-title">'+highlight(m.name,q)+'</div>'
-          +'<div class="search-result-sub">'+highlight(sub.join(' · '),q)+'</div>'
+          +'<div class="search-result-title">'+highlight(t.text,q)+'</div>'
+          +(sub.length?'<div class="search-result-sub">'+highlight(sub.join(' · '),q)+'</div>':'')
           +'</div>';
-        (function(id){row.addEventListener('click',function(){openMtgNotes(id);});})(m.id);
+        (function(m,s,id){row.addEventListener('click',function(){
+          switchMode(m);
+          applyMode(m);
+          setTimeout(function(){
+            var el=document.querySelector('[data-id="'+id+'"]');
+            if(el)el.scrollIntoView({behavior:'smooth',block:'center'});
+          },150);
+        });})(hit.mode,hit.sec,t.id);
         list.appendChild(row);
         totalCount++;
       });
