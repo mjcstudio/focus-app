@@ -379,21 +379,26 @@ body.mode-archive-per .arc-item-date{color:var(--per-muted)}
 body.mode-work .nav,body.mode-meetings .nav,body.mode-mnotes .nav,body.mode-archive .nav{background:var(--work-bg)}
 body.mode-personal .nav,body.mode-archive-per .nav{background:var(--per-bg)}
 body.mode-notes .nav,body.mode-ndetail .nav{background:var(--note-bg)}
+body.mode-account .nav{background:var(--work-bg)}
 .nav-btn{flex:1;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.03em;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center}
 .nav-btn:active{transform:scale(.97)}
-body.mode-work .nb-work{background:var(--work-accent);color:#fff}
-body.mode-work .nb-notes,.nb-work-off{background:var(--work-soft);color:var(--work-muted)}
-body.mode-personal .nb-per{background:var(--per-accent);color:#fff}
-body.mode-personal .nb-work,.nb-per-off{background:var(--per-soft);color:var(--per-muted)}
-body.mode-notes .nb-notes{background:var(--note-accent);color:#fff}
-body.mode-notes .nb-work,body.mode-notes .nb-per{background:#e8e8e6;color:var(--note-muted)}
+
+/* Fixed identity — each button always its own colour, just muted when inactive */
+.nb-work{background:var(--work-soft);color:var(--work-accent)}
+.nb-notes{background:#e8e8e6;color:var(--note-accent)}
+.nb-per{background:var(--per-soft);color:var(--per-accent)}
+
+/* Active state — solid fill, white text */
+body.mode-work .nb-work,
+body.mode-meetings .nb-work,
+body.mode-mnotes .nb-work,
+body.mode-archive .nb-work{background:var(--work-accent);color:#fff}
+
+body.mode-notes .nb-notes,
 body.mode-ndetail .nb-notes{background:var(--note-accent);color:#fff}
-body.mode-ndetail .nb-work,body.mode-ndetail .nb-per{background:#e8e8e6;color:var(--note-muted)}
-body.mode-meetings .nb-work,body.mode-mnotes .nb-work,body.mode-archive .nb-work{background:var(--work-accent);color:#fff}
-body.mode-meetings .nb-notes,body.mode-meetings .nb-per,body.mode-mnotes .nb-notes,body.mode-mnotes .nb-per,body.mode-archive .nb-notes,body.mode-archive .nb-per{background:var(--work-soft);color:var(--work-muted)}
+
+body.mode-personal .nb-per,
 body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
-body.mode-archive-per .nb-work,body.mode-archive-per .nb-notes{background:var(--per-soft);color:var(--per-muted)}
-body.mode-account .nb-work,body.mode-account .nb-notes,body.mode-account .nb-per{background:var(--work-soft);color:var(--work-muted)}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
