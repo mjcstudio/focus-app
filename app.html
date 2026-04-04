@@ -90,6 +90,8 @@ body.mode-personal .user-dot,body.mode-archive-per .user-dot{background:var(--pe
 body.mode-notes .user-dot,body.mode-ndetail .user-dot{background:var(--note-accent)}
 .user-pill-lbl{font-size:12px;font-weight:500;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+.flex-col{display:flex;flex-direction:column;flex:1;min-width:0}
+
 /* ── ACCOUNT SCREEN ── */
 body.mode-account{background:var(--work-bg);color:var(--work-text)}
 .account-view{display:none;flex-direction:column;height:100%;overflow-y:auto;padding:0 16px 24px;scrollbar-width:none}
@@ -645,7 +647,7 @@ window.save=function(){
       <div class="mnotes-top">
         <div class="mnotes-name" id="mnotesName"></div>
         <div style="display:flex;gap:6px">
-          <button class="hdr-btn" id="mnotesShareBtn" onclick="shareMtgNotes(S.activeMtgId)" style="background:#ede8e0;color:#7c6f5e">Share</button>
+          <button class="hdr-btn" id="mnotesShareBtn" onclick="shareMtgNotes(S.activeMtgId)" style="background:var(--work-soft);color:var(--work-accent)">Share</button>
           <button class="hdr-btn back-btn" style="display:block" onclick="openMtgModal(window._editMtgId)">Edit</button>
         </div>
       </div>
@@ -995,7 +997,12 @@ function goBack(){
 function applyMode(m){
   closeAllTaskNotes();
   S.currentMode=m;
-  document.body.className='mode-'+m;
+  // Preserve theme and dark classes — only replace the mode-* class
+  var classes=document.body.className.split(' ').filter(function(c){
+    return c.indexOf('mode-')!==0;
+  });
+  classes.push('mode-'+m);
+  document.body.className=classes.join(' ');
   var labels={work:'Work',personal:'Personal',notes:'Notes',ndetail:'Note',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive',account:'Account'};
   document.getElementById('modeLbl').textContent=labels[m]||m;
   var views={work:'workView',personal:'personalView',notes:'notesView',ndetail:'ndetailView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView',account:'accountView'};
