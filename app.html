@@ -13,15 +13,137 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --work-bg:#f5f2ee;--work-surface:#fff;--work-accent:#7c6f5e;--work-soft:#ede8e0;
-  --work-text:#2a2118;--work-muted:#9a8d7e;--work-div:#ddd6cb;--work-gen:#ede8e0;
-  --per-bg:#f0f4f8;--per-surface:#fff;--per-accent:#2d6a9f;--per-soft:#e8f0f8;
-  --per-text:#1a2733;--per-muted:#6b8299;--per-div:#d0dce8;--per-gen:#e8f0f8;
-  --note-bg:#f7f7f5;--note-surface:#fff;--note-accent:#4a4a48;--note-text:#1a1a18;--note-muted:#888886;
   --overdue:#c0392b;--overdue-bg:#fdf0ee;--soon:#b07d2a;
   --r:12px;--rs:8px;--nav:68px;--t:.2s ease
 }
 html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+
+/* ── THEMES ── */
+body.theme-warm{
+  --work-bg:#f5f2ee;--work-surface:#fff;--work-accent:#7c6f5e;--work-soft:#ede8e0;--work-text:#2a2118;--work-muted:#9a8d7e;--work-div:#ddd6cb;--work-gen:#ede8e0;
+  --per-bg:#f0f4f8;--per-surface:#fff;--per-accent:#2d6a9f;--per-soft:#e8f0f8;--per-text:#1a2733;--per-muted:#6b8299;--per-div:#d0dce8;--per-gen:#e8f0f8;
+  --note-bg:#f7f7f5;--note-surface:#fff;--note-accent:#4a4a48;--note-text:#1a1a18;--note-muted:#888886;
+}
+body.theme-forest{
+  --work-bg:#f0f4f0;--work-surface:#fff;--work-accent:#3d6e4e;--work-soft:#deeee4;--work-text:#1a2e20;--work-muted:#6a927a;--work-div:#c8ddd0;--work-gen:#deeee4;
+  --per-bg:#f0f6f5;--per-surface:#fff;--per-accent:#2a7a72;--per-soft:#d8ecea;--per-text:#132624;--per-muted:#5a8a85;--per-div:#c0d8d5;--per-gen:#d8ecea;
+  --note-bg:#f5f6f2;--note-surface:#fff;--note-accent:#4a5240;--note-text:#1a1e18;--note-muted:#848c7a;
+}
+body.theme-slate{
+  --work-bg:#f0f1f5;--work-surface:#fff;--work-accent:#3d4e72;--work-soft:#dde0ee;--work-text:#1a1e2e;--work-muted:#6a7290;--work-div:#c8cce0;--work-gen:#dde0ee;
+  --per-bg:#f3f0f8;--per-surface:#fff;--per-accent:#6b4e9f;--per-soft:#e8e0f5;--per-text:#221833;--per-muted:#8a72aa;--per-div:#d5cce8;--per-gen:#e8e0f5;
+  --note-bg:#f5f5f7;--note-surface:#fff;--note-accent:#484858;--note-text:#18181e;--note-muted:#888898;
+}
+body.theme-rose{
+  --work-bg:#f8f2f3;--work-surface:#fff;--work-accent:#8e4a5a;--work-soft:#f0dde1;--work-text:#2e1a1e;--work-muted:#a07080;--work-div:#e0c8ce;--work-gen:#f0dde1;
+  --per-bg:#fdf4f0;--per-surface:#fff;--per-accent:#b05a38;--per-soft:#f5e2d8;--per-text:#2e1a10;--per-muted:#a07060;--per-div:#e8d0c4;--per-gen:#f5e2d8;
+  --note-bg:#faf7f5;--note-surface:#fff;--note-accent:#584840;--note-text:#1e1815;--note-muted:#a09088;
+}
+body.theme-ocean{
+  --work-bg:#eef4f6;--work-surface:#fff;--work-accent:#2a6e82;--work-soft:#d8edf2;--work-text:#0e2830;--work-muted:#5a8e9e;--work-div:#c0dce5;--work-gen:#d8edf2;
+  --per-bg:#eef2f8;--per-surface:#fff;--per-accent:#2a52a0;--per-soft:#d8e4f5;--per-text:#0e1830;--per-muted:#5a72b0;--per-div:#c0d0e8;--per-gen:#d8e4f5;
+  --note-bg:#f2f5f7;--note-surface:#fff;--note-accent:#3a5060;--note-text:#101820;--note-muted:#7090a0;
+}
+
+/* ── DARK MODE ── */
+body.dark.theme-warm{
+  --work-bg:#1e1a16;--work-surface:#2a2420;--work-accent:#c4a882;--work-soft:#2e2820;--work-text:#f0ebe4;--work-muted:#8a7a6a;--work-div:#3a3028;--work-gen:#252018;
+  --per-bg:#141a22;--per-surface:#1e2830;--per-accent:#6aabdb;--per-soft:#1a2430;--per-text:#e0eaf5;--per-muted:#6080a0;--per-div:#2a3845;--per-gen:#181e28;
+  --note-bg:#1a1a18;--note-surface:#242420;--note-accent:#c8c8c0;--note-text:#e8e8e0;--note-muted:#707068;
+}
+body.dark.theme-forest{
+  --work-bg:#141e16;--work-surface:#1e2c20;--work-accent:#72c48a;--work-soft:#1a2e1e;--work-text:#e0f0e4;--work-muted:#608a70;--work-div:#2a3e2e;--work-gen:#162018;
+  --per-bg:#121e1e;--per-surface:#1a2c2c;--per-accent:#5ac4ba;--per-soft:#162828;--per-text:#d8eeec;--per-muted:#508880;--per-div:#263838;--per-gen:#141e1e;
+  --note-bg:#181a14;--note-surface:#22241e;--note-accent:#b0ba98;--note-text:#e4e8d8;--note-muted:#80886a;
+}
+body.dark.theme-slate{
+  --work-bg:#141620;--work-surface:#1e2230;--work-accent:#8a9ed0;--work-soft:#1e2238;--work-text:#e0e4f5;--work-muted:#6070a0;--work-div:#2a2e48;--work-gen:#161828;
+  --per-bg:#1a1424;--per-surface:#261e36;--per-accent:#b090e0;--per-soft:#221a38;--per-text:#ede0ff;--per-muted:#8868b8;--per-div:#342848;--per-gen:#1a1428;
+  --note-bg:#181820;--note-surface:#22222e;--note-accent:#b0b0cc;--note-text:#e4e4f0;--note-muted:#808098;
+}
+body.dark.theme-rose{
+  --work-bg:#201416;--work-surface:#2e1e22;--work-accent:#e09aaa;--work-soft:#301820;--work-text:#f5e4e8;--work-muted:#a06878;--work-div:#402830;--work-gen:#221618;
+  --per-bg:#201410;--per-surface:#2e1e18;--per-accent:#e09070;--per-soft:#301a14;--per-text:#f5e8e0;--per-muted:#a07060;--per-div:#402e25;--per-gen:#221510;
+  --note-bg:#1e1816;--note-surface:#2a2420;--note-accent:#c8b0a8;--note-text:#f0e8e4;--note-muted:#a09088;
+}
+body.dark.theme-ocean{
+  --work-bg:#101e22;--work-surface:#182c32;--work-accent:#6ac4e0;--work-soft:#142830;--work-text:#d8f0f8;--work-muted:#508898;--work-div:#203840;--work-gen:#122028;
+  --per-bg:#101828;--per-surface:#182438;--per-accent:#6a92e0;--per-soft:#142030;--per-text:#d8e4f8;--per-muted:#5070b0;--per-div:#202e48;--per-gen:#101828;
+  --note-bg:#141820;--note-surface:#1e2430;--note-accent:#90b0c8;--note-text:#d8e4f0;--note-muted:#6088a0;
+}
+
+/* ── FONT SIZES ── */
+body[data-fs="small"] .task-txt,body[data-fs="small"] .note-row-title,body[data-fs="small"] .mtg-name{font-size:12px}
+body[data-fs="small"] .sec-lbl,body[data-fs="small"] .mode-lbl{font-size:10px}
+body[data-fs="large"] .task-txt,body[data-fs="large"] .note-row-title,body[data-fs="large"] .mtg-name{font-size:16px}
+body[data-fs="large"] .task-card{padding:13px 12px}
+body[data-fs="large"] .sec-lbl,body[data-fs="large"] .mode-lbl{font-size:13px}
+
+/* ── USER PILL ── */
+.user-pill{display:flex;align-items:center;gap:5px;border:none;border-radius:20px;padding:4px 10px 4px 6px;cursor:pointer;transition:all var(--t);font-family:'DM Sans',sans-serif}
+body.mode-work .user-pill,body.mode-meetings .user-pill,body.mode-mnotes .user-pill,body.mode-archive .user-pill,body.mode-account .user-pill{background:var(--work-soft);color:var(--work-accent)}
+body.mode-personal .user-pill,body.mode-archive-per .user-pill{background:var(--per-soft);color:var(--per-accent)}
+body.mode-notes .user-pill,body.mode-ndetail .user-pill{background:#e8e8e6;color:var(--note-accent)}
+.user-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+body.mode-work .user-dot,body.mode-meetings .user-dot,body.mode-mnotes .user-dot,body.mode-archive .user-dot,body.mode-account .user-dot{background:var(--work-accent)}
+body.mode-personal .user-dot,body.mode-archive-per .user-dot{background:var(--per-accent)}
+body.mode-notes .user-dot,body.mode-ndetail .user-dot{background:var(--note-accent)}
+.user-pill-lbl{font-size:12px;font-weight:500;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── ACCOUNT SCREEN ── */
+body.mode-account{background:var(--work-bg);color:var(--work-text)}
+.account-view{display:none;flex-direction:column;height:100%;overflow-y:auto;padding:0 16px 24px;scrollbar-width:none}
+.account-view::-webkit-scrollbar{display:none}
+.account-view.active{display:flex}
+.acc-section{margin-bottom:24px}
+.acc-section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--work-muted);padding:16px 4px 10px;flex-shrink:0}
+.acc-card{background:var(--work-surface);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.acc-row{display:flex;align-items:center;padding:13px 16px;gap:12px;border-bottom:1px solid var(--work-div)}
+.acc-row:last-child{border-bottom:none}
+.acc-row-icon{font-size:18px;flex-shrink:0;width:24px;text-align:center}
+.acc-row-label{flex:1;font-size:14px;font-weight:500;color:var(--work-text)}
+.acc-row-sub{font-size:12px;color:var(--work-muted);margin-top:1px}
+.acc-row-right{flex-shrink:0;display:flex;align-items:center;gap:8px}
+.acc-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.acc-toggle input{opacity:0;width:0;height:0;position:absolute}
+.acc-toggle-sl{position:absolute;inset:0;background:var(--work-div);border-radius:12px;cursor:pointer;transition:.25s}
+.acc-toggle-sl::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.acc-toggle input:checked+.acc-toggle-sl{background:var(--work-accent)}
+.acc-toggle input:checked+.acc-toggle-sl::before{transform:translateX(20px)}
+.acc-btn{border:none;border-radius:var(--rs);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all var(--t)}
+.acc-btn.pri{background:var(--work-accent);color:#fff}
+.acc-btn.sec{background:var(--work-soft);color:var(--work-accent)}
+.acc-btn.danger{background:#fdf0ee;color:#c0392b}
+.acc-btn:active{opacity:.8;transform:scale(.97)}
+.acc-select{border:1.5px solid var(--work-div);border-radius:var(--rs);padding:5px 10px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--work-surface);color:var(--work-text);cursor:pointer;outline:none}
+
+/* Theme picker */
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px 16px}
+.theme-swatch{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:6px 4px;border-radius:var(--rs);transition:all var(--t)}
+.theme-swatch:active{opacity:.7}
+.theme-swatch.sel{background:var(--work-soft)}
+.theme-dots{display:flex;gap:3px}
+.theme-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,0,0,.08)}
+.theme-name{font-size:10px;font-weight:500;color:var(--work-muted);text-align:center}
+.theme-swatch.sel .theme-name{color:var(--work-accent);font-weight:700}
+
+/* Work days picker */
+.day-picker{display:flex;gap:6px;flex-wrap:wrap;padding:12px 16px}
+.day-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--work-div);background:var(--work-surface);color:var(--work-muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center}
+.day-btn.sel{background:var(--work-accent);border-color:var(--work-accent);color:#fff}
+.day-btn:active{transform:scale(.93)}
+
+/* Work hours */
+.hours-row{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.hours-sep{font-size:13px;color:var(--work-muted)}
+.hours-inp{width:72px;border:1.5px solid var(--work-div);border-radius:var(--rs);padding:6px 8px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--work-text);background:var(--work-surface);outline:none;text-align:center}
+.hours-inp:focus{border-color:var(--work-accent)}
+
+/* Info section */
+.acc-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--work-div);border-radius:var(--r);overflow:hidden}
+.acc-info-cell{background:var(--work-surface);padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+.acc-info-val{font-size:22px;font-weight:600;color:var(--work-accent)}
+.acc-info-lbl{font-size:11px;color:var(--work-muted);font-weight:500;letter-spacing:.04em}
 body{display:flex;flex-direction:column;height:100dvh;transition:background .3s}
 body.mode-work{background:var(--work-bg);color:var(--work-text)}
 body.mode-personal{background:var(--per-bg);color:var(--per-text)}
@@ -269,6 +391,7 @@ body.mode-meetings .nb-work,body.mode-mnotes .nb-work,body.mode-archive .nb-work
 body.mode-meetings .nb-notes,body.mode-meetings .nb-per,body.mode-mnotes .nb-notes,body.mode-mnotes .nb-per,body.mode-archive .nb-notes,body.mode-archive .nb-per{background:var(--work-soft);color:var(--work-muted)}
 body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
 body.mode-archive-per .nb-work,body.mode-archive-per .nb-notes{background:var(--per-soft);color:var(--per-muted)}
+body.mode-account .nb-work,body.mode-account .nb-notes,body.mode-account .nb-per{background:var(--work-soft);color:var(--work-muted)}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -335,8 +458,10 @@ let uid=null,unsub=null,saveTimer=null;
 onAuthStateChanged(auth,user=>{
   if(user){
     uid=user.uid;
+    window._focusUserName=user.displayName||'';
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('mainApp').style.display='flex';
+    renderUserPill();
     startSync();
     if(typeof reqNotif==='function')reqNotif();
   }else{
@@ -360,6 +485,8 @@ function startSync(){
       if(d.meetings)S.meetings=d.meetings;
       if(d.archive)S.archive=d.archive;
       if(d.nextId)S.nextId=d.nextId;
+      if(d.prefs)S.prefs=Object.assign(S.prefs,d.prefs);
+      if(typeof applyPrefs==='function')applyPrefs();
       if(typeof archivePast==='function')archivePast();
       if(typeof renderAll==='function')renderAll();
     }
@@ -370,7 +497,7 @@ window.save=function(){
   if(!uid)return;
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async function(){
-    try{await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,meetings:S.meetings,archive:S.archive,nextId:S.nextId,updatedAt:new Date().toISOString()});}
+    try{await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,meetings:S.meetings,archive:S.archive,nextId:S.nextId,prefs:S.prefs,updatedAt:new Date().toISOString()});}
     catch(e){console.error('Save failed:',e);}
   },800);
 };
@@ -396,6 +523,10 @@ window.save=function(){
       <button class="hdr-btn arc-hdr-btn" onclick="goArchive()">Archive</button>
       <button class="hdr-btn back-btn" onclick="goBack()">← Back</button>
       <button class="flip-btn" id="flipBtn" onclick="flipScreen()" title="Flip screen">⇅</button>
+      <button class="user-pill" id="userPill" onclick="switchMode('account')" title="Account">
+        <span class="user-dot"></span>
+        <span class="user-pill-lbl" id="userPillLbl">Me</span>
+      </button>
     </div>
   </div>
 </div>
@@ -513,11 +644,14 @@ window.save=function(){
     <div class="mnotes-hdr">
       <div class="mnotes-top">
         <div class="mnotes-name" id="mnotesName"></div>
-        <button class="hdr-btn back-btn" style="display:block" onclick="openMtgModal(window._editMtgId)">Edit</button>
+        <div style="display:flex;gap:6px">
+          <button class="hdr-btn" id="mnotesShareBtn" onclick="shareMtgNotes(S.activeMtgId)" style="background:#ede8e0;color:#7c6f5e">Share</button>
+          <button class="hdr-btn back-btn" style="display:block" onclick="openMtgModal(window._editMtgId)">Edit</button>
+        </div>
       </div>
       <div class="mnotes-meta" id="mnotesMeta"></div>
     </div>
-    <div class="mnotes-body" id="mnotesBody" contenteditable="true" onblur="saveMtgNotes(this.innerText)"></div>
+    <div class="mnotes-body" id="mnotesBody" contenteditable="true" onblur="saveMtgNotes(this.innerText)" oninput="debounceSaveMtgNotes(this.innerText)"></div>
   </div>
 
   <!-- WORK ARCHIVE -->
@@ -539,6 +673,142 @@ window.save=function(){
     </div>
     <div class="arc-list" id="arcPerList"></div>
   </div>
+
+  <!-- ACCOUNT -->
+  <div class="account-view" id="accountView">
+
+    <!-- DISPLAY -->
+    <div class="acc-section">
+      <div class="acc-section-title">Display</div>
+      <div class="acc-card">
+        <div class="acc-row">
+          <div class="acc-row-icon">🌙</div>
+          <div class="flex-col"><div class="acc-row-label">Dark mode</div></div>
+          <div class="acc-row-right">
+            <label class="acc-toggle"><input type="checkbox" id="prefDark" onchange="setPref('darkMode',this.checked)"><span class="acc-toggle-sl"></span></label>
+          </div>
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">🎨</div>
+          <div class="flex-col"><div class="acc-row-label">Theme</div></div>
+        </div>
+        <div class="theme-grid">
+          <div class="theme-swatch" data-theme="warm" onclick="setTheme('warm')">
+            <div class="theme-dots"><div class="theme-dot" style="background:#7c6f5e"></div><div class="theme-dot" style="background:#2d6a9f"></div></div>
+            <div class="theme-name">Warm</div>
+          </div>
+          <div class="theme-swatch" data-theme="forest" onclick="setTheme('forest')">
+            <div class="theme-dots"><div class="theme-dot" style="background:#3d6e4e"></div><div class="theme-dot" style="background:#2a7a72"></div></div>
+            <div class="theme-name">Forest</div>
+          </div>
+          <div class="theme-swatch" data-theme="slate" onclick="setTheme('slate')">
+            <div class="theme-dots"><div class="theme-dot" style="background:#3d4e72"></div><div class="theme-dot" style="background:#6b4e9f"></div></div>
+            <div class="theme-name">Slate</div>
+          </div>
+          <div class="theme-swatch" data-theme="rose" onclick="setTheme('rose')">
+            <div class="theme-dots"><div class="theme-dot" style="background:#8e4a5a"></div><div class="theme-dot" style="background:#b05a38"></div></div>
+            <div class="theme-name">Rose</div>
+          </div>
+          <div class="theme-swatch" data-theme="ocean" onclick="setTheme('ocean')">
+            <div class="theme-dots"><div class="theme-dot" style="background:#2a6e82"></div><div class="theme-dot" style="background:#2a52a0"></div></div>
+            <div class="theme-name">Ocean</div>
+          </div>
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">🔤</div>
+          <div class="flex-col"><div class="acc-row-label">Text size</div></div>
+          <div class="acc-row-right">
+            <select class="acc-select" id="prefFontSize" onchange="setPref('fontSize',this.value)">
+              <option value="small">Small</option>
+              <option value="medium" selected>Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEHAVIOUR -->
+    <div class="acc-section">
+      <div class="acc-section-title">Behaviour</div>
+      <div class="acc-card">
+        <div class="acc-row">
+          <div class="acc-row-icon">📅</div>
+          <div class="flex-col"><div class="acc-row-label">Work days</div></div>
+        </div>
+        <div class="day-picker">
+          <button class="day-btn" data-day="1" onclick="toggleWorkDay(1)">M</button>
+          <button class="day-btn" data-day="2" onclick="toggleWorkDay(2)">T</button>
+          <button class="day-btn" data-day="3" onclick="toggleWorkDay(3)">W</button>
+          <button class="day-btn" data-day="4" onclick="toggleWorkDay(4)">T</button>
+          <button class="day-btn" data-day="5" onclick="toggleWorkDay(5)">F</button>
+          <button class="day-btn" data-day="6" onclick="toggleWorkDay(6)">S</button>
+          <button class="day-btn" data-day="0" onclick="toggleWorkDay(0)">S</button>
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">🕐</div>
+          <div class="flex-col"><div class="acc-row-label">Work hours</div></div>
+        </div>
+        <div class="hours-row">
+          <input class="hours-inp" type="time" id="prefWorkStart" onchange="setWorkHours()">
+          <span class="hours-sep">to</span>
+          <input class="hours-inp" type="time" id="prefWorkEnd" onchange="setWorkHours()">
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">📁</div>
+          <div class="flex-col"><div class="acc-row-label">Meeting history</div><div class="acc-row-sub">Keep archived meeting notes for</div></div>
+          <div class="acc-row-right">
+            <select class="acc-select" id="prefMtgRetention" onchange="setPref('meetingRetention',parseInt(this.value))">
+              <option value="90">3 months</option>
+              <option value="180" selected>6 months</option>
+              <option value="365">1 year</option>
+              <option value="0">Forever</option>
+            </select>
+          </div>
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">✅</div>
+          <div class="flex-col"><div class="acc-row-label">Auto-archive tasks</div><div class="acc-row-sub">Move completed tasks to archive at midnight</div></div>
+          <div class="acc-row-right">
+            <label class="acc-toggle"><input type="checkbox" id="prefAutoArchive" checked onchange="setPref('autoArchive',this.checked)"><span class="acc-toggle-sl"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UTILITIES -->
+    <div class="acc-section">
+      <div class="acc-section-title">Utilities</div>
+      <div class="acc-card">
+        <div class="acc-row">
+          <div class="acc-row-icon">💾</div>
+          <div class="flex-col"><div class="acc-row-label">Export backup</div><div class="acc-row-sub" id="lastBackupLbl">Never backed up</div></div>
+          <div class="acc-row-right"><button class="acc-btn pri" onclick="exportBackup()">Export</button></div>
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">📂</div>
+          <div class="flex-col"><div class="acc-row-label">Import backup</div><div class="acc-row-sub">Restore from a saved file</div></div>
+          <div class="acc-row-right">
+            <button class="acc-btn sec" onclick="document.getElementById('importFileInput').click()">Import</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importBackup(this)">
+          </div>
+        </div>
+        <div class="acc-row">
+          <div class="acc-row-icon">🚪</div>
+          <div class="flex-col"><div class="acc-row-label">Sign out</div></div>
+          <div class="acc-row-right"><button class="acc-btn danger" onclick="confirmSignOut()">Sign out</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFORMATION -->
+    <div class="acc-section">
+      <div class="acc-section-title">Information</div>
+      <div class="acc-info-grid" id="accInfoGrid"></div>
+    </div>
+
+  </div>
+
 </div>
 
 <nav class="nav">
@@ -634,13 +904,20 @@ var S={
   notes:[],meetings:[],nextId:1,
   currentMode:null,prevTaskMode:'work',activeMtgId:null,activeNoteId:null,
   arcGroup:{work:'day',personal:'day'},
-  tm:{mode:null,sec:null,date:null,recur:'once'},
+  tm:{mode:null,sec:null,date:null,recur:'once',targetId:null},
   mm:{date:null,recur:'once',editId:null},
-  taskCalMo:new Date(),mtgCalMo:new Date()
+  taskCalMo:new Date(),mtgCalMo:new Date(),
+  prefs:{
+    darkMode:false,theme:'warm',fontSize:'medium',
+    workDays:[1,2,3,4,5],workStart:480,workEnd:1050,
+    meetingRetention:180,autoArchive:true,lastBackup:null
+  }
 };
 
 // ── PERSIST ───────────────────────────────────────────────────
-if(typeof save==='undefined')window.save=function(){localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId}));};
+if(typeof save==='undefined')window.save=function(){
+  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
+};
 function load(){
   try{
     var d=JSON.parse(localStorage.getItem('focus-v3')||localStorage.getItem('focus-v2')||'null');
@@ -650,7 +927,8 @@ function load(){
     if(d.meetings)S.meetings=d.meetings;
     if(d.nextId)S.nextId=d.nextId;
     if(d.archive)S.archive=d.archive;
-  }catch(e){}
+    if(d.prefs)S.prefs=Object.assign(S.prefs,d.prefs);
+  }catch(e){console.error('Focus: failed to load local data',e);}
 }
 
 function reqNotif(){if('Notification'in window&&Notification.permission==='default')Notification.requestPermission();}
@@ -693,7 +971,10 @@ function nextRecur(iso,recur){
 // ── MODE ──────────────────────────────────────────────────────
 function autoMode(){
   var n=new Date(),day=n.getDay(),mins=n.getHours()*60+n.getMinutes();
-  return(day>=1&&day<=5&&mins>=480&&mins<1050)?'work':'personal';
+  var days=S.prefs.workDays||[1,2,3,4,5];
+  var start=S.prefs.workStart!==undefined?S.prefs.workStart:480;
+  var end=S.prefs.workEnd!==undefined?S.prefs.workEnd:1050;
+  return(days.indexOf(day)!==-1&&mins>=start&&mins<end)?'work':'personal';
 }
 function switchMode(m){
   if(S.currentMode==='ndetail'){
@@ -715,9 +996,9 @@ function applyMode(m){
   closeAllTaskNotes();
   S.currentMode=m;
   document.body.className='mode-'+m;
-  var labels={work:'Work',personal:'Personal',notes:'Notes',ndetail:'Note',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive'};
+  var labels={work:'Work',personal:'Personal',notes:'Notes',ndetail:'Note',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive',account:'Account'};
   document.getElementById('modeLbl').textContent=labels[m]||m;
-  var views={work:'workView',personal:'personalView',notes:'notesView',ndetail:'ndetailView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView'};
+  var views={work:'workView',personal:'personalView',notes:'notesView',ndetail:'ndetailView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView',account:'accountView'};
   var keys=Object.keys(views);
   for(var i=0;i<keys.length;i++){
     var el=document.getElementById(views[keys[i]]);
@@ -729,6 +1010,7 @@ function applyMode(m){
   if(m==='meetings')renderMtgs();
   if(m==='archive')renderArchive('work');
   if(m==='archive-per')renderArchive('personal');
+  if(m==='account')renderAccount();
 }
 function initMode(){applyMode(autoMode());}
 
@@ -755,7 +1037,7 @@ function renderUpcoming(){
     return;
   }
   var now=Date.now(),ts=mtgTs(n);
-  var minsToStart=Math.round((ts-now)/60000);
+  var minsToStart=Math.max(0,Math.round((ts-now)/60000));
   var started=ts<=now; // past start time but within 10-min archive window
   var soon=!started&&minsToStart<=10; // within 10 mins before start
   if(upEl)upEl.classList.toggle('meeting-soon',soon||started);
@@ -809,13 +1091,6 @@ function doAdd(mode,sec){
   renderTasks(mode,sec);save();
 }
 
-function toggleTask(mode,sec,i){
-  var t=S.tasks[mode][sec][i];
-  if(!t)return;
-  t.completed=!t.completed;
-  if(t.completed&&t.recur!=='once'&&t.date){t.date=nextRecur(t.date,t.recur);t.completed=false;}
-  renderTasks(mode,sec);updateClearBtn(mode);save();
-}
 function toggleTaskById(mode,sec,id){
   var t=S.tasks[mode][sec].find(function(x){return x.id===id;});
   if(!t)return;
@@ -849,13 +1124,6 @@ function startEditTask(btn){
   txt.contentEditable='true';txt.classList.add('editing');txt.focus();
   var range=document.createRange(),sel=window.getSelection();
   range.selectNodeContents(txt);range.collapse(false);sel.removeAllRanges();sel.addRange(range);
-}
-function editTask(mode,sec,i,text){
-  var t=text.trim();
-  var card=document.querySelector('[data-mode="'+mode+'"][data-sec="'+sec+'"][data-tidx="'+i+'"] .task-txt');
-  if(card){card.contentEditable='false';card.classList.remove('editing');}
-  if(!t){delTask(mode,sec,i);return;}
-  S.tasks[mode][sec][i].text=t;save();
 }
 function closeAllTaskNotes(){
   var areas=document.querySelectorAll('.task-note-area.open');
@@ -910,11 +1178,7 @@ function toggleTaskNote(mode,sec,tid,btn){
     document.addEventListener('mousedown',outside,true);
   },100);
 }
-function saveTaskNote(mode,sec,i,val){
-  if(S.tasks[mode]&&S.tasks[mode][sec]&&S.tasks[mode][sec][i])S.tasks[mode][sec][i].note=val;
-  save();
-}
-function delTask(mode,sec,i){S.tasks[mode][sec].splice(i,1);renderTasks(mode,sec);save();}
+function delTask(mode,sec,id){delTaskById(mode,sec,id);}
 function hasCompleted(mode){return S.tasks[mode].priority.some(function(t){return t.completed;})||S.tasks[mode].general.some(function(t){return t.completed;});}
 function updateClearBtn(mode){var btn=document.getElementById('clr-'+mode);if(btn)btn.classList.toggle('on',hasCompleted(mode));}
 function clearCompleted(mode){
@@ -1038,11 +1302,16 @@ function renderTasks(mode,sec){
 function renderAll(){
   ['work','personal'].forEach(function(m){['priority','general'].forEach(function(s){renderTasks(m,s);});});
   renderNotes();renderUpcoming();
+  if(S.currentMode==='meetings')renderMtgs();
 }
 
 // ── TASK DATE MODAL ──────────────────────────────────────────
 function openTaskModal(mode,sec){
-  S.tm={mode:mode,sec:sec,date:null,recur:'once'};
+  S.tm={mode:mode,sec:sec,date:null,recur:'once',targetId:null};
+  // Capture the ID of the last undated task right now, not at confirm time
+  var tasks=S.tasks[mode][sec];
+  for(var i=tasks.length-1;i>=0;i--){if(!tasks[i].date){S.tm.targetId=tasks[i].id;break;}}
+  if(S.tm.targetId===null&&tasks.length)S.tm.targetId=tasks[tasks.length-1].id;
   var pills=document.querySelectorAll('#taskPills .pill');
   for(var i=0;i<pills.length;i++)pills[i].classList.toggle('sel',pills[i].dataset.v==='once');
   document.getElementById('taskTimeTog').checked=false;
@@ -1055,12 +1324,11 @@ function confirmTaskDate(){
   if(!S.tm.date){closeTaskModal();return;}
   var hasTime=document.getElementById('taskTimeTog').checked;
   var timeStr=hasTime?String(getDrumVal('drumTaskH')).padStart(2,'0')+':'+String(getDrumVal('drumTaskM')).padStart(2,'0'):null;
-  var tasks=S.tasks[S.tm.mode][S.tm.sec];
-  var applied=false;
-  for(var i=tasks.length-1;i>=0;i--){
-    if(!tasks[i].date){tasks[i].date=S.tm.date;tasks[i].time=timeStr;tasks[i].recur=S.tm.recur;if(timeStr)schedNotif(tasks[i].text,'Task due now',S.tm.date,timeStr);applied=true;break;}
+  var task=S.tasks[S.tm.mode][S.tm.sec].find(function(t){return t.id===S.tm.targetId;});
+  if(task){
+    task.date=S.tm.date;task.time=timeStr;task.recur=S.tm.recur;
+    if(timeStr)schedNotif(task.text,'Task due now',S.tm.date,timeStr);
   }
-  if(!applied&&tasks.length){tasks[tasks.length-1].date=S.tm.date;tasks[tasks.length-1].time=timeStr;tasks[tasks.length-1].recur=S.tm.recur;}
   closeTaskModal();renderTasks(S.tm.mode,S.tm.sec);save();
 }
 
@@ -1170,7 +1438,7 @@ function renderArchive(mode){
   var group=S.arcGroup[mode]||'day',groups={};
   var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var MOSL=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  items.forEach(function(item,idx){
+  items.forEach(function(item){
     var dp=item.completedDate.split('-'),d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
     var key,label;
     if(group==='day'){key=item.completedDate;label=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()]+' '+d.getFullYear();}
@@ -1181,21 +1449,21 @@ function renderArchive(mode){
       label=mon.getDate()+' '+MOS[mon.getMonth()]+' \u2013 '+sun.getDate()+' '+MOS[sun.getMonth()];
     }else{key=dp[0]+'-'+dp[1];label=MOSL[d.getMonth()]+' '+d.getFullYear();}
     if(!groups[key])groups[key]={label:label,items:[]};
-    groups[key].items.push({item:item,idx:idx});
+    groups[key].items.push(item);
   });
   Object.keys(groups).forEach(function(k){
     var g=groups[k];
     var lbl=document.createElement('div');lbl.className='arc-group-label';lbl.textContent=g.label;list.appendChild(lbl);
-    g.items.forEach(function(x){
+    g.items.forEach(function(item){
       var row=document.createElement('div');row.className='arc-item';
-      var dp=x.item.completedDate.split('-'),d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-      row.innerHTML='<span class="arc-item-txt">'+esc(x.item.text)+'</span><span class="arc-item-date">'+d.getDate()+' '+MOS[d.getMonth()]+'</span><button class="arc-del">✕</button>';
-      (function(idx){row.querySelector('.arc-del').addEventListener('click',function(){delArchive(mode,idx);});})(x.idx);
+      var dp=item.completedDate.split('-'),d=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+      row.innerHTML='<span class="arc-item-txt">'+esc(item.text)+'</span><span class="arc-item-date">'+d.getDate()+' '+MOS[d.getMonth()]+'</span><button class="arc-del">✕</button>';
+      (function(id){row.querySelector('.arc-del').addEventListener('click',function(){delArchive(mode,id);});})(item.id);
       list.appendChild(row);
     });
   });
 }
-function delArchive(mode,idx){S.archive[mode].splice(idx,1);renderArchive(mode);save();}
+function delArchive(mode,id){S.archive[mode]=S.archive[mode].filter(function(x){return x.id!==id;});renderArchive(mode);save();}
 
 // ── NOTES ────────────────────────────────────────────────────
 function addNote(){
@@ -1297,9 +1565,12 @@ function confirmMtg(){
 function archivePast(){
   var now=Date.now();
   var toProcess=S.meetings.filter(function(m){return!m.archived&&mtgTs(m)<now-600000;});
-  if(!toProcess.length)return;
+  if(!toProcess.length){
+    // Still trim even if nothing new to archive
+    trimMeetingHistory();
+    return;
+  }
   toProcess.forEach(function(m){
-    // If the user is currently on this meeting's notes screen, flush the contenteditable first
     if(S.activeMtgId===m.id&&S.currentMode==='mnotes'){
       var body=document.getElementById('mnotesBody');
       if(body)m.notes=body.innerText.trim();
@@ -1307,23 +1578,21 @@ function archivePast(){
     if(m.recur==='once'){
       m.archived=true;
     }else{
-      // Clone current instance as a permanent historical record
-      var historical={
-        id:S.nextId++,
-        name:m.name,
-        date:m.date,
-        time:m.time,
-        recur:'once',
-        notes:m.notes,
-        archived:true
-      };
+      var historical={id:S.nextId++,name:m.name,date:m.date,time:m.time,recur:'once',notes:m.notes,archived:true};
       S.meetings.push(historical);
-      // Roll the active record forward with a clean notes page
       m.date=nextRecur(m.date,m.recur);
       m.notes='';
     }
   });
+  trimMeetingHistory();
   save();
+}
+function trimMeetingHistory(){
+  var retention=S.prefs.meetingRetention;
+  if(retention>0){
+    var cutoff=Date.now()-retention*86400000;
+    S.meetings=S.meetings.filter(function(m){return!m.archived||mtgTs(m)>cutoff;});
+  }
 }
 function renderMtgs(){
   archivePast();
@@ -1360,12 +1629,21 @@ function openMtgNotes(id){
   var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   document.getElementById('mnotesMeta').textContent=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()]+(m.time?' \u00b7 '+m.time:'');
   document.getElementById('mnotesBody').innerText=m.notes||'';
+  // Hide Edit button for archived instances — they are historical records
+  var editBtn=document.querySelector('#mnotesView .back-btn[onclick*="openMtgModal"]');
+  if(editBtn)editBtn.style.display=m.archived?'none':'block';
   applyMode('mnotes');
+}
+var _mtgNotesSaveTimer=null;
+function debounceSaveMtgNotes(text){
+  clearTimeout(_mtgNotesSaveTimer);
+  _mtgNotesSaveTimer=setTimeout(function(){saveMtgNotes(text);},800);
 }
 function saveMtgNotes(text){var m=S.meetings.find(function(x){return x.id===S.activeMtgId;});if(m){m.notes=text.trim();save();}}
 
 // ── AUTO ARCHIVE ─────────────────────────────────────────────
 function autoArchiveCompleted(){
+  if(!S.prefs.autoArchive)return;
   var today=localISO(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
   var changed=false;
   ['work','personal'].forEach(function(mode){
@@ -1400,6 +1678,165 @@ function scheduleMidnightArchive(){
   },ms);
 }
 
+// ── ACCOUNT / PREFS ──────────────────────────────────────────
+function applyPrefs(){
+  var p=S.prefs;
+  // Theme
+  var themes=['warm','forest','slate','rose','ocean'];
+  themes.forEach(function(t){document.body.classList.remove('theme-'+t);});
+  document.body.classList.add('theme-'+(p.theme||'warm'));
+  // Dark mode
+  document.body.classList.toggle('dark',!!p.darkMode);
+  // Font size
+  document.body.setAttribute('data-fs',p.fontSize||'medium');
+}
+function renderAccount(){
+  var p=S.prefs;
+  // Sync controls to current prefs
+  document.getElementById('prefDark').checked=!!p.darkMode;
+  document.getElementById('prefFontSize').value=p.fontSize||'medium';
+  document.getElementById('prefMtgRetention').value=String(p.meetingRetention!==undefined?p.meetingRetention:180);
+  document.getElementById('prefAutoArchive').checked=p.autoArchive!==false;
+  // Work hours
+  var sh=Math.floor((p.workStart||480)/60),sm=(p.workStart||480)%60;
+  var eh=Math.floor((p.workEnd||1050)/60),em=(p.workEnd||1050)%60;
+  document.getElementById('prefWorkStart').value=String(sh).padStart(2,'0')+':'+String(sm).padStart(2,'0');
+  document.getElementById('prefWorkEnd').value=String(eh).padStart(2,'0')+':'+String(em).padStart(2,'0');
+  // Work days
+  var days=[1,2,3,4,5,6,0];
+  days.forEach(function(d){
+    var btn=document.querySelector('.day-btn[data-day="'+d+'"]');
+    if(btn)btn.classList.toggle('sel',(p.workDays||[1,2,3,4,5]).indexOf(d)!==-1);
+  });
+  // Theme swatches
+  document.querySelectorAll('.theme-swatch').forEach(function(sw){
+    sw.classList.toggle('sel',sw.dataset.theme===(p.theme||'warm'));
+  });
+  // Last backup
+  var lbl=document.getElementById('lastBackupLbl');
+  if(lbl)lbl.textContent=p.lastBackup?'Last backup: '+p.lastBackup:'Never backed up';
+  // User pill label
+  renderUserPill();
+  // Info grid
+  renderInfoGrid();
+}
+function renderUserPill(){
+  var lbl=document.getElementById('userPillLbl');
+  if(!lbl)return;
+  // Show first name from Google account if available, else 'Me'
+  if(window._focusUserName){lbl.textContent=window._focusUserName.split(' ')[0];}
+  else{lbl.textContent='Me';}
+}
+function renderInfoGrid(){
+  var el=document.getElementById('accInfoGrid');if(!el)return;
+  var wt=S.tasks.work.priority.length+S.tasks.work.general.length;
+  var pt=S.tasks.personal.priority.length+S.tasks.personal.general.length;
+  var activeMtgs=S.meetings.filter(function(m){return!m.archived;}).length;
+  var arcMtgs=S.meetings.filter(function(m){return m.archived;}).length;
+  var arcTasks=(S.archive.work||[]).length+(S.archive.personal||[]).length;
+  var cells=[
+    {val:wt,lbl:'Work tasks'},
+    {val:pt,lbl:'Personal tasks'},
+    {val:S.notes.length,lbl:'Notes'},
+    {val:activeMtgs,lbl:'Meetings'},
+    {val:arcMtgs,lbl:'Past meetings'},
+    {val:arcTasks,lbl:'Archived tasks'}
+  ];
+  el.innerHTML='';
+  cells.forEach(function(c){
+    var cell=document.createElement('div');cell.className='acc-info-cell';
+    cell.innerHTML='<div class="acc-info-val">'+c.val+'</div><div class="acc-info-lbl">'+c.lbl+'</div>';
+    el.appendChild(cell);
+  });
+}
+function setPref(key,val){
+  S.prefs[key]=val;
+  applyPrefs();
+  save();
+  if(key==='meetingRetention')trimMeetingHistory();
+}
+function setTheme(t){
+  S.prefs.theme=t;
+  applyPrefs();
+  save();
+  // Update swatch selection
+  document.querySelectorAll('.theme-swatch').forEach(function(sw){
+    sw.classList.toggle('sel',sw.dataset.theme===t);
+  });
+}
+function toggleWorkDay(d){
+  var days=S.prefs.workDays||[1,2,3,4,5];
+  var idx=days.indexOf(d);
+  if(idx===-1)days.push(d);else days.splice(idx,1);
+  S.prefs.workDays=days;
+  var btn=document.querySelector('.day-btn[data-day="'+d+'"]');
+  if(btn)btn.classList.toggle('sel',days.indexOf(d)!==-1);
+  save();
+}
+function setWorkHours(){
+  var s=document.getElementById('prefWorkStart').value;
+  var e=document.getElementById('prefWorkEnd').value;
+  if(s){var sp=s.split(':');S.prefs.workStart=parseInt(sp[0])*60+parseInt(sp[1]);}
+  if(e){var ep=e.split(':');S.prefs.workEnd=parseInt(ep[0])*60+parseInt(ep[1]);}
+  save();
+}
+function exportBackup(){
+  var data={version:1,exportedAt:new Date().toISOString(),tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs};
+  var json=JSON.stringify(data,null,2);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  var dateStr=new Date().toISOString().slice(0,10);
+  a.href=url;a.download='focus-backup-'+dateStr+'.json';
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+  // Record backup date
+  S.prefs.lastBackup=dateStr;
+  save();
+  var lbl=document.getElementById('lastBackupLbl');
+  if(lbl)lbl.textContent='Last backup: '+dateStr;
+}
+function importBackup(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.tasks||!data.meetings){alert('This doesn\'t look like a valid Focus backup file.');return;}
+      if(!confirm('This will replace all your current data with the backup. Are you sure?'))return;
+      if(data.tasks)S.tasks=data.tasks;
+      if(data.archive)S.archive=data.archive;
+      if(data.notes)S.notes=data.notes;
+      if(data.meetings)S.meetings=data.meetings;
+      if(data.nextId)S.nextId=data.nextId;
+      if(data.prefs)S.prefs=Object.assign(S.prefs,data.prefs);
+      applyPrefs();renderAll();renderAccount();save();
+      alert('Backup restored successfully.');
+    }catch(err){alert('Failed to read backup file: '+err.message);}
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+function confirmSignOut(){
+  if(confirm('Sign out of Focus?'))window.doSignOut();
+}
+// Share individual meeting notes
+function shareMtgNotes(id){
+  var m=S.meetings.find(function(x){return x.id===id;});if(!m)return;
+  var p=m.date.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  var DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr=DAYS[d.getDay()]+' '+d.getDate()+' '+MOS[d.getMonth()]+(m.time?' · '+m.time:'');
+  var text=m.name+'\n'+dateStr+'\n\n'+(m.notes||'(No notes)');
+  if(navigator.share){
+    navigator.share({title:m.name,text:text}).catch(function(){});
+  }else{
+    // Fallback: copy to clipboard
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).then(function(){alert('Notes copied to clipboard.');});
+    }
+  }
+}
+
 // ── FLIP SCREEN ──────────────────────────────────────────────
 function flipScreen(){
   var app=document.getElementById('mainApp');
@@ -1408,7 +1845,7 @@ function flipScreen(){
 }
 
 // ── INIT ─────────────────────────────────────────────────────
-load();archivePast();autoArchiveCompleted();initMode();renderAll();
+load();applyPrefs();archivePast();autoArchiveCompleted();initMode();renderAll();
 // Restore flip state
 if(localStorage.getItem('focus-flipped')==='1')document.getElementById('mainApp').classList.add('flipped');
 // Schedule midnight auto-archive
