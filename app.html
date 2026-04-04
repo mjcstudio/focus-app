@@ -385,7 +385,7 @@ body.mode-account .nav{background:var(--work-bg)}
 
 /* Fixed identity — each button always its own colour, just muted when inactive */
 .nb-work{background:var(--work-soft);color:var(--work-accent)}
-.nb-notes{background:#e8e8e6;color:var(--note-accent)}
+.nb-notes{background:var(--note-surface);color:var(--note-muted)}
 .nb-per{background:var(--per-soft);color:var(--per-accent)}
 
 /* Active state — solid fill, white text */
@@ -397,10 +397,16 @@ body.mode-archive .nb-work{background:var(--work-accent);color:#fff}
 body.mode-notes .nb-notes,
 body.mode-ndetail .nb-notes{background:var(--note-accent);color:#fff}
 
+/* Dark mode: note accent is near-white so use muted instead for the active Notes button */
+body.dark.mode-notes .nb-notes,
+body.dark.mode-ndetail .nb-notes{background:var(--note-muted);color:var(--note-bg)}
+
 body.mode-personal .nb-per,
 body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
 
-/* MODAL */
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--nav) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#1a1a18;color:#fff;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:300;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
 .modal{background:#fff;border-radius:var(--r) var(--r) 0 0;width:100%;max-height:90dvh;overflow-y:auto;padding:20px 20px 32px;transition:transform .25s;transform:translateY(20px)}
@@ -815,6 +821,8 @@ window.save=function(){
     </div>
 
   </div>
+
+<div id="toast" class="toast"></div>
 
 </div>
 
@@ -1814,7 +1822,7 @@ function importBackup(input){
   reader.onload=function(e){
     try{
       var data=JSON.parse(e.target.result);
-      if(!data.tasks||!data.meetings){alert('This doesn\'t look like a valid Focus backup file.');return;}
+      if(!data.tasks||!data.meetings){showToast('Not a valid Focus backup file');return;}
       if(!confirm('This will replace all your current data with the backup. Are you sure?'))return;
       if(data.tasks)S.tasks=data.tasks;
       if(data.archive)S.archive=data.archive;
@@ -1823,8 +1831,8 @@ function importBackup(input){
       if(data.nextId)S.nextId=data.nextId;
       if(data.prefs)S.prefs=Object.assign(S.prefs,data.prefs);
       applyPrefs();renderAll();renderAccount();save();
-      alert('Backup restored successfully.');
-    }catch(err){alert('Failed to read backup file: '+err.message);}
+      showToast('Backup restored successfully');
+    }catch(err){showToast('Failed to read backup: '+err.message);}
   };
   reader.readAsText(file);
   input.value='';
@@ -1844,9 +1852,20 @@ function shareMtgNotes(id){
   }else{
     // Fallback: copy to clipboard
     if(navigator.clipboard){
-      navigator.clipboard.writeText(text).then(function(){alert('Notes copied to clipboard.');});
+      navigator.clipboard.writeText(text).then(function(){showToast('Notes copied to clipboard');});
     }
   }
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+var _toastTimer=null;
+function showToast(msg){
+  var el=document.getElementById('toast');
+  if(!el)return;
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
 }
 
 // ── FLIP SCREEN ──────────────────────────────────────────────
