@@ -532,6 +532,7 @@ function startSync(){
       if(d.nextId)S.nextId=d.nextId;
       if(d.prefs)S.prefs=Object.assign(S.prefs,d.prefs);
       if(typeof applyPrefs==='function')applyPrefs();
+      if(typeof renderAccount==='function'&&typeof S!=='undefined'&&S.currentMode==='account')renderAccount();
       if(typeof archivePast==='function')archivePast();
       if(typeof renderAll==='function')renderAll();
     }
@@ -1045,6 +1046,7 @@ function nextBoundaryTs(){
   var start=S.prefs.workStart!==undefined?S.prefs.workStart:480;
   var end=S.prefs.workEnd!==undefined?S.prefs.workEnd:1050;
   var inWork=days.indexOf(day)!==-1&&mins>=start&&mins<end;
+  if(!days.length)return Date.now()+86400000*7; // no work days configured — return far future
   var boundary=new Date(n);
   if(inWork){
     // Next boundary is end of work today
@@ -1334,7 +1336,9 @@ function renderTasks(mode,sec){
 
   for(var si=0;si<sorted.length;si++){
     (function(t){
-      var overdue=!!(t.date&&!t.completed&&new Date(t.date)<nowD);
+      var ap=t.date?t.date.split('-'):null;
+      var taskD=ap?new Date(parseInt(ap[0]),parseInt(ap[1])-1,parseInt(ap[2])):null;
+      var overdue=!!(taskD&&!t.completed&&taskD<nowD);
       var du=t.date?daysUntil(t.date):999;
       var dueClass=overdue?'overdue':(du<=3&&du>=0?'soon':'');
       var hasNote=!!(t.note&&t.note.trim());
@@ -1721,7 +1725,6 @@ function trimMeetingHistory(){
   }
 }
 function renderMtgs(){
-  archivePast();
   var list=document.getElementById('mtgsList'),empty=document.getElementById('em-mtgs');
   var toRm=[];
   for(var ci=0;ci<list.childNodes.length;ci++){if(list.childNodes[ci].id!=='em-mtgs')toRm.push(list.childNodes[ci]);}
@@ -1843,9 +1846,13 @@ function updateSearchFilterBtns(){
 }
 function highlight(text,query){
   if(!query)return esc(text);
-  var escaped=esc(text);
-  var escapedQ=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  return escaped.replace(new RegExp('('+escapedQ+')','gi'),'<mark>$1</mark>');
+  var lText=text.toLowerCase(),lQuery=query.toLowerCase();
+  var result='',last=0,idx;
+  while((idx=lText.indexOf(lQuery,last))!==-1){
+    result+=esc(text.slice(last,idx))+'<mark>'+esc(text.slice(idx,idx+query.length))+'</mark>';
+    last=idx+query.length;
+  }
+  return result+esc(text.slice(last));
 }
 function doesMatch(text,query){
   return text&&text.toLowerCase().indexOf(query.toLowerCase())!==-1;
