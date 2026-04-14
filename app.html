@@ -527,7 +527,23 @@ function startSync(){
       const d=snap.data();
       if(d.tasks)S.tasks=d.tasks;
       if(d.notes)S.notes=d.notes;
-      if(d.meetings)S.meetings=d.meetings;
+      if(d.meetings){
+        // If the user is currently on a meeting notes screen, preserve
+        // their unsaved typing — don't let a cloud snapshot overwrite it
+        if(S.currentMode==='mnotes'&&S.activeMtgId!=null){
+          const activeId=S.activeMtgId;
+          const bodyEl=document.getElementById('mnotesBody');
+          const currentText=bodyEl?bodyEl.innerText.trim():null;
+          S.meetings=d.meetings;
+          // Restore the live text into whichever meeting record the user is editing
+          if(currentText!==null){
+            const m=S.meetings.find(function(x){return x.id===activeId;});
+            if(m)m.notes=currentText;
+          }
+        }else{
+          S.meetings=d.meetings;
+        }
+      }
       if(d.archive)S.archive=d.archive;
       if(d.nextId)S.nextId=d.nextId;
       if(d.prefs)S.prefs=Object.assign(S.prefs,d.prefs);
@@ -538,6 +554,14 @@ function startSync(){
   });
 }
 window.save=function(){
+  // Flush any unsaved meeting notes typing into S.meetings before persisting
+  if(S.currentMode==='mnotes'&&S.activeMtgId!=null){
+    var bodyEl=document.getElementById('mnotesBody');
+    if(bodyEl){
+      var m=S.meetings.find(function(x){return x.id===S.activeMtgId;});
+      if(m)m.notes=bodyEl.innerText.trim();
+    }
+  }
   localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId}));
   if(!uid)return;
   clearTimeout(saveTimer);
