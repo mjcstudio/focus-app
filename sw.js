@@ -14,6 +14,7 @@ self.addEventListener('activate',e=>{
       .then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
       .then(()=>self.clients.claim())
       .then(()=>{
+        // Notify all open clients that the app has been updated
         self.clients.matchAll({type:'window'}).then(clients=>{
           clients.forEach(client=>client.postMessage({type:'APP_UPDATED',version:CACHE}));
         });

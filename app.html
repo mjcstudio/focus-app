@@ -528,20 +528,21 @@ function startSync(){
       if(d.tasks)S.tasks=d.tasks;
       if(d.notes)S.notes=d.notes;
       if(d.meetings){
-        // If the user is currently on a meeting notes screen, preserve
-        // their unsaved typing — don't let a cloud snapshot overwrite it
-        if(S.currentMode==='mnotes'&&S.activeMtgId!=null){
-          const activeId=S.activeMtgId;
-          const bodyEl=document.getElementById('mnotesBody');
-          const currentText=bodyEl?bodyEl.innerText.trim():null;
-          S.meetings=d.meetings;
-          // Restore the live text into whichever meeting record the user is editing
-          if(currentText!==null){
-            const m=S.meetings.find(function(x){return x.id===activeId;});
-            if(m)m.notes=currentText;
-          }
-        }else{
-          S.meetings=d.meetings;
+        // Capture any meetings archived locally that haven't reached Firestore yet
+        const localArchivedIds=new Set(
+          S.meetings.filter(function(m){return m.archived;}).map(function(m){return m.id;})
+        );
+        // If user is on a meeting notes screen, preserve their unsaved typing too
+        const activeId=S.activeMtgId;
+        const bodyEl=document.getElementById('mnotesBody');
+        const currentText=(S.currentMode==='mnotes'&&activeId!=null&&bodyEl)?bodyEl.innerText.trim():null;
+        S.meetings=d.meetings;
+        // Re-apply locally-archived states that the snapshot doesn't know about yet
+        S.meetings.forEach(function(m){if(localArchivedIds.has(m.id))m.archived=true;});
+        // Re-apply unsaved note text
+        if(currentText!==null){
+          const m=S.meetings.find(function(x){return x.id===activeId;});
+          if(m)m.notes=currentText;
         }
       }
       if(d.archive)S.archive=d.archive;
