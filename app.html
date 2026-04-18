@@ -321,6 +321,8 @@ body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-te
 .notes-view{display:none;flex-direction:column;height:100%;padding:0 16px}
 .notes-view.active{display:flex}
 .notes-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:8px;scrollbar-width:none}
+.notes-list.sorting{overflow:hidden;pointer-events:none}
+.notes-list.sorting .note-row{pointer-events:auto}
 .notes-list::-webkit-scrollbar{display:none}
 /* NOTES LIST */
 .note-row{background:var(--note-surface);border-radius:var(--rs);padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t)}
@@ -2627,7 +2629,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v24';
+var APP_VERSION='focus-v25';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
