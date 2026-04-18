@@ -152,6 +152,7 @@ body.mode-work{background:var(--work-bg);color:var(--work-text)}
 body.mode-personal{background:var(--per-bg);color:var(--per-text)}
 body.mode-notes{background:var(--note-bg);color:var(--note-text)}
 body.mode-ndetail{background:var(--note-bg);color:var(--note-text)}
+body.mode-notes-archive{background:var(--note-bg);color:var(--note-text)}
 body.mode-meetings,body.mode-mnotes{background:var(--work-bg);color:var(--work-text)}
 body.mode-archive{background:var(--work-bg);color:var(--work-text)}
 body.mode-archive-per{background:var(--per-bg);color:var(--per-text)}
@@ -172,11 +173,11 @@ body.mode-archive-per{background:var(--per-bg);color:var(--per-text)}
 .app-title{font-family:'DM Serif Display',serif;font-size:26px;letter-spacing:-.5px;transition:color .3s;line-height:1}
 body.mode-work .app-title,body.mode-meetings .app-title,body.mode-mnotes .app-title,body.mode-archive .app-title{color:var(--work-accent)}
 body.mode-personal .app-title,body.mode-archive-per .app-title{color:var(--per-accent)}
-body.mode-notes .app-title,body.mode-ndetail .app-title{color:var(--note-accent)}
+body.mode-notes .app-title,body.mode-ndetail .app-title,body.mode-notes-archive .app-title{color:var(--note-accent)}
 .mode-lbl{font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:color .3s}
 body.mode-work .mode-lbl,body.mode-meetings .mode-lbl,body.mode-mnotes .mode-lbl,body.mode-archive .mode-lbl{color:var(--work-muted)}
 body.mode-personal .mode-lbl,body.mode-archive-per .mode-lbl{color:var(--per-muted)}
-body.mode-notes .mode-lbl,body.mode-ndetail .mode-lbl{color:var(--note-muted)}
+body.mode-notes .mode-lbl,body.mode-ndetail .mode-lbl,body.mode-notes-archive .mode-lbl{color:var(--note-muted)}
 .hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:nowrap;flex-shrink:0}
 .hdr-btn{border:none;border-radius:var(--rs);padding:4px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t)}
 
@@ -187,8 +188,10 @@ body.mode-notes .mode-lbl,body.mode-ndetail .mode-lbl{color:var(--note-muted)}
 body.mode-work .arc-hdr-btn{display:block;background:var(--work-soft);color:var(--work-accent)}
 body.mode-personal .arc-hdr-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
 .back-btn{display:none;background:var(--work-soft);color:var(--work-accent)}
-body.mode-meetings .back-btn,body.mode-mnotes .back-btn,body.mode-archive .back-btn{display:block}
+body.mode-meetings .back-btn,body.mode-mnotes .back-btn,body.mode-archive .back-btn,body.mode-notes-archive .back-btn{display:block}
 body.mode-archive-per .back-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
+body.mode-notes-archive .back-btn{background:#e8e8e6;color:var(--note-accent)}
+body.mode-notes .arc-hdr-btn{display:block;background:#e8e8e6;color:var(--note-accent)}
 .user-pill{display:flex;align-items:center;gap:5px;background:var(--work-soft);border:none;border-radius:20px;padding:4px 8px;cursor:pointer;transition:all var(--t)}
 body.mode-personal .user-pill{background:var(--per-soft)}
 .user-dot{width:7px;height:7px;border-radius:50%;background:var(--work-accent);flex-shrink:0}
@@ -322,10 +325,29 @@ body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-te
 /* NOTES LIST */
 .note-row{background:var(--note-surface);border-radius:var(--rs);padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t)}
 .note-row:active{opacity:.7}
+.note-row-handle{color:var(--note-muted);opacity:.25;font-size:14px;flex-shrink:0;cursor:grab;padding:2px 4px;touch-action:none;-webkit-user-select:none;user-select:none;min-width:20px;text-align:center}
+.note-row-handle:active{opacity:.6;cursor:grabbing}
 .note-row-title{flex:1;font-size:14px;font-weight:500;color:var(--note-accent);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .note-row-title.untitled{color:var(--note-muted);font-weight:400;font-style:italic}
 .note-row-del{opacity:.3;background:none;border:none;cursor:pointer;font-size:15px;color:var(--note-muted);padding:2px 6px;transition:opacity var(--t);flex-shrink:0}
 .note-row:active .note-row-del{opacity:.7}
+.note-row.sortable-ghost{opacity:.35}
+.note-row.sortable-drag{opacity:.9;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+
+/* NOTES ARCHIVE SCREEN */
+.notes-arc-view{display:none;flex-direction:column;height:100%;padding:0 16px}
+.notes-arc-view.active{display:flex}
+.notes-arc-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:8px;scrollbar-width:none}
+.notes-arc-list::-webkit-scrollbar{display:none}
+.note-arc-row{background:var(--note-surface);border-radius:var(--rs);padding:12px 16px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t)}
+.note-arc-row:active{opacity:.7}
+.note-arc-title{flex:1;font-size:14px;font-weight:500;color:var(--note-accent);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-arc-title.untitled{color:var(--note-muted);font-weight:400;font-style:italic}
+.note-arc-date{font-size:11px;color:var(--note-muted);flex-shrink:0}
+.note-arc-restore{background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--note-accent);padding:2px 6px;opacity:.5;transition:opacity var(--t);flex-shrink:0;font-family:'DM Sans',sans-serif}
+.note-arc-restore:active{opacity:1}
+.note-arc-del{opacity:.3;background:none;border:none;cursor:pointer;font-size:15px;color:var(--note-muted);padding:2px 6px;transition:opacity var(--t);flex-shrink:0}
+.note-arc-row:active .note-arc-del,.note-arc-row:active .note-arc-restore{opacity:.8}
 
 /* NOTE DETAIL VIEW */
 .ndetail-view{display:none;flex-direction:column;height:100%;padding:0 16px}
@@ -395,7 +417,7 @@ body.mode-archive-per .arc-item-date{color:var(--per-muted)}
 .nav{height:var(--nav);display:flex;align-items:stretch;flex-shrink:0;padding:8px 12px 12px;gap:8px;transition:background .3s}
 body.mode-work .nav,body.mode-meetings .nav,body.mode-mnotes .nav,body.mode-archive .nav{background:var(--work-bg)}
 body.mode-personal .nav,body.mode-archive-per .nav{background:var(--per-bg)}
-body.mode-notes .nav,body.mode-ndetail .nav{background:var(--note-bg)}
+body.mode-notes .nav,body.mode-ndetail .nav,body.mode-notes-archive .nav{background:var(--note-bg)}
 body.mode-account .nav{background:var(--work-bg)}
 body.mode-search .nav{background:var(--work-bg)}
 .nav-btn{flex:1;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.03em;cursor:pointer;transition:all var(--t);display:flex;align-items:center;justify-content:center}
@@ -413,11 +435,11 @@ body.mode-mnotes .nb-work,
 body.mode-archive .nb-work{background:var(--work-accent);color:#fff}
 
 body.mode-notes .nb-notes,
-body.mode-ndetail .nb-notes{background:var(--note-accent);color:#fff}
+body.mode-ndetail .nb-notes,body.mode-notes-archive .nb-notes{background:var(--note-accent);color:#fff}
 
 /* Dark mode: note accent is near-white so use muted instead for the active Notes button */
 body.dark.mode-notes .nb-notes,
-body.dark.mode-ndetail .nb-notes{background:var(--note-muted);color:var(--note-bg)}
+body.dark.mode-ndetail .nb-notes,body.dark.mode-notes-archive .nb-notes{background:var(--note-muted);color:var(--note-bg)}
 
 body.mode-personal .nb-per,
 body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
@@ -550,6 +572,7 @@ function startSync(){
       const d=snap.data();
       if(d.tasks)S.tasks=d.tasks;
       if(d.notes)S.notes=d.notes;
+      if(d.notesArchive)S.notesArchive=d.notesArchive;
       if(d.meetings){
         const localArchivedIds=new Set(
           S.meetings.filter(function(m){return m.archived;}).map(function(m){return m.id;})
@@ -581,11 +604,11 @@ window.save=function(){
       if(m)m.notes=bodyEl.innerText.trim();
     }
   }
-  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
+  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,notesArchive:S.notesArchive,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
   if(!uid)return;
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async function(){
-    try{await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,meetings:S.meetings,archive:S.archive,nextId:S.nextId,prefs:S.prefs,updatedAt:new Date().toISOString()});}
+    try{await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,notesArchive:S.notesArchive,meetings:S.meetings,archive:S.archive,nextId:S.nextId,prefs:S.prefs,updatedAt:new Date().toISOString()});}
     catch(e){console.error('Save failed:',e);}
   },800);
 };
@@ -706,6 +729,8 @@ window.save=function(){
   <div class="notes-view" id="notesView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
       <span class="sec-lbl note-lbl">Notes</span>
+      <span class="sec-spacer"></span>
+      <button class="hdr-btn arc-hdr-btn" onclick="applyMode('notes-archive')" style="display:block;background:#e8e8e6;color:var(--note-accent)">Archive</button>
     </div>
     <button class="ghost-btn note" onclick="addNote()">+ New note</button>
     <div class="notes-list" id="notesList">
@@ -718,9 +743,20 @@ window.save=function(){
     <div class="ndetail-hdr">
       <div contenteditable="true" class="ndetail-title" id="ndetailTitle" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ndetailBody').focus();}"></div>
       <button class="ndetail-done" style="background:var(--note-muted);color:var(--note-bg);font-weight:500;margin-right:4px" onclick="shareNote(S.activeNoteId)">Share</button>
+      <button class="ndetail-done" style="background:var(--note-muted);color:var(--note-bg);font-weight:500;margin-right:4px" onclick="archiveNote(S.activeNoteId)">Archive</button>
       <button class="ndetail-done" onclick="doneNote()">✓ Done</button>
     </div>
     <div contenteditable="true" class="ndetail-body" id="ndetailBody"></div>
+  </div>
+
+  <!-- NOTES ARCHIVE -->
+  <div class="notes-arc-view" id="notesArchiveView">
+    <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
+      <span class="sec-lbl note-lbl">Note Archive</span>
+    </div>
+    <div class="notes-arc-list" id="notesArcList">
+      <div class="empty" id="em-notes-arc" style="color:var(--note-muted)"><div class="empty-ico">📝</div>No archived notes</div>
+    </div>
   </div>
 
   <!-- MEETINGS -->
@@ -1047,8 +1083,8 @@ window.save=function(){
 var S={
   tasks:{work:{priority:[],general:[]},personal:{priority:[],general:[]}},
   archive:{work:[],personal:[]},
-  notes:[],meetings:[],nextId:1,
-  currentMode:null,prevTaskMode:'work',activeMtgId:null,activeNoteId:null,
+  notes:[],meetings:[],notesArchive:[],nextId:1,
+  currentMode:null,prevTaskMode:'work',activeMtgId:null,activeNoteId:null,activeNoteIsArchived:false,
   arcGroup:{work:'day',personal:'day'},
   tm:{mode:null,sec:null,date:null,recur:'once',targetId:null},
   mm:{date:null,recur:'once',editId:null},
@@ -1063,7 +1099,7 @@ var S={
 
 // ── PERSIST ───────────────────────────────────────────────────
 if(typeof save==='undefined')window.save=function(){
-  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
+  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,notesArchive:S.notesArchive,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
 };
 function load(){
   try{
@@ -1071,6 +1107,7 @@ function load(){
     if(!d)return;
     if(d.tasks)S.tasks=d.tasks;
     if(d.notes)S.notes=d.notes;
+    if(d.notesArchive)S.notesArchive=d.notesArchive;
     if(d.meetings)S.meetings=d.meetings;
     if(d.nextId)S.nextId=d.nextId;
     if(d.archive)S.archive=d.archive;
@@ -1158,8 +1195,16 @@ function autoMode(){
 }
 function switchMode(m){
   if(S.currentMode==='ndetail'){
-    var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
-    if(n){n.title=document.getElementById('ndetailTitle').innerText.trim();n.body=document.getElementById('ndetailBody').innerText.trim();save();}
+    var titleVal=document.getElementById('ndetailTitle').innerText.trim();
+    var bodyVal=document.getElementById('ndetailBody').innerText.trim();
+    if(S.activeNoteIsArchived){
+      var na=S.notesArchive.find(function(x){return x.id===S.activeNoteId;});
+      if(na){na.title=titleVal;na.body=bodyVal;save();}
+      S.activeNoteIsArchived=false;
+    }else{
+      var nn=S.notes.find(function(x){return x.id===S.activeNoteId;});
+      if(nn){nn.title=titleVal;nn.body=bodyVal;save();}
+    }
     renderNotes();
   }
   // Set manual override when user explicitly picks work or personal
@@ -1182,6 +1227,7 @@ function goArchive(){applyMode(S.prevTaskMode==='personal'?'archive-per':'archiv
 function goBack(){
   if(S.currentMode==='mnotes')applyMode('meetings');
   else if(S.currentMode==='ndetail')doneNote();
+  else if(S.currentMode==='notes-archive')applyMode('notes');
   else if(S.currentMode==='search')applyMode(S.prevTaskMode);
   else applyMode(S.prevTaskMode);
 }
@@ -1194,9 +1240,9 @@ function applyMode(m){
   });
   classes.push('mode-'+m);
   document.body.className=classes.join(' ');
-  var labels={work:'Work',personal:'Personal',notes:'Notes',ndetail:'Note',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive',account:'Account',search:'Search'};
+  var labels={work:'Work',personal:'Personal',notes:'Notes',ndetail:'Note',meetings:'Meetings',mnotes:'Meeting Notes',archive:'Archive','archive-per':'Archive',account:'Account',search:'Search','notes-archive':'Note Archive'};
   document.getElementById('modeLbl').textContent=labels[m]||m;
-  var views={work:'workView',personal:'personalView',notes:'notesView',ndetail:'ndetailView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView',account:'accountView',search:'searchView'};
+  var views={work:'workView',personal:'personalView',notes:'notesView',ndetail:'ndetailView',meetings:'meetingsView',mnotes:'mnotesView',archive:'archiveView','archive-per':'archivePerView',account:'accountView',search:'searchView','notes-archive':'notesArchiveView'};
   var keys=Object.keys(views);
   for(var i=0;i<keys.length;i++){
     var el=document.getElementById(views[keys[i]]);
@@ -1204,12 +1250,14 @@ function applyMode(m){
   }
   document.getElementById('notesView').classList.toggle('active',m==='notes');
   document.getElementById('ndetailView').classList.toggle('active',m==='ndetail');
+  document.getElementById('notesArchiveView').classList.toggle('active',m==='notes-archive');
   document.getElementById('searchView').classList.toggle('active',m==='search');
   if(m==='search')setTimeout(function(){document.getElementById('searchInp').focus();},80);
   if(m==='work')renderUpcoming();
   if(m==='meetings')renderMtgs();
   if(m==='archive')renderArchive('work');
   if(m==='archive-per')renderArchive('personal');
+  if(m==='notes-archive')renderNotesArchive();
   if(m==='account')renderAccount();
 }
 function initMode(){applyMode(autoMode());}
@@ -1842,6 +1890,7 @@ function openNoteDetail(id){
   var n=S.notes.find(function(x){return x.id===id;});
   if(!n)return;
   S.activeNoteId=id;
+  S.activeNoteIsArchived=false;
   var titleEl=document.getElementById('ndetailTitle');
   var bodyEl=document.getElementById('ndetailBody');
   titleEl.innerText=n.title||'';
@@ -1853,14 +1902,20 @@ function openNoteDetail(id){
   },50);
 }
 function doneNote(){
-  var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
-  if(n){
-    n.title=document.getElementById('ndetailTitle').innerText.trim();
-    n.body=document.getElementById('ndetailBody').innerText.trim();
-    save();
+  var titleVal=document.getElementById('ndetailTitle').innerText.trim();
+  var bodyVal=document.getElementById('ndetailBody').innerText.trim();
+  if(S.activeNoteIsArchived){
+    var n=S.notesArchive.find(function(x){return x.id===S.activeNoteId;});
+    if(n){n.title=titleVal;n.body=bodyVal;save();}
+    S.activeNoteIsArchived=false;
+    renderNotesArchive();
+    applyMode('notes-archive');
+  }else{
+    var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
+    if(n){n.title=titleVal;n.body=bodyVal;save();}
+    renderNotes();
+    applyMode('notes');
   }
-  renderNotes();
-  applyMode('notes');
 }
 function saveNoteDetail(field,val){
   var n=S.notes.find(function(x){return x.id===S.activeNoteId;});
@@ -1873,24 +1928,119 @@ function renderNotes(){
   toRm.forEach(function(c){c.remove();});
   empty.style.display=S.notes.length?'none':'flex';
   S.notes.forEach(function(n){
-    var row=document.createElement('div');row.className='note-row';
+    var row=document.createElement('div');row.className='note-row';row.dataset.id=String(n.id);
     var titleText=n.title&&n.title.trim()?n.title.trim():'Untitled';
     var isUntitled=!n.title||!n.title.trim();
-    row.innerHTML='<span class="note-row-title"></span><button class="note-row-del">&#10005;</button>';
-    var titleEl=row.querySelector('.note-row-title');
-    if(isUntitled)titleEl.className='note-row-title untitled'; else titleEl.className='note-row-title';
-    titleEl.textContent=titleText;
+    row.innerHTML='<div class="note-row-handle">&#8942;&#8942;</div><span class="note-row-title'+(isUntitled?' untitled':'')+'"></span><button class="note-row-del">&#10005;</button>';
+    row.querySelector('.note-row-title').textContent=titleText;
     (function(nid){
-      row.addEventListener('click',function(e){if(!e.target.classList.contains('note-row-del'))openNoteDetail(nid);});
+      row.addEventListener('click',function(e){
+        if(e.target.classList.contains('note-row-del')||e.target.classList.contains('note-row-handle'))return;
+        openNoteDetail(nid);
+      });
       row.querySelector('.note-row-del').addEventListener('click',function(e){e.stopPropagation();delNote(nid);});
     })(n.id);
     list.appendChild(row);
   });
+  // SortableJS on notes list
+  if(typeof Sortable!=='undefined'){
+    if(list._sortable)list._sortable.destroy();
+    list._sortable=Sortable.create(list,{
+      handle:'.note-row-handle',
+      animation:150,
+      ghostClass:'sortable-ghost',
+      dragClass:'sortable-drag',
+      draggable:'.note-row',
+      filter:'.empty',
+      forceFallback:true,
+      fallbackTolerance:5,
+      onEnd:function(){
+        var newOrder=[];
+        var rows=list.querySelectorAll('.note-row');
+        for(var i=0;i<rows.length;i++){
+          var nid=parseInt(rows[i].dataset.id);
+          var note=S.notes.find(function(n){return n.id===nid;});
+          if(note)newOrder.push(note);
+        }
+        S.notes=newOrder;
+        save();
+      }
+    });
+  }
 }
 function delNote(id){
   S.notes=S.notes.filter(function(n){return n.id!==id;});
   renderNotes();save();
   if(S.currentMode==='ndetail'&&S.activeNoteId===id)applyMode('notes');
+}
+function archiveNote(id){
+  // Save current edits first
+  var titleEl=document.getElementById('ndetailTitle');
+  var bodyEl=document.getElementById('ndetailBody');
+  var n=S.notes.find(function(x){return x.id===id;});
+  if(!n)return;
+  if(titleEl)n.title=titleEl.innerText.trim();
+  if(bodyEl)n.body=bodyEl.innerText.trim();
+  // Move to archive
+  var today=localISO(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
+  S.notesArchive.unshift({id:n.id,title:n.title,body:n.body,archivedDate:today});
+  S.notes=S.notes.filter(function(x){return x.id!==id;});
+  renderNotes();save();
+  applyMode('notes');
+}
+function renderNotesArchive(){
+  var list=document.getElementById('notesArcList'),empty=document.getElementById('em-notes-arc');
+  if(!list)return;
+  var toRm=[];
+  for(var ci=0;ci<list.childNodes.length;ci++){if(list.childNodes[ci].id!=='em-notes-arc')toRm.push(list.childNodes[ci]);}
+  toRm.forEach(function(c){c.remove();});
+  empty.style.display=S.notesArchive.length?'none':'flex';
+  var MOS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  S.notesArchive.forEach(function(n){
+    var row=document.createElement('div');row.className='note-arc-row';
+    var titleText=n.title&&n.title.trim()?n.title.trim():'Untitled';
+    var isUntitled=!n.title||!n.title.trim();
+    var dp=n.archivedDate?n.archivedDate.split('-'):null;
+    var dateStr=dp?dp[2]+' '+MOS[parseInt(dp[1])-1]:'';
+    row.innerHTML='<span class="note-arc-title'+(isUntitled?' untitled':'')+'"></span>'
+      +'<span class="note-arc-date">'+dateStr+'</span>'
+      +'<button class="note-arc-restore">Restore</button>'
+      +'<button class="note-arc-del">&#10005;</button>';
+    row.querySelector('.note-arc-title').textContent=titleText;
+    (function(nid){
+      row.addEventListener('click',function(e){
+        if(e.target.classList.contains('note-arc-restore')||e.target.classList.contains('note-arc-del'))return;
+        openNoteDetailArchived(nid);
+      });
+      row.querySelector('.note-arc-restore').addEventListener('click',function(e){e.stopPropagation();restoreNote(nid);});
+      row.querySelector('.note-arc-del').addEventListener('click',function(e){e.stopPropagation();delNoteArchive(nid);});
+    })(n.id);
+    list.appendChild(row);
+  });
+}
+function openNoteDetailArchived(id){
+  var n=S.notesArchive.find(function(x){return x.id===id;});
+  if(!n)return;
+  S.activeNoteId=id;
+  S.activeNoteIsArchived=true;
+  var titleEl=document.getElementById('ndetailTitle');
+  var bodyEl=document.getElementById('ndetailBody');
+  titleEl.innerText=n.title||'';
+  bodyEl.innerText=n.body||'';
+  applyMode('ndetail');
+  setTimeout(function(){bodyEl.focus();},50);
+}
+function restoreNote(id){
+  var n=S.notesArchive.find(function(x){return x.id===id;});
+  if(!n)return;
+  S.notes.unshift({id:n.id,title:n.title,body:n.body});
+  S.notesArchive=S.notesArchive.filter(function(x){return x.id!==id;});
+  renderNotes();renderNotesArchive();save();
+  showToast('Note restored');
+}
+function delNoteArchive(id){
+  S.notesArchive=S.notesArchive.filter(function(x){return x.id!==id;});
+  renderNotesArchive();save();
 }
 
 // ── MEETINGS ─────────────────────────────────────────────────
@@ -2157,7 +2307,8 @@ function renderSearchResults(query){
 
   // ── NOTES ──
   if(showNotes){
-    var noteHits=S.notes.filter(function(n){
+    var allNotes=S.notes.concat((S.notesArchive||[]).map(function(n){return Object.assign({},n,{_archived:true});}));
+    var noteHits=allNotes.filter(function(n){
       return doesMatch(n.title,q)||doesMatch(n.body,q);
     });
     if(noteHits.length){
@@ -2165,13 +2316,19 @@ function renderSearchResults(query){
       noteHits.forEach(function(n){
         var sub=[];
         if(n.body&&n.body.trim()&&doesMatch(n.body,q))sub.push(n.body.trim().slice(0,80)+(n.body.length>80?'…':''));
+        if(n._archived)sub.unshift('Archived');
         var row=document.createElement('div');row.className='search-result';
         row.innerHTML='<div class="search-result-icon">📝</div>'
           +'<div class="search-result-body">'
           +'<div class="search-result-title">'+highlight(n.title||'Untitled',q)+'</div>'
-          +(sub.length?'<div class="search-result-sub">'+highlight(sub[0],q)+'</div>':'')
+          +(sub.length?'<div class="search-result-sub">'+highlight(sub.join(' · '),q)+'</div>':'')
           +'</div>';
-        (function(id){row.addEventListener('click',function(){openNoteDetail(id);});})(n.id);
+        (function(nid,archived){
+          row.addEventListener('click',function(){
+            if(archived)openNoteDetailArchived(nid);
+            else openNoteDetail(nid);
+          });
+        })(n.id,!!n._archived);
         list.appendChild(row);
         totalCount++;
       });
@@ -2462,7 +2619,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v22';
+var APP_VERSION='focus-v23';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
