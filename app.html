@@ -264,10 +264,12 @@ body.mode-personal .task-card.completed .chk{background:var(--per-accent);border
 .task-txt{flex:1;font-size:14px;line-height:1.4;min-width:0;cursor:default;-webkit-user-select:none;user-select:none}
 .task-txt.editing{outline:none;cursor:text;-webkit-user-select:text;user-select:text}
 .due-tag{font-size:11px;font-weight:500;flex-shrink:0;padding:2px 6px;border-radius:4px}
-.due-tag.overdue{color:var(--overdue);background:rgba(192,57,43,.1)}
+.due-tag.overdue{color:#1a1a1a;background:#c0392b}
+.due-tag.due-today{color:#c0392b;font-weight:700}
 .due-tag.soon{color:var(--soon)}
-body.mode-work .due-tag:not(.overdue):not(.soon){color:var(--work-muted)}
-body.mode-personal .due-tag:not(.overdue):not(.soon){color:var(--per-muted)}
+body.mode-work .due-tag:not(.overdue):not(.due-today):not(.soon){color:var(--work-muted)}
+body.mode-personal .due-tag:not(.overdue):not(.due-today):not(.soon){color:var(--per-muted)}
+.task-card.overdue{background:var(--overdue-bg)!important}
 .task-edit-btn,.task-note-btn,.del-btn{opacity:.2;background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
 .task-card:active .task-edit-btn,.task-card:active .task-note-btn,.task-card:active .del-btn{opacity:.55}
 .task-note-btn.has-note{opacity:.6!important}
@@ -284,6 +286,18 @@ body.mode-personal .add-inp::placeholder{color:var(--per-muted)}
 .add-ok{border:none;border-radius:var(--rs);padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#fff;transition:all var(--t)}
 body.mode-work .add-ok{background:var(--work-accent)}
 body.mode-personal .add-ok{background:var(--per-accent)}
+.add-date-btn{border:none;background:none;cursor:pointer;font-size:16px;padding:2px 4px;opacity:.4;color:inherit;transition:opacity var(--t);flex-shrink:0;line-height:1}
+.add-date-btn:active{opacity:.9}
+.add-date-btn.has-date{opacity:1}
+.add-date-lbl{font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;cursor:pointer;flex-shrink:0;transition:all var(--t)}
+body.mode-work .add-date-lbl{color:var(--work-accent);background:var(--work-soft)}
+body.mode-personal .add-date-lbl{color:var(--per-accent);background:var(--per-soft)}
+.add-date-lbl.overdue{color:#1a1a1a;background:#c0392b}
+.add-date-lbl.due-today{color:#c0392b;font-weight:700;background:transparent}
+.add-date-lbl.soon{color:var(--soon);background:transparent}
+.task-date-btn{opacity:.2;background:none;border:none;cursor:pointer;font-size:13px;padding:2px 4px;border-radius:4px;transition:opacity var(--t);color:inherit;flex-shrink:0}
+.task-date-btn:active{opacity:.9}
+.task-card:active .task-date-btn{opacity:.55}
 
 /* TASK NOTES */
 .task-note-area{display:none;padding:4px 12px 8px 44px;flex-shrink:0}
@@ -437,7 +451,13 @@ body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
 .search-result-title mark{background:none;color:var(--work-accent);font-weight:700}
 .search-result-sub{font-size:12px;color:var(--work-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .search-result-sub mark{background:none;color:var(--work-accent);font-weight:600}
-.toast{position:fixed;bottom:calc(var(--nav) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#1a1a18;color:#fff;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:300;white-space:nowrap}
+.quick-picks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.qp-btn{padding:6px 12px;border:1.5px solid #ddd;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:#fff;color:#666;transition:all .15s}
+.qp-btn.sel{border-color:#7c6f5e;background:#7c6f5e;color:#fff}
+.qp-btn:active{opacity:.8}
+.remove-date-btn{width:100%;padding:8px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;color:#c0392b;cursor:pointer;text-align:center;margin-top:4px;border-radius:var(--rs);transition:background .15s}
+.remove-date-btn:active{background:#fdf0ee}
+/* TOAST */bottom:calc(var(--nav) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#1a1a18;color:#fff;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:300;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
@@ -528,18 +548,14 @@ function startSync(){
       if(d.tasks)S.tasks=d.tasks;
       if(d.notes)S.notes=d.notes;
       if(d.meetings){
-        // Capture any meetings archived locally that haven't reached Firestore yet
         const localArchivedIds=new Set(
           S.meetings.filter(function(m){return m.archived;}).map(function(m){return m.id;})
         );
-        // If user is on a meeting notes screen, preserve their unsaved typing too
         const activeId=S.activeMtgId;
         const bodyEl=document.getElementById('mnotesBody');
         const currentText=(S.currentMode==='mnotes'&&activeId!=null&&bodyEl)?bodyEl.innerText.trim():null;
         S.meetings=d.meetings;
-        // Re-apply locally-archived states that the snapshot doesn't know about yet
         S.meetings.forEach(function(m){if(localArchivedIds.has(m.id))m.archived=true;});
-        // Re-apply unsaved note text
         if(currentText!==null){
           const m=S.meetings.find(function(x){return x.id===activeId;});
           if(m)m.notes=currentText;
@@ -555,7 +571,6 @@ function startSync(){
   });
 }
 window.save=function(){
-  // Flush any unsaved meeting notes typing into S.meetings before persisting
   if(S.currentMode==='mnotes'&&S.activeMtgId!=null){
     var bodyEl=document.getElementById('mnotesBody');
     if(bodyEl){
@@ -563,7 +578,7 @@ window.save=function(){
       if(m)m.notes=bodyEl.innerText.trim();
     }
   }
-  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId}));
+  localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
   if(!uid)return;
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async function(){
@@ -614,11 +629,12 @@ window.save=function(){
         <span class="sec-lbl">Priority</span>
         <button class="clr-btn" id="clr-work" onclick="clearCompleted('work')">Clear Completed</button>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('work','priority')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('work-priority')">+</button>
       </div>
       <div class="add-bar" id="add-work-priority">
         <input class="add-inp" id="inp-work-priority" placeholder="Add priority task…" onkeydown="addKey(event,'work','priority')">
+        <span class="add-date-lbl" id="adl-work-priority" style="display:none"></span>
+        <button class="add-date-btn" id="adb-work-priority" title="Set due date" onclick="openTaskModalForAdd('work','priority')">🗓</button>
         <button class="add-ok" onclick="doAdd('work','priority')">Add</button>
       </div>
       <div class="task-list" id="tl-work-priority">
@@ -630,11 +646,12 @@ window.save=function(){
       <div class="sec-hdr">
         <span class="sec-lbl">General</span>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('work','general')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('work-general')">+</button>
       </div>
       <div class="add-bar" id="add-work-general">
         <input class="add-inp" id="inp-work-general" placeholder="Add general task…" onkeydown="addKey(event,'work','general')">
+        <span class="add-date-lbl" id="adl-work-general" style="display:none"></span>
+        <button class="add-date-btn" id="adb-work-general" title="Set due date" onclick="openTaskModalForAdd('work','general')">🗓</button>
         <button class="add-ok" onclick="doAdd('work','general')">Add</button>
       </div>
       <div class="task-list" id="tl-work-general">
@@ -650,11 +667,12 @@ window.save=function(){
         <span class="sec-lbl">Priority</span>
         <button class="clr-btn" id="clr-personal" onclick="clearCompleted('personal')">Clear Completed</button>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('personal','priority')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('personal-priority')">+</button>
       </div>
       <div class="add-bar" id="add-personal-priority">
         <input class="add-inp" id="inp-personal-priority" placeholder="Add priority task…" onkeydown="addKey(event,'personal','priority')">
+        <span class="add-date-lbl" id="adl-personal-priority" style="display:none"></span>
+        <button class="add-date-btn" id="adb-personal-priority" title="Set due date" onclick="openTaskModalForAdd('personal','priority')">🗓</button>
         <button class="add-ok" onclick="doAdd('personal','priority')">Add</button>
       </div>
       <div class="task-list" id="tl-personal-priority">
@@ -666,11 +684,12 @@ window.save=function(){
       <div class="sec-hdr">
         <span class="sec-lbl">General</span>
         <span class="sec-spacer"></span>
-        <button class="ibtn" onclick="openTaskModal('personal','general')">🗓</button>
         <button class="ibtn plus" onclick="showAdd('personal-general')">+</button>
       </div>
       <div class="add-bar" id="add-personal-general">
         <input class="add-inp" id="inp-personal-general" placeholder="Add general task…" onkeydown="addKey(event,'personal','general')">
+        <span class="add-date-lbl" id="adl-personal-general" style="display:none"></span>
+        <button class="add-date-btn" id="adb-personal-general" title="Set due date" onclick="openTaskModalForAdd('personal','general')">🗓</button>
         <button class="add-ok" onclick="doAdd('personal','general')">Add</button>
       </div>
       <div class="task-list" id="tl-personal-general">
@@ -858,6 +877,19 @@ window.save=function(){
           </div>
         </div>
         <div class="acc-row">
+          <div class="acc-row-icon">🟠</div>
+          <div class="flex-col"><div class="acc-row-label">Warning threshold</div><div class="acc-row-sub">Show orange alert when due within</div></div>
+          <div class="acc-row-right">
+            <select class="acc-select" id="prefSoonDays" onchange="setPref('soonDays',parseInt(this.value))">
+              <option value="1">1 day</option>
+              <option value="2" selected>2 days</option>
+              <option value="3">3 days</option>
+              <option value="5">5 days</option>
+              <option value="7">7 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="acc-row">
           <div class="acc-row-icon">✅</div>
           <div class="flex-col"><div class="acc-row-label">Auto-archive tasks</div><div class="acc-row-sub">Move completed tasks to archive at midnight</div></div>
           <div class="acc-row-right">
@@ -913,7 +945,20 @@ window.save=function(){
 <!-- TASK DATE MODAL -->
 <div class="overlay" id="taskModal">
   <div class="modal">
-    <div class="modal-title">Set date &amp; time</div>
+    <div class="modal-title" id="taskModalTitle">Set due date</div>
+    <div class="mfield">
+      <label class="mlbl">Quick pick</label>
+      <div class="quick-picks">
+        <button class="qp-btn" data-qp="today" onclick="qpick('today')">Today</button>
+        <button class="qp-btn" data-qp="tomorrow" onclick="qpick('tomorrow')">Tomorrow</button>
+        <button class="qp-btn" data-qp="2days" onclick="qpick('2days')">In 2 days</button>
+        <button class="qp-btn" data-qp="nextweek" onclick="qpick('nextweek')">Next week</button>
+      </div>
+    </div>
+    <div class="mfield">
+      <label class="mlbl">Or pick a date</label>
+      <div class="cal" id="taskCal"></div>
+    </div>
     <div class="mfield">
       <label class="mlbl">Recurrence</label>
       <div class="pills" id="taskPills">
@@ -923,10 +968,6 @@ window.save=function(){
         <button class="pill" data-v="monthly" onclick="selPill(this,'task')">Monthly</button>
         <button class="pill" data-v="yearly" onclick="selPill(this,'task')">Yearly</button>
       </div>
-    </div>
-    <div class="mfield">
-      <label class="mlbl">Date</label>
-      <div class="cal" id="taskCal"></div>
     </div>
     <div class="mfield">
       <div class="time-row">
@@ -945,6 +986,7 @@ window.save=function(){
       <button class="mbtn sec" onclick="closeTaskModal()">Cancel</button>
       <button class="mbtn pri" onclick="confirmTaskDate()">Set Date</button>
     </div>
+    <button class="remove-date-btn" id="removeDateBtn" style="display:none" onclick="removeTaskDate()">Remove date</button>
   </div>
 </div>
 
@@ -1003,7 +1045,8 @@ var S={
   prefs:{
     darkMode:false,theme:'warm',fontSize:'medium',
     workDays:[1,2,3,4,5],workStart:480,workEnd:1050,
-    meetingRetention:180,autoArchive:true,lastBackup:null
+    meetingRetention:180,autoArchive:true,lastBackup:null,
+    soonDays:2
   }
 };
 
@@ -1213,10 +1256,21 @@ function showAdd(key){
   var inp=document.getElementById('inp-'+key);
   inp.value='';
   inp.focus();
+  // Reset any pending date for this bar
+  var parts=key.split('-'),mode=parts[0],sec=parts[1];
+  if(S.tm&&S.tm.context==='add'&&S.tm.mode===mode&&S.tm.sec===sec){
+    S.tm.date=null;S.tm.time=null;S.tm.recur='once';
+    _updateAddBarDateLabel(mode,sec);
+  }
   setTimeout(function(){
     function outside(e){
       if(!bar.contains(e.target)){
         bar.classList.remove('on');inp.value='';
+        // Clear pending date on dismiss
+        if(S.tm&&S.tm.context==='add'&&S.tm.mode===mode&&S.tm.sec===sec){
+          S.tm.date=null;S.tm.time=null;S.tm.recur='once';
+          _updateAddBarDateLabel(mode,sec);
+        }
         document.removeEventListener('touchstart',outside,true);
         document.removeEventListener('mousedown',outside,true);
       }
@@ -1232,8 +1286,20 @@ function addKey(e,mode,sec){
 function doAdd(mode,sec){
   var inp=document.getElementById('inp-'+mode+'-'+sec),text=inp.value.trim();
   if(!text)return;
-  S.tasks[mode][sec].push({id:S.nextId++,text:text,completed:false,date:null,time:null,recur:'once',note:''});
-  inp.value='';document.getElementById('add-'+mode+'-'+sec).classList.remove('on');
+  var pendingDate=null,pendingTime=null,pendingRecur='once';
+  if(S.tm&&S.tm.context==='add'&&S.tm.mode===mode&&S.tm.sec===sec&&S.tm.date){
+    pendingDate=S.tm.date;pendingTime=S.tm.time||null;pendingRecur=S.tm.recur||'once';
+  }
+  var newTask={id:S.nextId++,text:text,completed:false,date:pendingDate,time:pendingTime,recur:pendingRecur,note:''};
+  if(pendingDate&&pendingTime)schedNotif(text,'Task due now',pendingDate,pendingTime);
+  S.tasks[mode][sec].push(newTask);
+  inp.value='';
+  document.getElementById('add-'+mode+'-'+sec).classList.remove('on');
+  // Reset pending date state
+  if(S.tm&&S.tm.context==='add'&&S.tm.mode===mode&&S.tm.sec===sec){
+    S.tm.date=null;S.tm.time=null;S.tm.recur='once';
+  }
+  _updateAddBarDateLabel(mode,sec);
   renderTasks(mode,sec);save();
 }
 
@@ -1361,7 +1427,8 @@ function renderTasks(mode,sec){
     (function(t){
       var overdue=!!(t.date&&!t.completed&&new Date(t.date)<nowD);
       var du=t.date?daysUntil(t.date):999;
-      var dueClass=overdue?'overdue':(du<=3&&du>=0?'soon':'');
+      var soonDays=S.prefs.soonDays!==undefined?S.prefs.soonDays:2;
+      var dueClass=overdue?'overdue':(du===0?'due-today':(du<=soonDays&&du>=0?'soon':''));
       var hasNote=!!(t.note&&t.note.trim());
 
       var wrap=document.createElement('div');
@@ -1377,6 +1444,7 @@ function renderTasks(mode,sec){
         +'<div class="chk"></div>'
         +'<div class="task-txt">'+esc(t.text)+'</div>'
         +dueHtml
+        +'<button class="task-date-btn" title="Set due date">🗓</button>'
         +'<button class="task-edit-btn" title="Edit">&#9998;</button>'
         +'<button class="task-note-btn'+(hasNote?' has-note':'')+'" title="Note">&#8943;</button>'
         +'<button class="del-btn">&#10005;</button>';
@@ -1384,6 +1452,7 @@ function renderTasks(mode,sec){
       // Use task ID for all operations — immune to index shifting
       (function(tid){
         card.querySelector('.chk').addEventListener('click',function(){toggleTaskById(mode,sec,tid);});
+        card.querySelector('.task-date-btn').addEventListener('click',function(e){e.stopPropagation();openTaskModalForTask(mode,sec,tid);});
         card.querySelector('.task-edit-btn').addEventListener('click',function(){startEditTask(this);});
         card.querySelector('.task-note-btn').addEventListener('click',function(){toggleTaskNote(mode,sec,tid,this);});
         card.querySelector('.del-btn').addEventListener('click',function(){delTaskById(mode,sec,tid);});
@@ -1457,30 +1526,105 @@ function renderAll(){
 }
 
 // ── TASK DATE MODAL ──────────────────────────────────────────
-function openTaskModal(mode,sec){
-  S.tm={mode:mode,sec:sec,date:null,recur:'once',targetId:null};
-  // Capture the ID of the last undated task right now, not at confirm time
-  var tasks=S.tasks[mode][sec];
-  for(var i=tasks.length-1;i>=0;i--){if(!tasks[i].date){S.tm.targetId=tasks[i].id;break;}}
-  if(S.tm.targetId===null&&tasks.length)S.tm.targetId=tasks[tasks.length-1].id;
+// S.tm.context: 'add' (pending new task) or 'task' (existing task by ID)
+function _openTaskModal(mode,sec,taskId,existingDate,existingTime,existingRecur){
+  S.tm={mode:mode,sec:sec,date:existingDate||null,recur:existingRecur||'once',targetId:taskId||null,context:taskId?'task':'add'};
+  // Quick-pick selection
+  document.querySelectorAll('.qp-btn').forEach(function(b){b.classList.remove('sel');});
+  // Pills
   var pills=document.querySelectorAll('#taskPills .pill');
-  for(var i=0;i<pills.length;i++)pills[i].classList.toggle('sel',pills[i].dataset.v==='once');
-  document.getElementById('taskTimeTog').checked=false;
-  document.getElementById('taskTimeF').style.display='none';
-  S.taskCalMo=new Date();renderCal('task');
+  for(var i=0;i<pills.length;i++)pills[i].classList.toggle('sel',pills[i].dataset.v===(existingRecur||'once'));
+  // Time
+  document.getElementById('taskTimeTog').checked=!!(existingTime);
+  document.getElementById('taskTimeF').style.display=existingTime?'block':'none';
+  if(existingTime){
+    var tp=existingTime.split(':');
+    setTimeout(function(){initDrum('drumTaskH',24,true,parseInt(tp[0]));initDrum('drumTaskM',60,true,parseInt(tp[1]));},50);
+  }
+  // Remove date button — only show if task already has a date
+  document.getElementById('removeDateBtn').style.display=(existingDate&&taskId)?'block':'none';
+  // Title
+  document.getElementById('taskModalTitle').textContent=existingDate?'Change due date':'Set due date';
+  // Calendar
+  S.taskCalMo=existingDate?
+    (function(){var p=existingDate.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));})()
+    :new Date();
+  renderCal('task');
   document.getElementById('taskModal').classList.add('open');
 }
+function openTaskModalForAdd(mode,sec){
+  // Called from add-bar — uses pending date on S.tm for the about-to-be-added task
+  var pending=S.tm&&S.tm.context==='add'&&S.tm.mode===mode&&S.tm.sec===sec?S.tm:null;
+  _openTaskModal(mode,sec,null,pending?pending.date:null,pending?pending.time:null,pending?pending.recur:'once');
+}
+function openTaskModalForTask(mode,sec,taskId){
+  var task=S.tasks[mode][sec].find(function(t){return t.id===taskId;});
+  if(!task)return;
+  _openTaskModal(mode,sec,taskId,task.date,task.time,task.recur);
+}
+// Legacy — kept for any old references
+function openTaskModal(mode,sec){openTaskModalForAdd(mode,sec);}
 function closeTaskModal(){document.getElementById('taskModal').classList.remove('open');}
+function qpick(which){
+  var d=new Date();
+  if(which==='today'){}
+  else if(which==='tomorrow')d.setDate(d.getDate()+1);
+  else if(which==='2days')d.setDate(d.getDate()+2);
+  else if(which==='nextweek')d.setDate(d.getDate()+7);
+  S.tm.date=localISO(d.getFullYear(),d.getMonth(),d.getDate());
+  document.querySelectorAll('.qp-btn').forEach(function(b){b.classList.toggle('sel',b.dataset.qp===which);});
+  renderCal('task');
+}
+function removeTaskDate(){
+  if(S.tm.targetId&&S.tm.context==='task'){
+    var task=S.tasks[S.tm.mode][S.tm.sec].find(function(t){return t.id===S.tm.targetId;});
+    if(task){task.date=null;task.time=null;task.recur='once';}
+    renderTasks(S.tm.mode,S.tm.sec);save();
+  }else if(S.tm.context==='add'){
+    // Clear pending date on add-bar
+    S.tm.date=null;S.tm.time=null;S.tm.recur='once';
+    _updateAddBarDateLabel(S.tm.mode,S.tm.sec);
+  }
+  closeTaskModal();
+}
 function confirmTaskDate(){
   if(!S.tm.date){closeTaskModal();return;}
   var hasTime=document.getElementById('taskTimeTog').checked;
   var timeStr=hasTime?String(getDrumVal('drumTaskH')).padStart(2,'0')+':'+String(getDrumVal('drumTaskM')).padStart(2,'0'):null;
-  var task=S.tasks[S.tm.mode][S.tm.sec].find(function(t){return t.id===S.tm.targetId;});
-  if(task){
-    task.date=S.tm.date;task.time=timeStr;task.recur=S.tm.recur;
-    if(timeStr)schedNotif(task.text,'Task due now',S.tm.date,timeStr);
+  if(S.tm.context==='task'&&S.tm.targetId){
+    // Applying to an existing task
+    var task=S.tasks[S.tm.mode][S.tm.sec].find(function(t){return t.id===S.tm.targetId;});
+    if(task){
+      task.date=S.tm.date;task.time=timeStr;task.recur=S.tm.recur;
+      if(timeStr)schedNotif(task.text,'Task due now',S.tm.date,timeStr);
+    }
+    renderTasks(S.tm.mode,S.tm.sec);save();
+  }else{
+    // Pending date for the add-bar — store on S.tm and update the label
+    S.tm.time=timeStr;
+    _updateAddBarDateLabel(S.tm.mode,S.tm.sec);
   }
-  closeTaskModal();renderTasks(S.tm.mode,S.tm.sec);save();
+  closeTaskModal();
+}
+function _updateAddBarDateLabel(mode,sec){
+  var key=mode+'-'+sec;
+  var lbl=document.getElementById('adl-'+key);
+  var btn=document.getElementById('adb-'+key);
+  if(!lbl||!btn)return;
+  var hasPending=!!(S.tm&&S.tm.context==='add'&&S.tm.mode===mode&&S.tm.sec===sec&&S.tm.date);
+  if(hasPending){
+    var du=daysUntil(S.tm.date);
+    var soonDays=S.prefs.soonDays!==undefined?S.prefs.soonDays:2;
+    var cls=du<0?'overdue':(du===0?'due-today':(du<=soonDays?'soon':''));
+    lbl.textContent=fmtDue(S.tm.date,S.tm.time);
+    lbl.className='add-date-lbl'+( cls?' '+cls:'');
+    lbl.style.display='inline';
+    btn.classList.add('has-date');
+  }else{
+    lbl.style.display='none';
+    lbl.textContent='';
+    btn.classList.remove('has-date');
+  }
 }
 
 // ── CALENDAR ─────────────────────────────────────────────────
@@ -2030,6 +2174,7 @@ function renderAccount(){
   document.getElementById('prefFontSize').value=p.fontSize||'medium';
   document.getElementById('prefMtgRetention').value=String(p.meetingRetention!==undefined?p.meetingRetention:180);
   document.getElementById('prefAutoArchive').checked=p.autoArchive!==false;
+  document.getElementById('prefSoonDays').value=String(p.soonDays!==undefined?p.soonDays:2);
   // Work hours
   var sh=Math.floor((p.workStart||480)/60),sm=(p.workStart||480)%60;
   var eh=Math.floor((p.workEnd||1050)/60),em=(p.workEnd||1050)%60;
