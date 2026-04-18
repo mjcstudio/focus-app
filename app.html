@@ -177,7 +177,7 @@ body.mode-notes .app-title,body.mode-ndetail .app-title{color:var(--note-accent)
 body.mode-work .mode-lbl,body.mode-meetings .mode-lbl,body.mode-mnotes .mode-lbl,body.mode-archive .mode-lbl{color:var(--work-muted)}
 body.mode-personal .mode-lbl,body.mode-archive-per .mode-lbl{color:var(--per-muted)}
 body.mode-notes .mode-lbl,body.mode-ndetail .mode-lbl{color:var(--note-muted)}
-.hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.hdr-right{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:nowrap;flex-shrink:0}
 .hdr-btn{border:none;border-radius:var(--rs);padding:4px 11px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t)}
 
 .flip-btn{background:none;border:none;cursor:pointer;font-size:20px;padding:2px 6px;opacity:.3;transition:opacity var(--t);color:inherit;line-height:1}
@@ -458,7 +458,8 @@ body.mode-archive-per .nb-per{background:var(--per-accent);color:#fff}
 .qp-btn:active{opacity:.8}
 .remove-date-btn{width:100%;padding:8px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;color:#c0392b;cursor:pointer;text-align:center;margin-top:4px;border-radius:var(--rs);transition:background .15s}
 .remove-date-btn:active{background:#fdf0ee}
-/* TOAST */bottom:calc(var(--nav) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#1a1a18;color:#fff;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:300;white-space:nowrap}
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--nav) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:#1a1a18;color:#fff;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:300;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
@@ -607,7 +608,7 @@ window.save=function(){
     <span class="app-title">Focus</span>
     <span class="mode-lbl" id="modeLbl">Work</span>
     <div class="hdr-right">
-      <button class="hdr-btn arc-hdr-btn" onclick="goArchive()">Archive</button>
+      <button class="hdr-btn arc-hdr-btn" onclick="goArchive()" title="Archive">📂</button>
       <button class="hdr-btn back-btn" onclick="goBack()">← Back</button>
       <button class="search-btn" onclick="openSearch()" title="Search">🔍</button>
       <button class="flip-btn" id="flipBtn" onclick="flipScreen()" title="Flip screen">⇅</button>
@@ -1433,7 +1434,11 @@ function renderTasks(mode,sec){
   // Sort: incomplete first, completed sink to bottom (preserve relative order)
   var incomplete=tasks.filter(function(t){return!t.completed;});
   var completed=tasks.filter(function(t){return t.completed;});
-  var sorted=incomplete.concat(completed);
+  // Within incomplete: undated tasks keep manual order, dated tasks sort by date ascending
+  var undated=incomplete.filter(function(t){return!t.date;});
+  var dated=incomplete.filter(function(t){return!!t.date;});
+  dated.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0;});
+  var sorted=undated.concat(dated).concat(completed);
 
   for(var si=0;si<sorted.length;si++){
     (function(t){
@@ -1624,6 +1629,13 @@ function confirmTaskDate(){
     // Pending date for the add-bar — store on S.tm and update the label
     S.tm.time=timeStr;
     _updateAddBarDateLabel(S.tm.mode,S.tm.sec);
+    // If text is already in the field, submit the task immediately
+    var inp=document.getElementById('inp-'+S.tm.mode+'-'+S.tm.sec);
+    if(inp&&inp.value.trim()){
+      closeTaskModal();
+      doAdd(S.tm.mode,S.tm.sec);
+      return;
+    }
   }
   closeTaskModal();
 }
@@ -2412,7 +2424,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v16';
+var APP_VERSION='focus-v18';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
