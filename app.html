@@ -1936,6 +1936,7 @@ function renderNotes(){
     (function(nid){
       row.addEventListener('click',function(e){
         if(e.target.classList.contains('note-row-del')||e.target.classList.contains('note-row-handle'))return;
+        if(list._wasDragging){list._wasDragging=false;return;}
         openNoteDetail(nid);
       });
       row.querySelector('.note-row-del').addEventListener('click',function(e){e.stopPropagation();delNote(nid);});
@@ -1954,7 +1955,14 @@ function renderNotes(){
       filter:'.empty',
       forceFallback:true,
       fallbackTolerance:5,
+      fallbackOnBody:true,
+      touchStartThreshold:3,
+      delay:0,
+      delayOnTouchOnly:false,
+      onStart:function(){list.classList.add('sorting');},
       onEnd:function(){
+        list.classList.remove('sorting');
+        list._wasDragging=true;
         var newOrder=[];
         var rows=list.querySelectorAll('.note-row');
         for(var i=0;i<rows.length;i++){
@@ -2619,7 +2627,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v23';
+var APP_VERSION='focus-v24';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
