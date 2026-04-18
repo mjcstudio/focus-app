@@ -1,4 +1,4 @@
-const CACHE='focus-v15';
+const CACHE='focus-v16';
 const ASSETS=[
   '/focus-app/app.html',
   '/focus-app/manifest.json',
