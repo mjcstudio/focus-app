@@ -1264,6 +1264,9 @@ function showAdd(key){
   }
   setTimeout(function(){
     function outside(e){
+      // Don't dismiss if the task date modal is open — user is picking a date for this bar
+      var modal=document.getElementById('taskModal');
+      if(modal&&modal.classList.contains('open'))return;
       if(!bar.contains(e.target)){
         bar.classList.remove('on');inp.value='';
         // Clear pending date on dismiss
@@ -1564,7 +1567,16 @@ function openTaskModalForTask(mode,sec,taskId){
 }
 // Legacy — kept for any old references
 function openTaskModal(mode,sec){openTaskModalForAdd(mode,sec);}
-function closeTaskModal(){document.getElementById('taskModal').classList.remove('open');}
+function closeTaskModal(){
+  document.getElementById('taskModal').classList.remove('open');
+  // If we were picking a date for a new task, make sure the add-bar is still visible
+  if(S.tm&&S.tm.context==='add'){
+    var bar=document.getElementById('add-'+S.tm.mode+'-'+S.tm.sec);
+    if(bar)bar.classList.add('on');
+    var inp=document.getElementById('inp-'+S.tm.mode+'-'+S.tm.sec);
+    if(inp)setTimeout(function(){inp.focus();},50);
+  }
+}
 function qpick(which){
   var d=new Date();
   if(which==='today'){}
