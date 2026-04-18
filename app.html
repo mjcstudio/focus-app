@@ -1430,7 +1430,6 @@ function renderTasks(mode,sec){
 
   var tasks=S.tasks[mode][sec];
   emptyEl.style.display=tasks.length?'none':'flex';
-  var nowD=new Date();nowD.setHours(0,0,0,0);
   // Sort: incomplete first, completed sink to bottom (preserve relative order)
   var incomplete=tasks.filter(function(t){return!t.completed;});
   var completed=tasks.filter(function(t){return t.completed;});
@@ -1442,9 +1441,24 @@ function renderTasks(mode,sec){
 
   for(var si=0;si<sorted.length;si++){
     (function(t){
-      var overdue=!!(t.date&&!t.completed&&new Date(t.date)<nowD);
+      var nowD=new Date();nowD.setHours(0,0,0,0);
+      var overdue=false;
+      if(t.date&&!t.completed){
+        if(t.time){
+          // Timed task — compare full datetime against now
+          var p=t.date.split('-'),tp=t.time.split(':');
+          var taskDt=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),parseInt(tp[0]),parseInt(tp[1]),0,0);
+          overdue=taskDt<new Date();
+        }else{
+          // Date-only — compare local date parts to avoid UTC offset issues
+          var p2=t.date.split('-');
+          var taskD=new Date(parseInt(p2[0]),parseInt(p2[1])-1,parseInt(p2[2]));
+          overdue=taskD<nowD;
+        }
+      }
       var du=t.date?daysUntil(t.date):999;
       var soonDays=S.prefs.soonDays!==undefined?S.prefs.soonDays:2;
+      // For timed tasks past their time today, treat as overdue not due-today
       var dueClass=overdue?'overdue':(du===0?'due-today':(du<=soonDays&&du>=0?'soon':''));
       var hasNote=!!(t.note&&t.note.trim());
 
@@ -2424,7 +2438,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v18';
+var APP_VERSION='focus-v19';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
