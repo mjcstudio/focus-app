@@ -158,6 +158,7 @@ body.mode-archive-per{background:var(--per-bg);color:var(--per-text)}
 
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;background:#f5f2ee;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;z-index:200;padding:40px}
+.login-version{position:absolute;top:20px;left:0;right:0;text-align:center;font-size:11px;font-weight:600;letter-spacing:.08em;color:#c8beb4;text-transform:uppercase}
 .login-title{font-family:'DM Serif Display',serif;font-size:42px;color:#7c6f5e;letter-spacing:-.5px}
 .login-sub{font-size:14px;color:#9a8d7e;text-align:center;line-height:1.6;max-width:260px}
 .login-btn{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #ddd6cb;border-radius:12px;padding:12px 20px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:#2a2118;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
@@ -591,6 +592,7 @@ window.save=function(){
 <body class="mode-work">
 
 <div id="loginScreen">
+  <div class="login-version" id="loginVersion"></div>
   <div class="login-title">Focus</div>
   <div class="login-sub">Your personal task &amp; meeting companion. Sign in to sync across all your devices.</div>
   <button class="login-btn" id="googleSignInBtn">
@@ -927,6 +929,13 @@ window.save=function(){
     <!-- INFORMATION -->
     <div class="acc-section">
       <div class="acc-section-title">Information</div>
+      <div class="acc-card" style="margin-bottom:12px">
+        <div class="acc-row">
+          <div class="acc-row-icon">🔢</div>
+          <div class="flex-col"><div class="acc-row-label">Version</div><div class="acc-row-sub" id="accVersion"></div></div>
+          <div class="acc-row-right"><button class="acc-btn sec" onclick="checkForUpdates()">Check for updates</button></div>
+        </div>
+      </div>
       <div class="acc-info-grid" id="accInfoGrid"></div>
     </div>
 
@@ -2205,6 +2214,9 @@ function renderAccount(){
   // Last backup
   var lbl=document.getElementById('lastBackupLbl');
   if(lbl)lbl.textContent=p.lastBackup?'Last backup: '+p.lastBackup:'Never backed up';
+  // Version
+  var vEl=document.getElementById('accVersion');
+  if(vEl)vEl.textContent=APP_VERSION;
   // User pill label
   renderUserPill();
   // Info grid
@@ -2393,11 +2405,39 @@ if('serviceWorker'in navigator){
   window.addEventListener('load',function(){
     navigator.serviceWorker.register('/focus-app/sw.js').catch(function(e){console.log('SW:',e);});
   });
-  // Show toast when a new version of the app has been installed
   navigator.serviceWorker.addEventListener('message',function(e){
     if(e.data&&e.data.type==='APP_UPDATED'){
-      showToast('Focus has been updated');
+      showToast('Focus updated to '+e.data.version+' — reloading…');
+      setTimeout(function(){window.location.reload();},1800);
     }
+  });
+}
+var APP_VERSION='focus-v16';
+// Show version on login screen
+(function(){
+  var el=document.getElementById('loginVersion');
+  if(el)el.textContent=APP_VERSION;
+})();
+function checkForUpdates(){
+  if(!('serviceWorker' in navigator)){showToast('Updates not available in this browser');return;}
+  showToast('Checking for updates…');
+  navigator.serviceWorker.getRegistration('/focus-app/sw.js').then(function(reg){
+    if(!reg){showToast('No service worker found');return;}
+    reg.update().then(function(){
+      // If a new SW installs and activates, the message listener above will trigger
+      // If already up to date, nothing fires — show confirmation after a delay
+      setTimeout(function(){
+        if(reg.waiting){
+          // New SW waiting — activate it
+          reg.waiting.postMessage({type:'SKIP_WAITING'});
+        }else if(!reg.installing){
+          showToast('Already up to date ('+APP_VERSION+')');
+        }
+      },3000);
+    }).catch(function(e){
+      showToast('Update check failed — check your connection');
+      console.error('SW update failed:',e);
+    });
   });
 }
 </script>
