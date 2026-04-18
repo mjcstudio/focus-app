@@ -1297,6 +1297,30 @@ function addKey(e,mode,sec){
   if(e.key==='Enter')doAdd(mode,sec);
   if(e.key==='Escape')document.getElementById('add-'+mode+'-'+sec).classList.remove('on');
 }
+// Insert a task into S.tasks in date order among incomplete dated tasks.
+// Undated tasks stay at the top in manual order; dated tasks slot in by datetime.
+function _taskSortKey(t){
+  if(!t.date)return null;
+  var p=t.date.split('-');
+  if(t.time){var tp=t.time.split(':');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),parseInt(tp[0]),parseInt(tp[1]),0,0).getTime();}
+  return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),0,0,0,0).getTime();
+}
+function _insertTaskSorted(mode,sec,task){
+  var arr=S.tasks[mode][sec];
+  if(!task.date){arr.push(task);return;}
+  // Find first dated incomplete task with a later key, insert before it
+  var key=_taskSortKey(task);
+  for(var i=0;i<arr.length;i++){
+    if(arr[i].completed)continue;
+    var k=_taskSortKey(arr[i]);
+    if(k!==null&&k>key){arr.splice(i,0,task);return;}
+  }
+  // No later dated task found — insert before the first completed task
+  for(var j=0;j<arr.length;j++){
+    if(arr[j].completed){arr.splice(j,0,task);return;}
+  }
+  arr.push(task);
+}
 function doAdd(mode,sec){
   var inp=document.getElementById('inp-'+mode+'-'+sec),text=inp.value.trim();
   if(!text)return;
@@ -1306,7 +1330,7 @@ function doAdd(mode,sec){
   }
   var newTask={id:S.nextId++,text:text,completed:false,date:pendingDate,time:pendingTime,recur:pendingRecur,note:''};
   if(pendingDate&&pendingTime)schedNotif(text,'Task due now',pendingDate,pendingTime);
-  S.tasks[mode][sec].push(newTask);
+  _insertTaskSorted(mode,sec,newTask);
   inp.value='';
   document.getElementById('add-'+mode+'-'+sec).classList.remove('on');
   // Reset pending date state
@@ -1431,14 +1455,10 @@ function renderTasks(mode,sec){
 
   var tasks=S.tasks[mode][sec];
   emptyEl.style.display=tasks.length?'none':'flex';
-  // Sort: incomplete first, completed sink to bottom (preserve relative order)
+  // Sort: incomplete first, completed sink to bottom — preserve S.tasks order within each group
   var incomplete=tasks.filter(function(t){return!t.completed;});
   var completed=tasks.filter(function(t){return t.completed;});
-  // Within incomplete: undated tasks keep manual order, dated tasks sort by date ascending
-  var undated=incomplete.filter(function(t){return!t.date;});
-  var dated=incomplete.filter(function(t){return!!t.date;});
-  dated.sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0;});
-  var sorted=undated.concat(dated).concat(completed);
+  var sorted=incomplete.concat(completed);
 
   for(var si=0;si<sorted.length;si++){
     (function(t){
@@ -1633,11 +1653,14 @@ function confirmTaskDate(){
   var hasTime=document.getElementById('taskTimeTog').checked;
   var timeStr=hasTime?String(getDrumVal('drumTaskH')).padStart(2,'0')+':'+String(getDrumVal('drumTaskM')).padStart(2,'0'):null;
   if(S.tm.context==='task'&&S.tm.targetId){
-    // Applying to an existing task
-    var task=S.tasks[S.tm.mode][S.tm.sec].find(function(t){return t.id===S.tm.targetId;});
-    if(task){
+    // Applying to an existing task — remove it, update it, re-insert in sorted position
+    var arr=S.tasks[S.tm.mode][S.tm.sec];
+    var idx=arr.findIndex(function(t){return t.id===S.tm.targetId;});
+    if(idx!==-1){
+      var task=arr.splice(idx,1)[0];
       task.date=S.tm.date;task.time=timeStr;task.recur=S.tm.recur;
       if(timeStr)schedNotif(task.text,'Task due now',S.tm.date,timeStr);
+      _insertTaskSorted(S.tm.mode,S.tm.sec,task);
     }
     renderTasks(S.tm.mode,S.tm.sec);save();
   }else{
@@ -2439,7 +2462,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v21';
+var APP_VERSION='focus-v22';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
