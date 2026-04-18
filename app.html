@@ -609,7 +609,7 @@ window.save=function(){
     <span class="app-title">Focus</span>
     <span class="mode-lbl" id="modeLbl">Work</span>
     <div class="hdr-right">
-      <button class="hdr-btn arc-hdr-btn" onclick="goArchive()" title="Archive">📂</button>
+      <button class="hdr-btn arc-hdr-btn" onclick="goArchive()">Archive</button>
       <button class="hdr-btn back-btn" onclick="goBack()">← Back</button>
       <button class="search-btn" onclick="openSearch()" title="Search">🔍</button>
       <button class="flip-btn" id="flipBtn" onclick="flipScreen()" title="Flip screen">⇅</button>
@@ -2439,7 +2439,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v20';
+var APP_VERSION='focus-v21';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
