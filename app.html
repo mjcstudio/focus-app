@@ -2594,14 +2594,6 @@ function showToast(msg){
   _toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
 }
 
-  var el=document.getElementById('toast');
-  if(!el)return;
-  el.textContent=msg;
-  el.classList.add('show');
-  clearTimeout(_toastTimer);
-  _toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
-}
-
 // ── FLIP SCREEN ──────────────────────────────────────────────
 function flipScreen(){
   var app=document.getElementById('mainApp');
@@ -2639,7 +2631,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v33';
+var APP_VERSION='focus-v34';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
