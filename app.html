@@ -728,7 +728,7 @@ window.save=function(){
   </div>
 
   <!-- NOTES -->
-  <div class="view notes-view" id="notesView">
+  <div class="notes-view" id="notesView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
       <span class="sec-lbl note-lbl">Notes</span>
       <span class="sec-spacer"></span>
@@ -741,7 +741,7 @@ window.save=function(){
   </div>
 
   <!-- NOTE DETAIL -->
-  <div class="view ndetail-view" id="ndetailView">
+  <div class="ndetail-view" id="ndetailView">
     <div class="ndetail-hdr">
       <div contenteditable="true" class="ndetail-title" id="ndetailTitle" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('ndetailBody').focus();}"></div>
       <button class="ndetail-done" style="background:var(--note-muted);color:var(--note-bg);font-weight:500;margin-right:4px" onclick="shareNote(S.activeNoteId)">Share</button>
@@ -752,7 +752,7 @@ window.save=function(){
   </div>
 
   <!-- NOTES ARCHIVE -->
-  <div class="view notes-arc-view" id="notesArchiveView">
+  <div class="notes-arc-view" id="notesArchiveView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
       <span class="sec-lbl note-lbl">Note Archive</span>
     </div>
@@ -762,7 +762,7 @@ window.save=function(){
   </div>
 
   <!-- MEETINGS -->
-  <div class="view mtgs-view" id="meetingsView">
+  <div class="mtgs-view" id="meetingsView">
     <div class="sec-hdr" style="padding:4px 4px 10px;flex-shrink:0">
       <span class="sec-lbl mtg-lbl">Meetings</span>
     </div>
@@ -773,7 +773,7 @@ window.save=function(){
   </div>
 
   <!-- MEETING NOTES -->
-  <div class="view mnotes-view" id="mnotesView">
+  <div class="mnotes-view" id="mnotesView">
     <div class="mnotes-hdr">
       <div class="mnotes-top">
         <div class="mnotes-name" id="mnotesName"></div>
@@ -788,7 +788,7 @@ window.save=function(){
   </div>
 
   <!-- WORK ARCHIVE -->
-  <div class="view arc-view" id="archiveView">
+  <div class="arc-view" id="archiveView">
     <div class="arc-group-btns">
       <button class="arc-grp-btn sel" data-g="day" onclick="selArcGroup(this,'work')">Day</button>
       <button class="arc-grp-btn" data-g="week" onclick="selArcGroup(this,'work')">Week</button>
@@ -798,7 +798,7 @@ window.save=function(){
   </div>
 
   <!-- PERSONAL ARCHIVE -->
-  <div class="view arc-view" id="archivePerView">
+  <div class="arc-view" id="archivePerView">
     <div class="arc-group-btns">
       <button class="arc-grp-btn sel" data-g="day" onclick="selArcGroup(this,'personal')">Day</button>
       <button class="arc-grp-btn" data-g="week" onclick="selArcGroup(this,'personal')">Week</button>
@@ -808,7 +808,7 @@ window.save=function(){
   </div>
 
   <!-- SEARCH -->
-  <div class="view search-view" id="searchView">
+  <div class="search-view" id="searchView">
     <div class="search-bar">
       <input class="search-inp" id="searchInp" type="search" placeholder="Search everything…"
         oninput="onSearchInput(this.value)"
@@ -827,7 +827,7 @@ window.save=function(){
   </div>
 
   <!-- ACCOUNT -->
-  <div class="view account-view" id="accountView">
+  <div class="account-view" id="accountView">
 
     <!-- DISPLAY -->
     <div class="acc-section">
@@ -2629,7 +2629,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v29';
+var APP_VERSION='focus-v31';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
