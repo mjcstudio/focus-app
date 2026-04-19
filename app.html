@@ -595,6 +595,7 @@ function startSync(){
       if(typeof applyPrefs==='function')applyPrefs();
       if(typeof archivePast==='function')archivePast();
       if(typeof renderAll==='function')renderAll();
+      if(typeof checkBackupDue==='function'&&!window._backupChecked){window._backupChecked=true;setTimeout(checkBackupDue,2000);}
     }
   });
 }
@@ -982,6 +983,7 @@ window.save=function(){
   </div>
 
 <div id="toast" class="toast"></div>
+
 
 </div>
 
@@ -2591,6 +2593,24 @@ function showToast(msg){
   clearTimeout(_toastTimer);
   _toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
 }
+function checkBackupDue(){
+  var lastDate=S.prefs.lastBackup||null;
+  var due=false;
+  if(!lastDate){due=true;}
+  else{
+    var p=lastDate.split('-');
+    var last=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+    due=Math.floor((Date.now()-last.getTime())/86400000)>=7;
+  }
+  if(due){exportBackup();showToast('Weekly backup saved automatically');}
+}
+  var el=document.getElementById('toast');
+  if(!el)return;
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
+}
 
 // ── FLIP SCREEN ──────────────────────────────────────────────
 function flipScreen(){
@@ -2629,7 +2649,7 @@ if('serviceWorker'in navigator){
     }
   });
 }
-var APP_VERSION='focus-v31';
+var APP_VERSION='focus-v32';
 // Show version on login screen
 (function(){
   var el=document.getElementById('loginVersion');
