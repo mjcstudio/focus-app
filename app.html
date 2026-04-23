@@ -546,7 +546,7 @@ const cfg={apiKey:"AIzaSyCDnMndkJBFvrXPTzaZh5_GjgHq9rOShVQ",authDomain:"focus-ap
 const fbApp=initializeApp(cfg);
 const auth=getAuth(fbApp);
 const db=getFirestore(fbApp);
-let uid=null,unsub=null,saveTimer=null;
+let uid=null,unsub=null,saveTimer=null,localWritePending=false,lastSaveTime=0;
 onAuthStateChanged(auth,user=>{
   if(user){
     uid=user.uid;
@@ -567,10 +567,25 @@ window.signInWithGoogle=async function(){
   try{const p=new GoogleAuthProvider();await signInWithPopup(auth,p);}catch(e){console.error(e);}
 };
 window.doSignOut=async function(){await signOut(auth);};
+function mergeArchive(remote,local){
+  // Union of remote and local archive entries, deduplicated by id.
+  // Local entries always win so completions made since the last write are never lost.
+  var result={work:[],personal:[]};
+  ['work','personal'].forEach(function(mode){
+    var seen=new Set();
+    (local[mode]||[]).forEach(function(e){if(!seen.has(e.id)){seen.add(e.id);result[mode].push(e);}});
+    (remote[mode]||[]).forEach(function(e){if(!seen.has(e.id)){seen.add(e.id);result[mode].push(e);}});
+    result[mode].sort(function(a,b){return(b.completedDate||'')>(a.completedDate||'')?1:-1;});
+  });
+  return result;
+}
 function startSync(){
   if(unsub)unsub();
   unsub=onSnapshot(doc(db,'users',uid,'data','main'),snap=>{
     if(snap.exists()){
+      // If a local write is in flight, skip — our own write will trigger another
+      // snapshot once it lands, and by then localWritePending will be false.
+      if(localWritePending)return;
       const d=snap.data();
       if(d.tasks)S.tasks=d.tasks;
       if(d.notes)S.notes=d.notes;
@@ -589,13 +604,15 @@ function startSync(){
           if(m)m.notes=currentText;
         }
       }
-      if(d.archive)S.archive=d.archive;
-      if(d.nextId)S.nextId=d.nextId;
+      // Merge remote and local archives so completed tasks are never lost.
+      if(d.archive){S.archive=mergeArchive(d.archive,S.archive);}
+      // Only advance nextId, never retreat it — prevents id collisions
+      if(d.nextId&&d.nextId>S.nextId)S.nextId=d.nextId;
       if(d.prefs)S.prefs=Object.assign(S.prefs,d.prefs);
       if(typeof applyPrefs==='function')applyPrefs();
       if(typeof archivePast==='function')archivePast();
+      if(typeof autoArchiveCompleted==='function')autoArchiveCompleted();
       if(typeof renderAll==='function')renderAll();
-
     }
   });
 }
@@ -610,9 +627,17 @@ window.save=function(){
   localStorage.setItem('focus-v3',JSON.stringify({tasks:S.tasks,archive:S.archive,notes:S.notes,notesArchive:S.notesArchive,meetings:S.meetings,nextId:S.nextId,prefs:S.prefs}));
   if(!uid)return;
   clearTimeout(saveTimer);
+  // Block the snapshot handler from overwriting S while this write is in flight.
+  localWritePending=true;
+  lastSaveTime=Date.now();
   saveTimer=setTimeout(async function(){
-    try{await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,notesArchive:S.notesArchive,meetings:S.meetings,archive:S.archive,nextId:S.nextId,prefs:S.prefs,updatedAt:new Date().toISOString()});}
-    catch(e){console.error('Save failed:',e);}
+    try{
+      await setDoc(doc(db,'users',uid,'data','main'),{tasks:S.tasks,notes:S.notes,notesArchive:S.notesArchive,meetings:S.meetings,archive:S.archive,nextId:S.nextId,prefs:S.prefs,updatedAt:new Date().toISOString()});
+    }catch(e){
+      console.error('Save failed:',e);
+    }finally{
+      localWritePending=false;
+    }
   },800);
 };
 </script>
