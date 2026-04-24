@@ -541,7 +541,7 @@ input:checked+.tog-sl::before{transform:translateX(18px)}
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import{getFirestore,doc,setDoc,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getFirestore,doc,collection,setDoc,deleteDoc,onSnapshot}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 const cfg={apiKey:"AIzaSyCDnMndkJBFvrXPTzaZh5_GjgHq9rOShVQ",authDomain:"focus-app-b5600.firebaseapp.com",projectId:"focus-app-b5600",storageBucket:"focus-app-b5600.firebasestorage.app",messagingSenderId:"29192274508",appId:"1:29192274508:web:354f4affb51b9f4a116ae9"};
 const fbApp=initializeApp(cfg);
 const auth=getAuth(fbApp);
@@ -555,10 +555,12 @@ onAuthStateChanged(auth,user=>{
     document.getElementById('mainApp').style.display='flex';
     renderUserPill();
     startSync();
+    startInboxListener();
     if(typeof reqNotif==='function')reqNotif();
   }else{
     uid=null;
     if(unsub){unsub();unsub=null;}
+    if(unsubInbox){unsubInbox();unsubInbox=null;}
     document.getElementById('loginScreen').style.display='flex';
     document.getElementById('mainApp').style.display='none';
   }
@@ -613,6 +615,56 @@ function startSync(){
       if(typeof archivePast==='function')archivePast();
       if(typeof autoArchiveCompleted==='function')autoArchiveCompleted();
       if(typeof renderAll==='function')renderAll();
+    }
+  });
+}
+let unsubInbox=null;
+function startInboxListener(){
+  if(unsubInbox)unsubInbox();
+  unsubInbox=onSnapshot(collection(db,'users',uid,'inbox'),snap=>{
+    if(snap.empty)return;
+    var didChange=false;
+    snap.forEach(function(docSnap){
+      var d=docSnap.data();
+      if(d.processed)return;
+      if(d.type==='meeting'){
+        if(d.name&&d.date){
+          S.meetings.push({
+            id:S.nextId++,
+            name:d.name,
+            date:d.date,
+            time:d.time||null,
+            recur:'once',
+            notes:d.note||'',
+            archived:false
+          });
+          didChange=true;
+        }
+      }else{
+        var mode=d.mode||'work';
+        var sec=d.section||'general';
+        if(S.tasks[mode]&&S.tasks[mode][sec]!==undefined){
+          var newTask={
+            id:S.nextId++,
+            text:d.text||'(email task)',
+            completed:false,
+            date:null,
+            time:null,
+            recur:'once',
+            note:d.note||''
+          };
+          _insertTaskSorted(mode,sec,newTask);
+          didChange=true;
+        }
+      }
+      deleteDoc(doc(db,'users',uid,'inbox',docSnap.id)).catch(function(e){
+        console.error('Failed to delete inbox entry:',e);
+      });
+    });
+    if(didChange){
+      if(typeof archivePast==='function')archivePast();
+      if(typeof renderAll==='function')renderAll();
+      save();
     }
   });
 }
