@@ -1,4 +1,4 @@
-const CACHE='focus-v37';
+const CACHE='focus-v38';
 const ASSETS=[
   '/focus-app/app.html',
   '/focus-app/manifest.json',
@@ -20,12 +20,10 @@ self.addEventListener('activate',e=>{
       })
   );
 });
-// Allow app to trigger activation of a waiting SW
 self.addEventListener('message',e=>{
   if(e.data&&e.data.type==='SKIP_WAITING')self.skipWaiting();
 });
 self.addEventListener('fetch',e=>{
-  // Always fetch sw.js fresh — never serve it from cache
   if(e.request.url.includes('sw.js')){
     e.respondWith(fetch(e.request));
     return;
