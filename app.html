@@ -2697,22 +2697,34 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v37';
+var APP_VERSION='focus-v38';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
+  var av=document.getElementById('accVersion');
+  if(av)av.textContent=APP_VERSION;
 })();
 
 function activateSW(reg){
   if(reg.waiting){
+    showToast('Update ready — applying now…');
     reg.waiting.postMessage({type:'SKIP_WAITING'});
     navigator.serviceWorker.addEventListener('controllerchange',function(){
-      window.location.reload();
+      setTimeout(function(){window.location.reload();},600);
     },{once:true});
   }
 }
 
 if('serviceWorker'in navigator){
+  // Listen for APP_UPDATED message broadcast by the SW after activation
+  navigator.serviceWorker.addEventListener('message',function(e){
+    if(e.data&&e.data.type==='APP_UPDATED'){
+      // Page was already reloaded by controllerchange; this fires in edge cases
+      // where the SW activates without a waiting→controller transition visible to us.
+      console.log('SW reports updated to',e.data.version);
+    }
+  });
+
   window.addEventListener('load',function(){
     navigator.serviceWorker.register('/focus-app/sw.js').then(function(reg){
       if(reg.waiting)activateSW(reg);
@@ -2734,12 +2746,28 @@ function checkForUpdates(){
   showToast('Checking for updates…');
   navigator.serviceWorker.getRegistration('/focus-app/sw.js').then(function(reg){
     if(!reg){showToast('No service worker found');return;}
+    // Hook into update events before calling reg.update() so we don't miss a
+    // fast install that completes before our setTimeout would fire.
+    var updateFound=false;
+    reg.addEventListener('updatefound',function(){
+      updateFound=true;
+      var newSW=reg.installing;
+      if(!newSW)return;
+      newSW.addEventListener('statechange',function(){
+        if(newSW.state==='installed'&&navigator.serviceWorker.controller){
+          activateSW(reg);
+        }
+      });
+    },{once:true});
     reg.update().then(function(){
+      // Give the browser a moment to detect an already-waiting worker
       setTimeout(function(){
-        if(!reg.installing&&!reg.waiting){
+        if(reg.waiting){
+          activateSW(reg);
+        }else if(!updateFound&&!reg.installing){
           showToast('Already up to date ('+APP_VERSION+')');
         }
-      },4000);
+      },1000);
     }).catch(function(e){
       showToast('Update check failed — check your connection');
       console.error('SW update failed:',e);
