@@ -1,4 +1,4 @@
-const CACHE='focus-v36';
+const CACHE='focus-v37';
 const ASSETS=[
   '/focus-app/app.html',
   '/focus-app/manifest.json',
@@ -25,6 +25,11 @@ self.addEventListener('message',e=>{
   if(e.data&&e.data.type==='SKIP_WAITING')self.skipWaiting();
 });
 self.addEventListener('fetch',e=>{
+  // Always fetch sw.js fresh — never serve it from cache
+  if(e.request.url.includes('sw.js')){
+    e.respondWith(fetch(e.request));
+    return;
+  }
   if(e.request.url.includes('firebase')||e.request.url.includes('googleapis')||e.request.url.includes('gstatic')||e.request.url.includes('cdnjs')){
     e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
     return;
