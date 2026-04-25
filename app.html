@@ -624,9 +624,10 @@ function startInboxListener(){
   unsubInbox=onSnapshot(collection(db,'users',uid,'inbox'),snap=>{
     if(snap.empty)return;
     var didChange=false;
+    var addedNames=[];
     snap.forEach(function(docSnap){
       var d=docSnap.data();
-      if(d.processed)return;
+      var valid=false;
       if(d.type==='meeting'){
         if(d.name&&d.date){
           S.meetings.push({
@@ -634,11 +635,15 @@ function startInboxListener(){
             name:d.name,
             date:d.date,
             time:d.time||null,
-            recur:'once',
+            recur:d.recur||'once',
             notes:d.note||'',
             archived:false
           });
+          addedNames.push(d.name);
           didChange=true;
+          valid=true;
+        }else{
+          console.warn('Focus inbox: skipping malformed meeting doc',docSnap.id,d);
         }
       }else{
         var mode=d.mode||'work';
@@ -648,23 +653,39 @@ function startInboxListener(){
             id:S.nextId++,
             text:d.text||'(email task)',
             completed:false,
-            date:null,
-            time:null,
-            recur:'once',
+            date:d.date||null,
+            time:d.time||null,
+            recur:d.recur||'once',
             note:d.note||''
           };
           _insertTaskSorted(mode,sec,newTask);
+          addedNames.push(d.text||'task');
           didChange=true;
+          valid=true;
+        }else{
+          console.warn('Focus inbox: skipping doc with unknown mode/section',docSnap.id,{mode:mode,sec:sec});
         }
       }
-      deleteDoc(doc(db,'users',uid,'inbox',docSnap.id)).catch(function(e){
-        console.error('Failed to delete inbox entry:',e);
-      });
+      // Only consume the inbox doc if it was successfully processed
+      if(valid){
+        deleteDoc(doc(db,'users',uid,'inbox',docSnap.id)).catch(function(e){
+          console.error('Failed to delete inbox entry:',e);
+        });
+      }
     });
     if(didChange){
+      // Block the sync snapshot from overwriting S while save() is in flight.
+      // Without this, the incoming snapshot from startSync fires before the
+      // debounced setDoc completes and wipes out the just-added inbox items.
+      localWritePending=true;
       if(typeof archivePast==='function')archivePast();
       if(typeof renderAll==='function')renderAll();
       save();
+      if(addedNames.length===1){
+        showToast('Added: '+addedNames[0]);
+      }else if(addedNames.length>1){
+        showToast('Added '+addedNames.length+' items from email');
+      }
     }
   });
 }
