@@ -554,6 +554,13 @@ onAuthStateChanged(auth,user=>{
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('mainApp').style.display='flex';
     renderUserPill();
+    // Write email to profile so the email processor can route messages without
+    // a manually-maintained userMap
+    if(user.email){
+      setDoc(doc(db,'users',uid,'config','profile'),{email:user.email},{merge:true}).catch(function(e){
+        console.warn('Could not write profile email:',e);
+      });
+    }
     startSync();
     startInboxListener();
     if(typeof reqNotif==='function')reqNotif();
@@ -1457,7 +1464,7 @@ function _taskSortKey(t){
 }
 function _insertTaskSorted(mode,sec,task){
   var arr=S.tasks[mode][sec];
-  if(!task.date){arr.push(task);return;}
+  if(!task.date){arr.unshift(task);return;}
   // Find first dated incomplete task with a later key, insert before it
   var key=_taskSortKey(task);
   for(var i=0;i<arr.length;i++){
