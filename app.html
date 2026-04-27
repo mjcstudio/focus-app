@@ -554,11 +554,13 @@ onAuthStateChanged(auth,user=>{
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('mainApp').style.display='flex';
     renderUserPill();
-    // Write email to profile so the email processor can route messages without
-    // a manually-maintained userMap
+    // Write email into config/userMap so the email processor can route messages
+    // without any manual maintenance
     if(user.email){
-      setDoc(doc(db,'users',uid,'config','profile'),{email:user.email},{merge:true}).catch(function(e){
-        console.warn('Could not write profile email:',e);
+      var mapUpdate={};
+      mapUpdate[user.email.toLowerCase()]=uid;
+      setDoc(doc(db,'config','userMap'),mapUpdate,{merge:true}).catch(function(e){
+        console.warn('Could not write to userMap:',e);
       });
     }
     startSync();
