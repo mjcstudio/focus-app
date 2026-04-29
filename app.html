@@ -538,25 +538,17 @@ input:checked+.tog-sl::before{transform:translateX(18px)}
 .mbtn.sec{background:#f0ece7;color:#7c6f5e}
 .mbtn:active{transform:scale(.97)}
 
-/* ── TABLET LANDSCAPE ────────────────────────────────────────────────────────*/
-body.landscape.tablet #mainApp{max-width:900px;margin:0 auto}
-body.landscape.tablet .hdr{padding:14px 28px 8px}
-body.landscape.tablet .upcoming{margin:0 28px 10px}
-body.landscape.tablet .view{padding:0 12px}
-body.landscape.tablet .notes-view,body.landscape.tablet .ndetail-view,body.landscape.tablet .notes-arc-view,body.landscape.tablet .mtgs-view,body.landscape.tablet .mnotes-view,body.landscape.tablet .arc-view,body.landscape.tablet .account-view{padding:0 28px}
-body.landscape.tablet .nav{padding:8px 28px 12px}
-
-/* ── PHONE LANDSCAPE ─────────────────────────────────────────────────────────*/
-body.landscape.phone #mainApp{flex-direction:row!important;max-width:none;margin:0;overflow:hidden}
-body.landscape.phone .nav{width:72px;height:100dvh;flex-direction:column;padding:12px 8px;gap:6px;order:-1;flex-shrink:0;border-right:1px solid rgba(124,111,94,.12)}
-body.landscape.phone .nav-btn{flex:none;height:52px;width:100%;font-size:11px;border-radius:var(--rs)}
-body.landscape.phone .content{flex:1;min-width:0;height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative}
-body.landscape.phone .hdr{padding:8px 14px 6px;flex-shrink:0}
-body.landscape.phone .hdr-inner{gap:8px}
-body.landscape.phone .app-title{font-size:15px}
-body.landscape.phone .mode-lbl{font-size:13px}
-body.landscape.phone .upcoming{display:none!important}
-body.landscape.phone .view,body.landscape.phone .notes-view,body.landscape.phone .ndetail-view,body.landscape.phone .notes-arc-view,body.landscape.phone .mtgs-view,body.landscape.phone .mnotes-view,body.landscape.phone .arc-view,body.landscape.phone .account-view{padding:0 14px}
+/* ── LANDSCAPE MODE ──────────────────────────────────────────────────────────*/
+body.landscape #mainApp{
+  transform:rotate(90deg);
+  transform-origin:center center;
+  width:100dvh;
+  height:100dvw;
+  position:fixed;
+  top:calc((100dvh - 100dvw) / 2);
+  left:calc((100dvw - 100dvh) / 2);
+  overflow:hidden;
+}
 </style>
 
 <script type="module">
@@ -2732,47 +2724,32 @@ function showToast(msg){
 // ── FLIP SCREEN ──────────────────────────────────────────────
 // ── ORIENTATION / LANDSCAPE MODE ─────────────────────────────────────────────
 (function(){
-  var _manualOverride=null; // null=auto, 'landscape', 'portrait'
+  var _manualOverride=null;
 
   function isPhysicallyLandscape(){
-    // Prefer screen.orientation API, fall back to dimensions
     if(window.screen&&window.screen.orientation){
-      var t=window.screen.orientation.type;
-      return t.indexOf('landscape')!==-1;
+      return window.screen.orientation.type.indexOf('landscape')!==-1;
     }
     return window.innerWidth>window.innerHeight;
   }
 
-  function isPhone(){
-    // Treat as phone if shorter dimension < 600px (covers all phones, excludes tablets)
-    return Math.min(screen.width,screen.height)<600;
-  }
-
   function applyOrientation(){
-    var landscape=_manualOverride==='landscape'||((_manualOverride===null)&&isPhysicallyLandscape());
+    var landscape=_manualOverride==='landscape'||(_manualOverride===null&&isPhysicallyLandscape());
     document.body.classList.toggle('landscape',landscape);
-    document.body.classList.toggle('portrait',!landscape);
-    document.body.classList.toggle('phone',isPhone());
-    document.body.classList.toggle('tablet',!isPhone());
     localStorage.setItem('focus-landscape-override',_manualOverride||'');
   }
 
   window.flipScreen=function(){
     if(_manualOverride===null){
-      // First press: lock to opposite of current physical state
       _manualOverride=isPhysicallyLandscape()?'portrait':'landscape';
-    } else {
-      // Subsequent presses: cycle override → clear (back to auto)
+    }else{
       _manualOverride=(_manualOverride==='landscape')?'portrait':null;
     }
     applyOrientation();
   };
 
-  // Restore saved override
   var saved=localStorage.getItem('focus-landscape-override');
   if(saved==='landscape'||saved==='portrait')_manualOverride=saved;
-
-  // Apply on load and on any orientation change
   applyOrientation();
   window.addEventListener('orientationchange',function(){setTimeout(applyOrientation,100);});
   window.addEventListener('resize',applyOrientation);
@@ -2780,8 +2757,6 @@ function showToast(msg){
     window.screen.orientation.addEventListener('change',applyOrientation);
   }
 })();
-
-function flipScreen(){} // defined above in IIFE, stub prevents duplicate declaration errors
 
 // ── INIT ─────────────────────────────────────────────────────
 load();applyPrefs();archivePast();autoArchiveCompleted();initMode();renderAll();
@@ -2800,7 +2775,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v43';
+var APP_VERSION='focus-v44';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
@@ -2829,7 +2804,7 @@ if('serviceWorker'in navigator){
   });
 
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('/focus-app/sw.js?v=43').then(function(reg){
+    navigator.serviceWorker.register('/focus-app/sw.js?v=44').then(function(reg){
       if(reg.waiting)activateSW(reg);
       reg.addEventListener('updatefound',function(){
         var newSW=reg.installing;
