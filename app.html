@@ -183,7 +183,6 @@ body.mode-notes .mode-lbl,body.mode-ndetail .mode-lbl,body.mode-notes-archive .m
 
 .flip-btn{background:none;border:none;cursor:pointer;font-size:20px;padding:2px 6px;opacity:.3;transition:opacity var(--t);color:inherit;line-height:1}
 .flip-btn:active{opacity:.8}
-#mainApp.flipped{transform:rotate(180deg);transform-origin:center center;}
 .arc-hdr-btn{display:none}
 body.mode-work .arc-hdr-btn{display:block;background:var(--work-soft);color:var(--work-accent)}
 body.mode-personal .arc-hdr-btn{display:block;background:var(--per-soft);color:var(--per-accent)}
@@ -2757,6 +2756,10 @@ function showToast(msg){
     document.body.classList.toggle('phone',isPhone());
     document.body.classList.toggle('tablet',!isPhone());
     localStorage.setItem('focus-landscape-override',_manualOverride||'');
+    if(typeof showToast==='function'){
+      showToast((landscape?'Landscape':'Portrait')+' / '+(isPhone()?'Phone':'Tablet')
+        +' ('+Math.min(screen.width,screen.height)+'px short side)');
+    }
   }
 
   window.flipScreen=function(){
@@ -2802,7 +2805,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v41';
+var APP_VERSION='focus-v42';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
@@ -2831,7 +2834,7 @@ if('serviceWorker'in navigator){
   });
 
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('/focus-app/sw.js').then(function(reg){
+    navigator.serviceWorker.register('/focus-app/sw.js?v=42').then(function(reg){
       if(reg.waiting)activateSW(reg);
       reg.addEventListener('updatefound',function(){
         var newSW=reg.installing;
