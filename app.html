@@ -2775,7 +2775,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v44';
+var APP_VERSION='focus-v45';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
@@ -2804,7 +2804,7 @@ if('serviceWorker'in navigator){
   });
 
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('/focus-app/sw.js?v=44').then(function(reg){
+    navigator.serviceWorker.register('/focus-app/sw.js?v=45').then(function(reg){
       if(reg.waiting)activateSW(reg);
       reg.addEventListener('updatefound',function(){
         var newSW=reg.installing;
