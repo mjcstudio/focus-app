@@ -547,12 +547,11 @@ body.landscape.tablet .notes-view,body.landscape.tablet .ndetail-view,body.lands
 body.landscape.tablet .nav{padding:8px 28px 12px}
 
 /* ── PHONE LANDSCAPE ─────────────────────────────────────────────────────────*/
-body.landscape.phone #mainApp{flex-direction:row;max-width:none;margin:0}
+body.landscape.phone #mainApp{flex-direction:row!important;max-width:none;margin:0;overflow:hidden}
 body.landscape.phone .nav{width:72px;height:100dvh;flex-direction:column;padding:12px 8px;gap:6px;order:-1;flex-shrink:0;border-right:1px solid rgba(124,111,94,.12)}
 body.landscape.phone .nav-btn{flex:none;height:52px;width:100%;font-size:11px;border-radius:var(--rs)}
-body.landscape.phone #mainApp>.hdr{flex-shrink:0;width:auto}
-body.landscape.phone .content{height:100dvh;overflow:hidden;flex:1;min-width:0}
-body.landscape.phone .hdr{padding:8px 14px 6px}
+body.landscape.phone .content{flex:1;min-width:0;height:100dvh;overflow-y:auto;overflow-x:hidden;position:relative}
+body.landscape.phone .hdr{padding:8px 14px 6px;flex-shrink:0}
 body.landscape.phone .hdr-inner{gap:8px}
 body.landscape.phone .app-title{font-size:15px}
 body.landscape.phone .mode-lbl{font-size:13px}
@@ -2756,10 +2755,6 @@ function showToast(msg){
     document.body.classList.toggle('phone',isPhone());
     document.body.classList.toggle('tablet',!isPhone());
     localStorage.setItem('focus-landscape-override',_manualOverride||'');
-    if(typeof showToast==='function'){
-      showToast((landscape?'Landscape':'Portrait')+' / '+(isPhone()?'Phone':'Tablet')
-        +' ('+Math.min(screen.width,screen.height)+'px short side)');
-    }
   }
 
   window.flipScreen=function(){
@@ -2805,7 +2800,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v42';
+var APP_VERSION='focus-v43';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
@@ -2834,7 +2829,7 @@ if('serviceWorker'in navigator){
   });
 
   window.addEventListener('load',function(){
-    navigator.serviceWorker.register('/focus-app/sw.js?v=42').then(function(reg){
+    navigator.serviceWorker.register('/focus-app/sw.js?v=43').then(function(reg){
       if(reg.waiting)activateSW(reg);
       reg.addEventListener('updatefound',function(){
         var newSW=reg.installing;
