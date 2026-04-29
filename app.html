@@ -539,68 +539,26 @@ input:checked+.tog-sl::before{transform:translateX(18px)}
 .mbtn.sec{background:#f0ece7;color:#7c6f5e}
 .mbtn:active{transform:scale(.97)}
 
-/* ── TABLET LANDSCAPE ────────────────────────────────────────────────────────
-   Wider screens in landscape: add comfortable side padding, cap content width.
-   Bottom nav stays but gets a centred max-width container feel.            */
-@media (orientation:landscape) and (min-height:501px){
-  #mainApp{max-width:900px;margin:0 auto}
-  .hdr{padding:14px 28px 8px}
-  .upcoming{margin:0 28px 10px}
-  .view{padding:0 12px}
-  .notes-view,.ndetail-view,.notes-arc-view,.mtgs-view,.mnotes-view,.arc-view,.account-view{padding:0 28px}
-  .nav{padding:8px 28px 12px}
-}
+/* ── TABLET LANDSCAPE ────────────────────────────────────────────────────────*/
+body.landscape.tablet #mainApp{max-width:900px;margin:0 auto}
+body.landscape.tablet .hdr{padding:14px 28px 8px}
+body.landscape.tablet .upcoming{margin:0 28px 10px}
+body.landscape.tablet .view{padding:0 12px}
+body.landscape.tablet .notes-view,body.landscape.tablet .ndetail-view,body.landscape.tablet .notes-arc-view,body.landscape.tablet .mtgs-view,body.landscape.tablet .mnotes-view,body.landscape.tablet .arc-view,body.landscape.tablet .account-view{padding:0 28px}
+body.landscape.tablet .nav{padding:8px 28px 12px}
 
-/* ── PHONE LANDSCAPE ─────────────────────────────────────────────────────────
-   Short screens in landscape (phones): move nav to left sidebar to recover
-   vertical space. Header compresses. Upcoming bar hidden.                  */
-@media (orientation:landscape) and (max-height:500px){
-  #mainApp{flex-direction:row;max-width:none;margin:0}
-
-  /* Left sidebar nav */
-  .nav{
-    width:72px;
-    height:100dvh;
-    flex-direction:column;
-    padding:12px 8px;
-    gap:6px;
-    order:-1;
-    flex-shrink:0;
-    border-right:1px solid rgba(124,111,94,.12);
-  }
-  .nav-btn{
-    flex:none;
-    height:52px;
-    width:100%;
-    font-size:11px;
-    border-radius:var(--rs);
-  }
-
-  /* Right side: header + content stacked */
-  #mainApp > .hdr,
-  #mainApp > .content{
-    flex-shrink:1;
-    width:0; /* let flex grow handle it */
-    flex-grow:1;
-  }
-  #mainApp > .hdr + *,
-  .content{min-width:0}
-
-  /* Compress header */
-  .hdr{padding:8px 14px 6px}
-  .hdr-inner{gap:8px}
-  .app-title{font-size:15px}
-  .mode-lbl{font-size:13px}
-
-  /* Hide upcoming bar — no vertical room */
-  .upcoming{display:none!important}
-
-  /* Views need full height within the right column */
-  .content{height:100dvh;overflow:hidden}
-  .view,.notes-view,.ndetail-view,.notes-arc-view,.mtgs-view,.mnotes-view,.arc-view,.account-view{
-    padding:0 14px
-  }
-}
+/* ── PHONE LANDSCAPE ─────────────────────────────────────────────────────────*/
+body.landscape.phone #mainApp{flex-direction:row;max-width:none;margin:0}
+body.landscape.phone .nav{width:72px;height:100dvh;flex-direction:column;padding:12px 8px;gap:6px;order:-1;flex-shrink:0;border-right:1px solid rgba(124,111,94,.12)}
+body.landscape.phone .nav-btn{flex:none;height:52px;width:100%;font-size:11px;border-radius:var(--rs)}
+body.landscape.phone #mainApp>.hdr{flex-shrink:0;width:auto}
+body.landscape.phone .content{height:100dvh;overflow:hidden;flex:1;min-width:0}
+body.landscape.phone .hdr{padding:8px 14px 6px}
+body.landscape.phone .hdr-inner{gap:8px}
+body.landscape.phone .app-title{font-size:15px}
+body.landscape.phone .mode-lbl{font-size:13px}
+body.landscape.phone .upcoming{display:none!important}
+body.landscape.phone .view,body.landscape.phone .notes-view,body.landscape.phone .ndetail-view,body.landscape.phone .notes-arc-view,body.landscape.phone .mtgs-view,body.landscape.phone .mnotes-view,body.landscape.phone .arc-view,body.landscape.phone .account-view{padding:0 14px}
 </style>
 
 <script type="module">
@@ -2774,16 +2732,61 @@ function showToast(msg){
 }
 
 // ── FLIP SCREEN ──────────────────────────────────────────────
-function flipScreen(){
-  var app=document.getElementById('mainApp');
-  app.classList.toggle('flipped');
-  localStorage.setItem('focus-flipped',app.classList.contains('flipped')?'1':'0');
-}
+// ── ORIENTATION / LANDSCAPE MODE ─────────────────────────────────────────────
+(function(){
+  var _manualOverride=null; // null=auto, 'landscape', 'portrait'
+
+  function isPhysicallyLandscape(){
+    // Prefer screen.orientation API, fall back to dimensions
+    if(window.screen&&window.screen.orientation){
+      var t=window.screen.orientation.type;
+      return t.indexOf('landscape')!==-1;
+    }
+    return window.innerWidth>window.innerHeight;
+  }
+
+  function isPhone(){
+    // Treat as phone if shorter dimension < 600px (covers all phones, excludes tablets)
+    return Math.min(screen.width,screen.height)<600;
+  }
+
+  function applyOrientation(){
+    var landscape=_manualOverride==='landscape'||((_manualOverride===null)&&isPhysicallyLandscape());
+    document.body.classList.toggle('landscape',landscape);
+    document.body.classList.toggle('portrait',!landscape);
+    document.body.classList.toggle('phone',isPhone());
+    document.body.classList.toggle('tablet',!isPhone());
+    localStorage.setItem('focus-landscape-override',_manualOverride||'');
+  }
+
+  window.flipScreen=function(){
+    if(_manualOverride===null){
+      // First press: lock to opposite of current physical state
+      _manualOverride=isPhysicallyLandscape()?'portrait':'landscape';
+    } else {
+      // Subsequent presses: cycle override → clear (back to auto)
+      _manualOverride=(_manualOverride==='landscape')?'portrait':null;
+    }
+    applyOrientation();
+  };
+
+  // Restore saved override
+  var saved=localStorage.getItem('focus-landscape-override');
+  if(saved==='landscape'||saved==='portrait')_manualOverride=saved;
+
+  // Apply on load and on any orientation change
+  applyOrientation();
+  window.addEventListener('orientationchange',function(){setTimeout(applyOrientation,100);});
+  window.addEventListener('resize',applyOrientation);
+  if(window.screen&&window.screen.orientation){
+    window.screen.orientation.addEventListener('change',applyOrientation);
+  }
+})();
+
+function flipScreen(){} // defined above in IIFE, stub prevents duplicate declaration errors
 
 // ── INIT ─────────────────────────────────────────────────────
 load();applyPrefs();archivePast();autoArchiveCompleted();initMode();renderAll();
-// Restore flip state
-if(localStorage.getItem('focus-flipped')==='1')document.getElementById('mainApp').classList.add('flipped');
 // Schedule midnight auto-archive
 scheduleMidnightArchive();
 setInterval(function(){archivePast();renderUpcoming();},30000);
@@ -2799,7 +2802,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v40';
+var APP_VERSION='focus-v41';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
