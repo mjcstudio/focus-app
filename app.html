@@ -305,13 +305,15 @@ body.mode-personal .add-date-lbl{color:var(--per-accent);background:var(--per-so
 .task-card:active .task-date-btn{opacity:.55}
 
 /* TASK NOTES */
-.task-note-area{display:none;padding:4px 12px 8px 44px;flex-shrink:0}
-.task-note-area.open{display:flex;align-items:flex-start;gap:8px}
-.task-note-inp{flex:1;border:none;border-bottom:1px solid;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;padding:4px 0;outline:none;color:inherit;resize:none;line-height:1.5;-webkit-user-select:text;user-select:text}
+.task-note-area{display:none;padding:4px 12px 8px 12px;flex-shrink:0;flex-direction:column;gap:6px}
+.task-note-area.open{display:flex}
+.task-note-inp{flex:1;border:1px solid;border-radius:var(--rs);background:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;outline:none;color:inherit;resize:none;line-height:1.5;-webkit-user-select:text;user-select:text;min-height:100px;width:100%;box-sizing:border-box;overflow-y:auto}
 body.mode-work .task-note-inp{border-color:var(--work-div);color:var(--work-text)}
 body.mode-personal .task-note-inp{border-color:var(--per-div);color:var(--per-text)}
-.task-note-close{flex-shrink:0;border:none;background:none;cursor:pointer;font-size:16px;padding:2px 4px;opacity:.35;color:inherit;line-height:1;margin-top:4px;transition:opacity var(--t)}
-.task-note-close:active{opacity:.8}
+.task-note-footer{display:flex;justify-content:flex-end}
+.task-note-close{border:none;background:var(--work-soft);color:var(--work-accent);cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;padding:5px 12px;border-radius:var(--rs);opacity:1;line-height:1;transition:opacity var(--t)}
+body.mode-personal .task-note-close{background:var(--per-soft);color:var(--per-accent)}
+.task-note-close:active{opacity:.7}
 
 /* EMPTY */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:6px;opacity:.3;pointer-events:none;padding:20px;text-align:center;font-size:13px}
@@ -1634,7 +1636,10 @@ function toggleTaskNote(mode,sec,tid,btn){
   closeAllTaskNotes();
   if(isOpen){return;} // was open, closeAllTaskNotes already shut it
   noteArea.classList.add('open');
-  noteArea.querySelector('textarea').focus();
+  var ta=noteArea.querySelector('textarea');
+  ta.style.height='auto';
+  ta.style.height=Math.max(100,ta.scrollHeight)+'px';
+  ta.focus();
   // Outside-click listener
   setTimeout(function(){
     function outside(e){
@@ -1741,17 +1746,21 @@ function renderTasks(mode,sec){
       noteArea.dataset.mode=mode;
       noteArea.dataset.sec=sec;
       var ta=document.createElement('textarea');
-      ta.className='task-note-inp';ta.rows=2;ta.placeholder='Add a note\u2026';ta.value=t.note||'';
+      ta.className='task-note-inp';ta.placeholder='Add a note\u2026';ta.value=t.note||'';
+      // Auto-grow as content is typed
+      ta.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.max(100,this.scrollHeight)+'px';});
+      var footer=document.createElement('div');
+      footer.className='task-note-footer';
       var shareBtn=document.createElement('button');
-      shareBtn.className='task-note-close';shareBtn.title='Share';shareBtn.textContent='Share';
-      shareBtn.style.fontSize='11px';shareBtn.style.opacity='0.4';shareBtn.style.fontWeight='600';
+      shareBtn.className='task-note-close';shareBtn.style.marginRight='6px';shareBtn.style.opacity='0.6';shareBtn.textContent='Share';
       (function(m2,s2,tid2){shareBtn.addEventListener('click',function(e){e.stopPropagation();shareTask(m2,s2,tid2);});})(mode,sec,t.id);
       var closeBtn=document.createElement('button');
-      closeBtn.className='task-note-close';closeBtn.title='Save & close';closeBtn.textContent='✓';
+      closeBtn.className='task-note-close';closeBtn.title='Save & close';closeBtn.textContent='Done';
       (function(na){closeBtn.addEventListener('click',function(e){e.stopPropagation();closeTaskNote(na);});})(noteArea);
+      footer.appendChild(shareBtn);
+      footer.appendChild(closeBtn);
       noteArea.appendChild(ta);
-      noteArea.appendChild(shareBtn);
-      noteArea.appendChild(closeBtn);
+      noteArea.appendChild(footer);
 
       wrap.appendChild(card);
       wrap.appendChild(noteArea);
@@ -2790,7 +2799,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
-var APP_VERSION='focus-v39';
+var APP_VERSION='focus-v40';
 (function(){
   var el=document.getElementById('loginVersion');
   if(el)el.textContent=APP_VERSION;
