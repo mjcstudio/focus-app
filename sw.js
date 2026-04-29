@@ -1,7 +1,6 @@
-const CACHE='focus-v44';
+const CACHE='focus-v46';
 const ASSETS=[
   '/focus-app/app.html',
-  '/focus-app/manifest.json',
   '/focus-app/icon-192.png',
   '/focus-app/icon-512.png'
 ];
@@ -24,7 +23,7 @@ self.addEventListener('message',e=>{
   if(e.data&&e.data.type==='SKIP_WAITING')self.skipWaiting();
 });
 self.addEventListener('fetch',e=>{
-  if(e.request.url.includes('sw.js')){
+  if(e.request.url.includes('sw.js')||e.request.url.includes('manifest.json')){
     e.respondWith(fetch(e.request));
     return;
   }
